@@ -1,0 +1,64 @@
+{
+  "name": "@selfhelp/shared",
+  "version": "0.1.0",
+  "description": "Shared TypeScript package for SelfHelp web frontend and mobile app: style registry, types, API contracts, Mantine theme tokens, condition + interpolation engines, CMS class allow-list.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./registry": {
+      "types": "./dist/registry/index.d.ts",
+      "import": "./dist/registry/index.mjs",
+      "require": "./dist/registry/index.js"
+    },
+    "./theme": {
+      "types": "./dist/theme/index.d.ts",
+      "import": "./dist/theme/index.mjs",
+      "require": "./dist/theme/index.js"
+    },
+    "./tailwind": {
+      "types": "./dist/theme/tailwind.d.ts",
+      "import": "./dist/theme/tailwind.mjs",
+      "require": "./dist/theme/tailwind.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts --format cjs,esm --dts --clean --no-splitting",
+    "dev": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts --format cjs,esm --dts --watch --no-splitting",
+    "lint": "eslint . --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "json-logic-js": "^2.0.5"
+  },
+  "devDependencies": {
+    "@types/json-logic-js": "^2.0.8",
+    "@types/node": "^22.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.18.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "sideEffects": false,
+  "license": "UNLICENSED",
+  "private": true
+}
