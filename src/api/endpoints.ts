@@ -10,9 +10,10 @@ export const ENDPOINTS = {
         LOGIN: `${API_VERSION_PREFIX}/auth/login`,
         TWO_FACTOR_VERIFY: `${API_VERSION_PREFIX}/auth/two-factor-verify`,
         LOGOUT: `${API_VERSION_PREFIX}/auth/logout`,
-        REFRESH: `${API_VERSION_PREFIX}/auth/refresh`,
+        REFRESH: `${API_VERSION_PREFIX}/auth/refresh-token`,
         SET_LANGUAGE: `${API_VERSION_PREFIX}/auth/set-language`,
         USER_DATA: `${API_VERSION_PREFIX}/auth/user-data`,
+        EVENTS: `${API_VERSION_PREFIX}/auth/events`,
     },
     USER: {
         UPDATE_USERNAME: `${API_VERSION_PREFIX}/auth/user/username`,

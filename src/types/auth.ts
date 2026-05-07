@@ -27,6 +27,7 @@ export interface IUserData {
     permissions?: string[];
     roles?: string[];
     groups?: string[];
+    acl_version?: string | number | null;
 }
 
 export interface IJwtPayload {

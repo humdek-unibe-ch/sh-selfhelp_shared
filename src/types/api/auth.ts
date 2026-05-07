@@ -8,7 +8,7 @@ export interface ILoginRequest {
 }
 
 export interface ITwoFactorVerifyRequest {
-    user_id: number;
+    id_users: number;
     code: string;
 }
 
@@ -24,7 +24,7 @@ export interface ILoginSuccessData {
 
 export interface ITwoFactorRequiredData {
     requires_2fa: true;
-    user_id: number;
+    id_users: number;
     expires_in_seconds?: number;
 }
 
