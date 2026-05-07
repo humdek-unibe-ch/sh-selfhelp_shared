@@ -1,3 +1,7 @@
+/*
+SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+SPDX-License-Identifier: MPL-2.0
+*/
 /**
  * Frontend-only subset of /cms-api/v1/* endpoints. The web frontend keeps
  * its admin endpoints local. The mobile app consumes only what's here.

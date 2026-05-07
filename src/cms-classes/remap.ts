@@ -1,3 +1,7 @@
+/*
+SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+SPDX-License-Identifier: MPL-2.0
+*/
 /**
  * Web -> mobile class remap. Some Tailwind classes are valid on web but
  * have no mobile equivalent (or have a different name in Uniwind). This

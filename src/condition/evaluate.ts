@@ -1,3 +1,7 @@
+/*
+SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+SPDX-License-Identifier: MPL-2.0
+*/
 /**
  * Client-side mirror of the backend `ConditionService::evaluateCondition`.
  * Uses `json-logic-js` so the same JSON-Logic expressions evaluated on

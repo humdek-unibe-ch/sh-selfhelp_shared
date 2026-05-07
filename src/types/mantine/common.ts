@@ -1,3 +1,7 @@
+/*
+SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+SPDX-License-Identifier: MPL-2.0
+*/
 /**
  * Shared Mantine semantic types used by both web (Mantine v9) and mobile
  * (HeroUI Native + Uniwind, where these are mapped through the theme tokens).

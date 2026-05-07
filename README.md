@@ -1,3 +1,7 @@
+/*
+SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+SPDX-License-Identifier: MPL-2.0
+*/
 # @selfhelp/shared
 
 Shared TypeScript package consumed by both [`sh-selfhelp_frontend`](../sh-selfhelp_frontend) (web) and [`sh-selfhelp_mobile`](../sh-selfhelp_mobile) (Expo).
@@ -60,3 +64,36 @@ See `docs/cookbook/add-style.md` in the mobile repo for the full walkthrough.
 
 - Currently consumed via `file:` dep. Any change is picked up immediately on the next install / restart.
 - When promoted to a private npm registry, follow semver: minor for new styles / fields, major for breaking type changes.
+
+## License
+
+Licensed under the [Mozilla Public License 2.0](LICENSE). Copyright (c) 2026 Humdek, University of Bern.
+
+### SPDX headers
+
+Every TS/JS source file should carry a two-line SPDX header:
+
+```ts
+/*
+ * SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+ * SPDX-License-Identifier: MPL-2.0
+ */
+```
+
+The header text lives in [`header.txt`](header.txt) (single source of truth). Header insertion / verification / removal is automated with [`license-check-and-add`](https://www.npmjs.com/package/license-check-and-add) using [`license-check-and-add-config.json`](license-check-and-add-config.json).
+
+```bash
+# One-time install (already in devDependencies):
+npm install
+
+# Add the header to every .ts/.tsx/.js/.jsx/.mjs/.cjs file under src/.
+npm run headers:add
+
+# Verify (CI-friendly, exits 1 if any file is missing the header).
+npm run headers:check
+
+# Strip the header (rarely needed; e.g. before re-licensing).
+npm run headers:remove
+```
+
+The tool reads `.gitignore` so `node_modules/`, `dist/`, etc. are skipped automatically. Extra paths are listed in the `exact_paths` section of the config.

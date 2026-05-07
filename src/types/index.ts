@@ -1,3 +1,7 @@
+/*
+SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+SPDX-License-Identifier: MPL-2.0
+*/
 export * from './styles/base';
 export * from './styles/auth';
 export * from './styles/layout';

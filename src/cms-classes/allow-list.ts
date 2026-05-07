@@ -1,3 +1,7 @@
+/*
+SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+SPDX-License-Identifier: MPL-2.0
+*/
 /**
  * Tailwind classes the CMS may emit in `css_mobile`. Anything outside
  * this list (or the remap table) is dropped on mobile with a dev-only

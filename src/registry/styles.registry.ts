@@ -1,3 +1,7 @@
+/*
+SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+SPDX-License-Identifier: MPL-2.0
+*/
 /**
  * STYLE_REGISTRY — single source of truth for every supported user-facing
  * style. Both the web and mobile renderers import this map and TypeScript

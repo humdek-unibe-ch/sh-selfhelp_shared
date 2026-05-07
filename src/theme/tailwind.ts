@@ -1,3 +1,7 @@
+/*
+SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+SPDX-License-Identifier: MPL-2.0
+*/
 /**
  * Shared Tailwind preset extended by both the web frontend (Tailwind v4)
  * and the mobile app (Uniwind v4 inside HeroUI Native). Anchors the same

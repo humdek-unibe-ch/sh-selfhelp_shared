@@ -1,3 +1,7 @@
+/*
+SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+SPDX-License-Identifier: MPL-2.0
+*/
 import type { TStyleName } from '../types/styles/unknown';
 import { STYLE_REGISTRY } from './styles.registry';
 
