@@ -1,7 +1,15 @@
 {
   "name": "@selfhelp/shared",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Shared TypeScript package for SelfHelp web frontend and mobile app: style registry, types, API contracts, Mantine theme tokens, condition + interpolation engines, CMS class allow-list.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/humdek-unibe-ch/sh-selfhelp_shared.git"
+  },
+  "homepage": "https://github.com/humdek-unibe-ch/sh-selfhelp_shared#readme",
+  "bugs": {
+    "url": "https://github.com/humdek-unibe-ch/sh-selfhelp_shared/issues"
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -30,7 +38,8 @@
   "files": [
     "dist",
     "src",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts --format cjs,esm --dts --clean --no-splitting",
@@ -38,6 +47,7 @@
     "lint": "eslint . --ext .ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "prepublishOnly": "npm run build",
     "headers:check": "license-check-and-add check -f license-check-and-add-config.json",
     "headers:add": "license-check-and-add add -f license-check-and-add-config.json",
     "headers:remove": "license-check-and-add remove -f license-check-and-add-config.json"
@@ -57,12 +67,11 @@
     "vitest": "^2.1.0"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "engines": {
     "node": ">=18"
   },
   "sideEffects": false,
-  "license": "MPL-2.0",
-  "private": true
+  "license": "MPL-2.0"
 }
