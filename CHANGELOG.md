@@ -4,7 +4,7 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
-## [1.0.2] - 2026-05-19
+## [1.0.3] - 2026-05-19
 
  - Adjust types after the DB refactoring
 
