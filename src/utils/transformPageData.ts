@@ -5,15 +5,20 @@ SPDX-License-Identifier: MPL-2.0
 /**
  * Backend → frontend page-shape transformer.
  *
- * The Symfony repositories project pages with snake_case keys
- * (`nav_position`, `footer_position`, `id_pages`, `parent`) for legacy
- * reasons. Both the web and the mobile app prefer camelCase
- * (`navPosition`, `footerPosition`) at the type-system level. This
- * helper bridges the two so consumers don't have to know about the
- * snake-case wire format.
+ * The Symfony backend projects pages with canonical `snake_case` keys
+ * (`nav_position`, `footer_position`, `id_pages`, `id_parent_page`,
+ * `id_page_types`, `id_page_access_types`). The web and mobile apps
+ * prefer camelCase (`navPosition`, `footerPosition`) at the type-system
+ * level. This helper bridges the two so consumers don't have to know
+ * about the snake-case wire format.
  *
  * It is the single source of truth for the conversion. Web frontend
  * and mobile both import it from `@selfhelp/shared`.
+ *
+ * NOTE: Pre-release breaking-change cutover (`db_naming_cutover_*`)
+ * removed all legacy aliases (`parent`, `id_type`,
+ * `id_pageAccessTypes`). The backend is the single source of canonical
+ * keys; the transformer no longer accepts the legacy shapes.
  */
 
 import type { IPageItem } from '../types/pages';
@@ -23,7 +28,7 @@ interface IRawPage {
     id_pages?: number;
     keyword?: string;
     url?: string | null;
-    parent?: number | null;
+    id_parent_page?: number | null;
     parent_page_id?: number | null;
     is_headless?: number | boolean | null;
     nav_position?: number | null;
@@ -39,8 +44,8 @@ interface IRawPage {
     acl_insert?: 0 | 1;
     acl_update?: 0 | 1;
     acl_delete?: 0 | 1;
-    id_type?: number;
-    id_pageAccessTypes?: number;
+    id_page_types?: number;
+    id_page_access_types?: number;
     children?: IRawPage[];
     [key: string]: unknown;
 }
@@ -55,11 +60,12 @@ function toBool(value: unknown): boolean {
 
 export function transformPageData(apiPage: IRawPage): IPageItem {
     const id = apiPage.id ?? apiPage.id_pages ?? 0;
+    const parentPageId = apiPage.parent_page_id ?? apiPage.id_parent_page ?? null;
     return {
         id,
         keyword: apiPage.keyword ?? '',
         url: apiPage.url ?? null,
-        parent_page_id: apiPage.parent_page_id ?? apiPage.parent ?? null,
+        parent_page_id: parentPageId,
         is_headless: toBool(apiPage.is_headless),
         navPosition:
             apiPage.navPosition !== undefined ? apiPage.navPosition : (apiPage.nav_position ?? null),
@@ -78,8 +84,8 @@ export function transformPageData(apiPage: IRawPage): IPageItem {
         acl_insert: apiPage.acl_insert,
         acl_update: apiPage.acl_update,
         acl_delete: apiPage.acl_delete,
-        id_type: apiPage.id_type,
-        id_pageAccessTypes: apiPage.id_pageAccessTypes,
+        id_page_types: apiPage.id_page_types,
+        id_page_access_types: apiPage.id_page_access_types,
     };
 }
 

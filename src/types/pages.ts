@@ -58,8 +58,8 @@ export interface IPageItem extends IBasePageInfo {
     acl_insert?: 0 | 1;
     acl_update?: 0 | 1;
     acl_delete?: 0 | 1;
-    id_type?: number;
-    id_pageAccessTypes?: number;
+    id_page_types?: number;
+    id_page_access_types?: number;
     title?: string | null;
     description?: string | null;
     children?: IPageItem[];
