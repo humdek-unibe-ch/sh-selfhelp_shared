@@ -179,3 +179,61 @@ Do not add migrations here. This package has no database layer. Add backend migr
 - Do not rely on client-side permissions for security decisions.
 - Do not make `replaceCalcedValues()` render `undefined` for unknown placeholders.
 - Do not make condition evaluation throw for invalid CMS condition strings.
+
+## Plugin Ecosystem Rules (shared package side)
+
+This package is the **single contract** between the SelfHelp core and plugins. It exposes both the existing CMS contracts (style registry, types, theme, etc.) and a dedicated plugin SDK consumed by every plugin's frontend and mobile package.
+
+### Multi-Repository AGENTS.md Rule
+
+This project is multi-repository. The AI agent must always obey the `AGENTS.md` of the repository whose files it is editing, regardless of where the agent was started. Plugin-related work also touches `D:\TPF\SelfHelp\sh-selfhelp_backend`, `D:\TPF\SelfHelp\sh-selfhelp_frontend`, `D:\TPF\SelfHelp\sh-selfhelp_mobile`, and the affected plugin repo under `D:\TPF\SelfHelp\plugins\`. The canonical rule lives at `D:\TPF\SelfHelp\sh-selfhelp_backend\docs\plugins\multi-repo-agents-md.md`.
+
+### Plugin SDK contract (`@selfhelp/shared/plugin-sdk`)
+
+- The plugin SDK lives under `src/plugin-sdk/` and is exposed via the package subpath export `./plugin-sdk`.
+- Public surface includes `definePlugin`, `defineMobilePlugin`, `definePluginRealtimeTopic`, `IStyleDefinition`, `IAdminPageDefinition`, `IMenuItemDefinition`, `IPluginApi`, `IPluginRegistration`, `IMobilePluginRegistration`, `IPluginHealthCheck`, `IPluginFeatureFlag`, `IRichTextEditorAdapter`, semver helpers (`assertCmsCompatibility`, `assertPluginApiVersion`), and TypeScript schemas mirroring the JSON Schemas for the plugin manifest, registry, and lock file.
+- The SDK has its own `pluginApiVersion` (currently `1.0`) that is independent of this package's npm version. Bumping it follows the host's plugin version semantics: patch = no breaking surface change; minor = additive; major = breaking.
+
+### Open style registry (`STYLE_REGISTRY` + `extendStyleRegistry`)
+
+- `STYLE_REGISTRY` becomes a *closed* `BASE_STYLE_REGISTRY` for core styles plus a runtime `extendStyleRegistry(entries)` mutator used by plugin SDKs to register additional styles at boot.
+- `TStyleName` accepts core styles strictly (`keyof typeof BASE_STYLE_REGISTRY`) plus an open `string & {}` for plugin styles so plugin keys do not break the type while keeping autocomplete on core names.
+- Adding a plugin style does NOT require editing this package; plugins extend the registry through the SDK.
+
+### Schemas mirror, not duplicate
+
+- The JSON Schemas for `plugin.json`, `registry.json`, and `selfhelp.plugins.lock.json` live in `D:\TPF\SelfHelp\sh-selfhelp_backend\docs\plugins\`. The shared package ships TypeScript types derived from those schemas (`IPluginManifest`, `IPluginRegistry`, `IPluginLock`).
+- Keep the TypeScript types and JSON Schemas in sync. When the JSON Schema changes, regenerate the TS types (or update them manually) and bump the package minor version.
+
+### Realtime contract
+
+- `usePluginRealtime(pluginId, topic, topicParams)` is exposed by the SDK as a `react` hook (web) and `react-native` hook (mobile). Plugins never talk to Mercure directly.
+- Payload typing: plugins declare a TypeScript type per topic; the SDK validates payloads through `definePluginRealtimeTopic({ payloadSchema })` at runtime.
+
+### Lookup-driven enums
+
+Do not invent client-side enum string unions for values that live in the central `lookups` table. The SDK exposes `useLookupGroup(typeCode)` and `getLookupGroupSync(typeCode)` so plugin components branch on lookup codes rather than hardcoded strings.
+
+### Plugin version semantics
+
+The SDK ships helpers that codify the rule:
+
+- **patch** (`1.0.0 → 1.0.1`) — code change without DB change. No migration.
+- **minor** (`1.0.x → 1.1.0`) — always carries a DB change.
+- **major** (`1.x → 2.0`) — breaking change.
+
+`assertPluginVersionSemantics(prev, next, hasMigration)` is exposed for CI and the host installer.
+
+### Plugin file paths (this repo)
+
+- `src/plugin-sdk/index.ts` and submodules — public SDK.
+- `src/registry/styles.registry.ts` — open style registry with `BASE_STYLE_REGISTRY` + `extendStyleRegistry`.
+- `src/types/plugin.ts`, `src/types/plugin-lock.ts`, `src/types/plugin-registry.ts` — manifest/lock/registry TS schemas.
+- `src/condition`, `src/interpolation` — unchanged; plugins reuse these.
+
+### Do not (plugin layer)
+
+- Do not allow plugin packages to import deep into `src/` paths that are not in the public export map.
+- Do not break the SDK without bumping `pluginApiVersion`.
+- Do not duplicate JSON Schema definitions in this package; mirror, do not redefine.
+- Do not export server-only helpers from the plugin SDK.
