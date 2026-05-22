@@ -33,6 +33,11 @@
       "types": "./dist/theme/tailwind.d.ts",
       "import": "./dist/theme/tailwind.mjs",
       "require": "./dist/theme/tailwind.js"
+    },
+    "./plugin-sdk": {
+      "types": "./dist/plugin-sdk/index.d.ts",
+      "import": "./dist/plugin-sdk/index.mjs",
+      "require": "./dist/plugin-sdk/index.js"
     }
   },
   "files": [
@@ -42,8 +47,8 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts --format cjs,esm --dts --clean --no-splitting",
-    "dev": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts --format cjs,esm --dts --watch --no-splitting",
+    "build": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts src/plugin-sdk/index.ts --format cjs,esm --dts --clean --no-splitting",
+    "dev": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts src/plugin-sdk/index.ts --format cjs,esm --dts --watch --no-splitting",
     "lint": "eslint . --ext .ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
