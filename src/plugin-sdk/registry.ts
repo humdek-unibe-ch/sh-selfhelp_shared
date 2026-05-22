@@ -71,16 +71,25 @@ export interface IPluginRegistryEntry {
 
 /**
  * Registry root document.
+ *
+ * Mirrors `plugin-registry.schema.json`. The schema document calls the
+ * version field `registryVersion` (integer, bumped only on breaking
+ * registry-document changes); we keep the legacy `schemaVersion` field
+ * as a compatibility alias so existing consumers do not break.
  */
 export interface IPluginRegistry {
-    /** Schema version of this registry document. */
-    schemaVersion: '1.0';
+    /** Registry schema generation. Bumped only on breaking registry-document changes. */
+    registryVersion: number;
     /** Registry display name. */
     name: string;
-    /** ISO timestamp this registry was generated. */
-    generatedAt: string;
-    /** Registry maintainer URL. */
-    maintainer?: string;
+    /** Registry homepage / maintainer URL. */
+    homepage?: string;
+    /** ISO timestamp this registry was published. */
+    publishedAt?: string;
+    /** Public key used to verify per-version signatures. */
+    trustKey?: { algo: 'ed25519'; publicKeyId: string; publicKey: string };
+    /** Channels this registry exposes (subset of stable/beta/alpha/nightly). */
+    channels?: TPluginRegistryChannel[];
     /** Listed plugins. */
     plugins: IPluginRegistryEntry[];
 }

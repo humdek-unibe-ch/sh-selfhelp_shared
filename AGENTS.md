@@ -186,7 +186,7 @@ This package is the **single contract** between the SelfHelp core and plugins. I
 
 ### Multi-Repository AGENTS.md Rule
 
-This project is multi-repository. The AI agent must always obey the `AGENTS.md` of the repository whose files it is editing, regardless of where the agent was started. Plugin-related work also touches `D:\TPF\SelfHelp\sh-selfhelp_backend`, `D:\TPF\SelfHelp\sh-selfhelp_frontend`, `D:\TPF\SelfHelp\sh-selfhelp_mobile`, and the affected plugin repo under `D:\TPF\SelfHelp\plugins\`. The canonical rule lives at `D:\TPF\SelfHelp\sh-selfhelp_backend\docs\plugins\multi-repo-agents-md.md`.
+This project is multi-repository. The AI agent must always obey the `AGENTS.md` of the repository whose files it is editing, regardless of where the agent was started. Plugin-related work also touches the sibling repositories `sh-selfhelp_backend`, `sh-selfhelp_frontend`, `sh-selfhelp_mobile`, and the affected plugin repo under `plugins/<plugin-id>/`. The canonical rule lives at `sh-selfhelp_backend/docs/plugins/multi-repo-agents-md.md`. Use repository-relative paths; never hard-code an absolute path for your local machine.
 
 ### Plugin SDK contract (`@selfhelp/shared/plugin-sdk`)
 
@@ -202,7 +202,7 @@ This project is multi-repository. The AI agent must always obey the `AGENTS.md` 
 
 ### Schemas mirror, not duplicate
 
-- The JSON Schemas for `plugin.json`, `registry.json`, and `selfhelp.plugins.lock.json` live in `D:\TPF\SelfHelp\sh-selfhelp_backend\docs\plugins\`. The shared package ships TypeScript types derived from those schemas (`IPluginManifest`, `IPluginRegistry`, `IPluginLock`).
+- The JSON Schemas for `plugin.json`, `registry.json`, and `selfhelp.plugins.lock.json` live in the sibling backend repo at `sh-selfhelp_backend/docs/plugins/` (`plugin-manifest.schema.json`, `plugin-registry.schema.json`, `plugin-lock.schema.json`). The shared package ships TypeScript types derived from those schemas (`IPluginManifest`, `IPluginRegistry`, `IPluginLock`).
 - Keep the TypeScript types and JSON Schemas in sync. When the JSON Schema changes, regenerate the TS types (or update them manually) and bump the package minor version.
 
 ### Realtime contract
