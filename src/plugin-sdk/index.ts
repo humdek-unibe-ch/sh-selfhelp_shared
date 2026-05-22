@@ -81,3 +81,11 @@ export type {
 } from './types';
 
 export { definePlugin, defineMobilePlugin, definePluginRealtimeTopic } from './define';
+
+export type {
+    IRealtimeTransport,
+    TRealtimeTransportFactory,
+    IUsePluginRealtimeOptions,
+    IUsePluginRealtimeResult,
+} from './realtime';
+export { usePluginRealtime } from './realtime';
