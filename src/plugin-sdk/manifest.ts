@@ -29,7 +29,9 @@ export type IPluginManifestCapability =
     | 'mobileStyles'
     | 'realtimePublish'
     | 'fileUploads'
-    | 'secretAccess';
+    | 'secretAccess'
+    | 'lookupExtend'
+    | 'lookupOwnGroup';
 
 export interface IPluginManifestCompatibility {
     /** SemVer range for the SelfHelp CMS version (e.g. `^2.0`). */
