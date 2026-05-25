@@ -41,6 +41,49 @@ export interface IStyleDefinition extends Omit<IStyleRegistryEntry, 'category'> 
 }
 
 /**
+ * Props passed by the host's section-field editor to a plugin-supplied
+ * field renderer. The host owns the surrounding label / help tooltip /
+ * type badge; the plugin only owns the actual input control.
+ *
+ * `field` is intentionally typed as a loose record because the host's
+ * `IFieldData` lives in the frontend repo and must not leak into the
+ * shared SDK contract — plugins read only what they need (id, name,
+ * config, default_value, etc.).
+ */
+export interface IPluginFieldRendererProps {
+    /** Field id (database row id). */
+    fieldId: number;
+    /** Field name (DB `fields.name`). */
+    fieldName: string;
+    /** Field type (`fields.type`, e.g. `select-survey-js`). */
+    fieldType: string;
+    /** Current string value bound to the section_field translation. */
+    value: string;
+    /** Persist a new string value on the section_field translation. */
+    onChange: (value: string) => void;
+    /** Whether the input is disabled by the host. */
+    disabled?: boolean;
+    /** Loose pass-through of the host field row (config, default, help, ...). */
+    field?: Record<string, unknown>;
+}
+
+/**
+ * Field renderer contributed by a plugin. Replaces the host default
+ * editor control for the given `fieldType`. Used by the CMS
+ * section-field editor in the frontend repo so plugins can ship custom
+ * pickers (e.g. SurveyJS survey select) without the host having to
+ * hardcode plugin-specific UI in `FieldRenderer.tsx`.
+ *
+ * The component receives {@link IPluginFieldRendererProps}.
+ */
+export interface IFieldRendererDefinition {
+    /** Field type discriminator (`fields.type`, e.g. `select-survey-js`). */
+    fieldType: string;
+    /** React component that renders the input control. */
+    component: TPluginComponent<IPluginFieldRendererProps>;
+}
+
+/**
  * Admin page contributed by a plugin. Mounted under
  * `/admin/plugins-host/{pluginId}/{slug}` in the frontend.
  */
@@ -247,6 +290,13 @@ export interface IPluginRegistration {
     featureFlags?: IPluginFeatureFlag[];
     /** Realtime topics the plugin publishes / subscribes to. */
     realtimeTopics?: IPluginRealtimeTopic[];
+    /**
+     * CMS section-field editor renderers contributed by the plugin.
+     * Allows plugins to ship custom pickers for plugin-owned field types
+     * (declared in the plugin's Doctrine migration as new rows in
+     * `field_types`) without the host having to hardcode the renderer.
+     */
+    fieldRenderers?: IFieldRendererDefinition[];
 }
 
 /**

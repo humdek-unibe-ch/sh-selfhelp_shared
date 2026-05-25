@@ -67,6 +67,8 @@ export type {
     IPluginRegistration,
     IMobilePluginRegistration,
     IStyleDefinition,
+    IFieldRendererDefinition,
+    IPluginFieldRendererProps,
     IAdminPageDefinition,
     IMenuItemDefinition,
     IPluginApi,

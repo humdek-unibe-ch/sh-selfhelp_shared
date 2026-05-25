@@ -4,6 +4,21 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## [1.1.0] - 2026-05-25
+
+### Added
+
+- Plugin SDK field-renderer contracts:
+  `IFieldRendererDefinition`, `IPluginFieldRendererProps`, and
+  `fieldRenderers` on `IPluginRegistration`, so plugins can contribute
+  custom CMS section-field editor controls for plugin-owned field types.
+
+### Changed
+
+- Bumped `PLUGIN_API_VERSION` from `1.0` to `1.1` to reflect the new
+  additive plugin SDK surface.
+- Re-exported the new field-renderer types from `@selfhelp/shared/plugin-sdk`.
+
 ## [1.0.4] - 2026-05-22
 
 ### Added

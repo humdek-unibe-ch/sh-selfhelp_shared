@@ -72,10 +72,9 @@ export interface IPluginRegistryEntry {
 /**
  * Registry root document.
  *
- * Mirrors `plugin-registry.schema.json`. The schema document calls the
- * version field `registryVersion` (integer, bumped only on breaking
- * registry-document changes); we keep the legacy `schemaVersion` field
- * as a compatibility alias so existing consumers do not break.
+ * Mirrors `plugin-registry.schema.json`. The version field is named
+ * `registryVersion` (integer, bumped only on breaking registry-document
+ * changes).
  */
 export interface IPluginRegistry {
     /** Registry schema generation. Bumped only on breaking registry-document changes. */
