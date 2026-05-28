@@ -72,22 +72,33 @@ export interface IPluginRegistryEntry {
 /**
  * Registry root document.
  *
- * Mirrors `plugin-registry.schema.json`. The version field is named
- * `registryVersion` (integer, bumped only on breaking registry-document
- * changes).
+ * Mirrors `plugin-registry.schema.json` in the host repository. The
+ * canonical schema requires `schemaVersion` (a string enum, currently
+ * `'1.0'`) and `plugins`. The publisher/base-url metadata is optional
+ * but always emitted by `scripts/publish-to-registry.mjs`.
  */
 export interface IPluginRegistry {
-    /** Registry schema generation. Bumped only on breaking registry-document changes. */
-    registryVersion: number;
-    /** Registry display name. */
-    name: string;
-    /** Registry homepage / maintainer URL. */
-    homepage?: string;
+    /** Canonical registry schema version. Currently fixed at `'1.0'`. */
+    schemaVersion: '1.0';
     /** ISO timestamp this registry was published. */
     publishedAt?: string;
-    /** Public key used to verify per-version signatures. */
+    /**
+     * Public base URL where this registry is served (with trailing
+     * slash). Plugin publishers join this to relative
+     * `artifacts/<id>-<version>/...` paths to produce the absolute
+     * `runtime.entrypointUrl` / `runtime.stylesheetUrl` that gets
+     * signed and shipped in each plugin entry.
+     */
+    baseUrl?: string;
+    /** Publisher metadata shown in the admin UI. */
+    publisher?: { name: string; url?: string };
+    /** Optional registry display name (legacy helper, not in canonical schema). */
+    name?: string;
+    /** Registry homepage / maintainer URL (legacy helper, not in canonical schema). */
+    homepage?: string;
+    /** Public key used to verify per-version signatures (legacy helper, not in canonical schema). */
     trustKey?: { algo: 'ed25519'; publicKeyId: string; publicKey: string };
-    /** Channels this registry exposes (subset of stable/beta/alpha/nightly). */
+    /** Channels this registry exposes (legacy helper, not in canonical schema). */
     channels?: TPluginRegistryChannel[];
     /** Listed plugins. */
     plugins: IPluginRegistryEntry[];

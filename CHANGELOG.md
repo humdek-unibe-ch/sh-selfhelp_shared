@@ -9,6 +9,50 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## [1.2.1] - 2026-05-28
+
+### Fixed
+
+- `IPluginRegistry` in `@selfhelp/shared/plugin-sdk` is now back in
+  sync with the canonical `plugin-registry.schema.json` shipped by
+  `sh-selfhelp_backend`. The root version field is the schema's
+  `schemaVersion: '1.0'` again (the `registryVersion: number` rename
+  introduced in `1.0.4` mis-described the wire format). Added the two
+  other canonical root fields, `baseUrl` and `publisher`, as optional
+  so the type matches what `scripts/publish-to-registry.mjs` actually
+  emits. The pre-existing `name` / `homepage` / `trustKey` /
+  `channels` properties are kept as optional legacy helpers and
+  flagged in the JSDoc as not part of the canonical schema; they will
+  be removed in the next major release once the deeper drift in
+  `IPluginRegistryEntry` / `IPluginRegistryVersionEntry` is rewritten
+  to match the canonical schema.
+- `npm run check:schemas` is green again — previously failed because
+  `schemaVersion` was missing from the TS mirror after the `1.0.4`
+  rename.
+
+### Migration notes
+
+```ts
+// before (1.2.0, broken)
+const registry: IPluginRegistry = {
+    registryVersion: 1,
+    name: 'my-registry',
+    plugins: [],
+};
+
+// after (1.2.1, matches plugin-registry.schema.json)
+const registry: IPluginRegistry = {
+    schemaVersion: '1.0',
+    publisher: { name: 'my-registry' },
+    plugins: [],
+};
+```
+
+No runtime/installation behaviour changed — this only corrects the
+shape of the published TS contract that plugin authors compile
+against. The backend's `RegistryClient` already reads the canonical
+wire format, so installed registries keep working.
+
 ## [1.2.0] - 2026-05-28
 
 ### Added
