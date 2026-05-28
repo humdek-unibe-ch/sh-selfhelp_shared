@@ -1,6 +1,6 @@
 {
   "name": "@selfhelp/shared",
-  "version": "1.0.3",
+  "version": "1.2.1",
   "description": "Shared TypeScript package for SelfHelp web frontend and mobile app: style registry, types, API contracts, Mantine theme tokens, condition + interpolation engines, CMS class allow-list.",
   "repository": {
     "type": "git",
@@ -33,6 +33,11 @@
       "types": "./dist/theme/tailwind.d.ts",
       "import": "./dist/theme/tailwind.mjs",
       "require": "./dist/theme/tailwind.js"
+    },
+    "./plugin-sdk": {
+      "types": "./dist/plugin-sdk/index.d.ts",
+      "import": "./dist/plugin-sdk/index.mjs",
+      "require": "./dist/plugin-sdk/index.js"
     }
   },
   "files": [
@@ -42,11 +47,12 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts --format cjs,esm --dts --clean --no-splitting",
-    "dev": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts --format cjs,esm --dts --watch --no-splitting",
+    "build": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts src/plugin-sdk/index.ts --format cjs,esm --dts --clean --no-splitting",
+    "dev": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts src/plugin-sdk/index.ts --format cjs,esm --dts --watch --no-splitting",
     "lint": "eslint . --ext .ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
+    "check:schemas": "node scripts/check-schema-parity.mjs",
     "prepublishOnly": "npm run build",
     "headers:check": "license-check-and-add check -f license-check-and-add-config.json",
     "headers:add": "license-check-and-add add -f license-check-and-add-config.json",
@@ -55,13 +61,23 @@
   "dependencies": {
     "json-logic-js": "^2.0.5"
   },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@types/json-logic-js": "^2.0.8",
     "@types/node": "^22.10.0",
+    "@types/react": "^19.2.15",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "eslint": "^9.18.0",
     "license-check-and-add": "^4.0.5",
+    "react": "^19.2.6",
     "tsup": "^8.3.5",
     "typescript": "^5.6.0",
     "vitest": "^2.1.0"

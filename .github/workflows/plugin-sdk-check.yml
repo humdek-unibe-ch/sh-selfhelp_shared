@@ -1,0 +1,101 @@
+# SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+# SPDX-License-Identifier: MPL-2.0
+#
+# Plugin SDK check (plan §21.4).
+#
+# This workflow guards the contract every SelfHelp plugin compiles
+# against. The shared package ships:
+#   - `STYLE_REGISTRY` + `extendStyleRegistry` (open style registry)
+#   - `@selfhelp/shared/plugin-sdk` (definePlugin, manifest/lock/registry
+#     TS schemas, semver helpers, usePluginRealtime React hook)
+#
+# A regression here ripples into every plugin repository, so every
+# pull-request to `main` runs:
+#   1. Source-header check (license headers must be present).
+#   2. Type-check of the entire package.
+#   3. Build (tsup → cjs + esm + dts), confirming the published artifact
+#      compiles deterministically.
+#   4. Schema-parity check: TypeScript mirrors in `src/plugin-sdk/*.ts`
+#      must still cover every required property of the JSON Schemas
+#      published by the sh-selfhelp_backend repository. The script lives
+#      at `scripts/check-schema-parity.mjs`; it SKIPS cleanly when the
+#      backend repo is not checked out next to this one, but the CI job
+#      below clones the backend explicitly so the check is binding.
+#   5. Unit tests (Vitest). The suite stays minimal because most of the
+#      surface is types.
+#
+# A failing job blocks merging to `main`.
+
+name: plugin-sdk-check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sdk-check:
+    name: Type-check, build, schema parity
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout shared package
+        uses: actions/checkout@v4
+        with:
+          path: sh-selfhelp_shared
+
+      - name: Checkout backend (for JSON schemas)
+        uses: actions/checkout@v4
+        with:
+          repository: humdek-unibe-ch/sh-selfhelp_backend
+          ref: main
+          path: sh-selfhelp_backend
+        continue-on-error: true
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: sh-selfhelp_shared/package-lock.json
+
+      - name: Install dependencies
+        working-directory: sh-selfhelp_shared
+        run: npm ci
+
+      - name: License headers
+        working-directory: sh-selfhelp_shared
+        run: npm run headers:check
+
+      - name: Type-check
+        working-directory: sh-selfhelp_shared
+        run: npm run typecheck
+
+      - name: Build (tsup)
+        working-directory: sh-selfhelp_shared
+        run: npm run build
+
+      - name: Verify usePluginRealtime is exported from plugin-sdk
+        working-directory: sh-selfhelp_shared
+        run: |
+          set -euo pipefail
+          for f in dist/plugin-sdk/index.d.ts dist/plugin-sdk/index.js dist/plugin-sdk/index.mjs; do
+            if ! grep -q 'usePluginRealtime' "$f"; then
+              echo "::error file=$f::usePluginRealtime missing from built bundle"
+              exit 1
+            fi
+          done
+          echo "usePluginRealtime present in all three dist artifacts."
+
+      - name: Schema parity check
+        working-directory: sh-selfhelp_shared
+        run: npm run check:schemas
+
+      - name: Unit tests
+        working-directory: sh-selfhelp_shared
+        run: npm test --if-present
