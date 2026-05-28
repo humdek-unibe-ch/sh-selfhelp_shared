@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+SPDX-License-Identifier: MPL-2.0
+-->
+
 # Changelog
 
 All notable changes to `@selfhelp/shared` will be documented in this file.

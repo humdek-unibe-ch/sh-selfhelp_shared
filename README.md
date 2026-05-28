@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+SPDX-License-Identifier: MPL-2.0
+-->
+
 # @selfhelp/shared
 
 `@selfhelp/shared` is the shared TypeScript foundation for the SelfHelp ecosystem.
