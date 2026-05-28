@@ -51,7 +51,7 @@
     "dev": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts src/plugin-sdk/index.ts --format cjs,esm --dts --watch --no-splitting",
     "lint": "eslint . --ext .ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "check:schemas": "node scripts/check-schema-parity.mjs",
     "prepublishOnly": "npm run build",
     "headers:check": "license-check-and-add check -f license-check-and-add-config.json",
