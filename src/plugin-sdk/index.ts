@@ -91,3 +91,13 @@ export type {
     IUsePluginRealtimeResult,
 } from './realtime';
 export { usePluginRealtime } from './realtime';
+
+export type { TPluginRuntimeShimSpecifier } from './runtime-shim';
+export {
+    PLUGIN_RUNTIME_SHIM_SPECIFIERS,
+    PLUGIN_RUNTIME_SHIM_BASE_PATH,
+    PLUGIN_RUNTIME_GLOBAL_KEY,
+    PLUGIN_RUNTIME_IMPORT_MAP,
+    buildPluginRuntimeShimPath,
+    isPluginRuntimeShimSpecifier,
+} from './runtime-shim';

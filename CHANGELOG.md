@@ -4,6 +4,45 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## [1.2.0] - 2026-05-28
+
+### Added
+
+- Canonical plugin runtime-shim contract exported from
+  `@selfhelp/shared/plugin-sdk`. This is the single source of truth
+  every consumer (host import map, host `globalThis` stash, host
+  `/api/plugins/runtime-shim/*` BFF route, plugin Vite build, plugin
+  dev-runtime server) now reads from, so the three pieces cannot
+  drift apart again:
+  - `PLUGIN_RUNTIME_SHIM_SPECIFIERS` — readonly list of every bare
+    specifier the host shims to plugins. Includes the previously
+    missing `react/jsx-dev-runtime` (needed by Vite's React plugin in
+    dev mode) and `@mantine/notifications` (consumed by plugins that
+    show toast notifications), so dev-server bundles can resolve them
+    instead of bundling a second copy of React or Mantine.
+  - `PLUGIN_RUNTIME_SHIM_BASE_PATH` — `/api/plugins/runtime-shim/`
+    constant; the host frontend owns this route.
+  - `PLUGIN_RUNTIME_GLOBAL_KEY` — `__SELFHELP_RUNTIME__` constant.
+  - `PLUGIN_RUNTIME_IMPORT_MAP` — frozen `Record` derived from the
+    specifier list, ready to be `JSON.stringify`ed into the host's
+    `<script type="importmap">` tag.
+  - `buildPluginRuntimeShimPath(specifier)` — string builder for a
+    single specifier.
+  - `isPluginRuntimeShimSpecifier(value)` — runtime type guard.
+  - `TPluginRuntimeShimSpecifier` — string-literal type union of the
+    supported specifiers.
+- The plugin SDK contract version bumps from `1.1` to `1.2` to
+  reflect the additive surface. Hosts on SDK `1.2+` still accept
+  plugins declaring `pluginApiVersion: "1.1"`, so existing plugins
+  remain compatible.
+
+### Changed
+
+- `PLUGIN_API_VERSION` constant: `1.1` → `1.2`. No behavioural
+  change for plugins that do not consume the runtime-shim contract
+  directly; this only signals which optional SDK surface the host
+  exposes.
+
 ## [1.1.0] - 2026-05-25
 
 ### Added

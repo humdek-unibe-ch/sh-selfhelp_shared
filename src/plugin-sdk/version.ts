@@ -14,7 +14,7 @@ SPDX-License-Identifier: MPL-2.0
  *
  * Independent from the npm `version` of `@selfhelp/shared`.
  */
-export const PLUGIN_API_VERSION = '1.1' as const;
+export const PLUGIN_API_VERSION = '1.2' as const;
 
 export interface ISemver {
     major: number;

@@ -153,6 +153,27 @@ import { THEME_TOKENS } from '@selfhelp/shared/theme';
 import tailwindPreset from '@selfhelp/shared/tailwind';
 ```
 
+### Consume the plugin runtime-shim contract
+
+Plugin builds and the host frontend share a single list of bare
+specifiers that resolve through the host's runtime-shim BFF route.
+Read the contract from `@selfhelp/shared/plugin-sdk` instead of
+duplicating the list in plugin `vite.config.ts` files or in the host
+`runtime-globals.ts`:
+
+```ts
+import {
+  PLUGIN_RUNTIME_SHIM_SPECIFIERS,
+  PLUGIN_RUNTIME_IMPORT_MAP,
+  buildPluginRuntimeShimPath,
+} from '@selfhelp/shared/plugin-sdk';
+```
+
+The contract is what guarantees `react`, `@mantine/core`,
+`@tanstack/react-query`, and `@selfhelp/shared` (plus their
+documented subpaths) stay single-instance across the host shell and
+every loaded plugin.
+
 ### Build the package locally
 
 ```bash
