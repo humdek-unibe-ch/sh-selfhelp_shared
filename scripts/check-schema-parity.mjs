@@ -76,18 +76,39 @@ const RESPONSE_SCHEMA_MAPPING = [
         requiredPath: ['properties', 'data', 'required'],
     },
     {
-        // KNOWN DRIFT: backend form_submitted.data requires {record_id,
-        // section_id, page_id, submitted_at, user_authenticated}; shared
-        // IFormSubmitData models {record_id, success, redirect_url, message,
-        // field_errors}. The two shapes need cross-repo reconciliation (which
-        // response does the frontend actually consume?) before the TS type is
-        // changed. Tracked as a warning so the drift stays VISIBLE without
-        // blocking CI.
+        // User-data response carries the permission/ACL contract the frontend
+        // consumes (roles, permissions, groups, acl_version) plus the profile
+        // fields. IUserData is the authoritative shared mirror.
+        schemaFile: 'responses/auth/user_data.json',
+        sourceFile: 'src/types/auth.ts',
+        label: 'auth user-data (permissions / roles / groups / acl_version)',
+        requiredPath: ['properties', 'data', 'required'],
+    },
+    {
+        // CMS page payload consumed by frontend + mobile renderers. The shared
+        // mirror is IPageContent (the `data.page` object).
+        schemaFile: 'responses/frontend/get_page.json',
+        sourceFile: 'src/types/pages.ts',
+        label: 'CMS page payload (IPageContent)',
+        requiredPath: ['properties', 'data', 'properties', 'page', 'required'],
+    },
+    {
+        // RESOLVED DRIFT (was knownDrift): IFormSubmitData now mirrors the real
+        // FormController contract {record_id, section_id, page_id, submitted_at,
+        // user_authenticated}. The legacy success/message/redirect_url fields
+        // are retained as deprecated optionals for migrating consumers.
         schemaFile: 'responses/frontend/form_submitted.json',
         sourceFile: 'src/types/api/forms.ts',
         label: 'form submit data',
         requiredPath: ['allOf', 1, 'properties', 'data', 'required'],
-        knownDrift: true,
+    },
+    {
+        // Form UPDATE returns a distinct shape (updated_at, no user_authenticated)
+        // mirrored by IFormUpdateData.
+        schemaFile: 'responses/frontend/form_updated.json',
+        sourceFile: 'src/types/api/forms.ts',
+        label: 'form update data',
+        requiredPath: ['allOf', 1, 'properties', 'data', 'required'],
     },
 ];
 
@@ -174,6 +195,19 @@ async function checkResponseSchemas() {
 
 await checkPluginSchemas();
 await checkResponseSchemas();
+
+const count = (prefix) => lines.filter((l) => l.startsWith(prefix)).length;
+const total = PLUGIN_SCHEMA_MAPPING.length + RESPONSE_SCHEMA_MAPPING.length;
+log('');
+log(
+    `SUMMARY: ${count('OK:')} OK, ${count('DRIFT:')} DRIFT, ${count('ERROR:')} ERROR, `
+    + `${count('WARN')} WARN, ${count('SKIP')} SKIP across ${total} contracts.`,
+);
+log(
+    drift
+        ? 'RESULT: FAIL — contract drift detected. Align the named shared TS type with the backend JSON schema (or vice versa), then re-run.'
+        : 'RESULT: OK — shared TS types cover every checked backend response/SDK schema contract.',
+);
 
 process.stdout.write(`${lines.join('\n')}\n`);
 process.exit(drift ? 1 : 0);
