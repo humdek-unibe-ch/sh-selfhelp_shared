@@ -25,6 +25,7 @@ export interface IRegisterStyle extends IStyleWithSpacing {
     alert_success?: IContentField<string>;
     title?: IContentField<string>;
     success?: IContentField<string>;
+    open_registration?: IContentField<string>;
 }
 
 export interface IValidateStyle extends IStyleWithSpacing {
