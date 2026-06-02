@@ -24,12 +24,25 @@ This project follows semantic versioning.
   istanbul provider is used instead of v8 because v8 double-counts files on
   Windows (phantom 0% entries) and would fail the gate locally.
 - New public subpath export `@selfhelp/shared/testing` — the plugin
-  certification kit. Scaffold release: `definePluginCertification`
-  (frozen API shape), `CERTIFICATION_CHECKS`/`CERTIFICATION_KIT_VERSION`,
-  a fully-working in-memory `mockMercureHub` (Mercure recorder for tests,
-  no polling), and `seedFromLockFile`. The executable certification
-  runner lands in a later release; the public surface is stable now so
-  plugin repos can import it without churn.
+  certification kit (`CERTIFICATION_KIT_VERSION` `1.0.0`).
+  `definePluginCertification(config).run(manifest)` now performs the real
+  **static manifest certification** and returns a typed
+  `IPluginCertificationReport`: ordered checks `manifest-valid`,
+  `capabilities-vs-trust-level`, `compatibility-shape`,
+  `lookup-ownership`, `db-naming` (also exported individually as
+  `checkManifestValid`, `checkCapabilitiesVsTrustLevel`,
+  `checkCompatibilityShape`, `checkLookupOwnership`, `checkDbNaming`, and
+  `runCertificationChecks`). Built on the existing plugin SDK
+  (`IPluginManifest` + semver helpers) so manifest typing/range parsing is
+  not re-implemented. Runtime install/lifecycle remains the backend host
+  certification's responsibility — the kit gates the manifest before
+  publishing; the host gates the actual install. Also ships the
+  fully-working in-memory `mockMercureHub` (Mercure recorder, no polling)
+  and `seedFromLockFile`.
+- `IPluginManifestDataAccess` now mirrors the manifest schema's
+  `ownedTables` and `ownedDataTablePrefix` fields (previously only
+  `read`/`write`/`delete` were typed), so the `db-naming` certification
+  check is fully typed against the real manifest.
 - Vitest unit tests for the runtime helpers (`replaceCalcedValues`,
   `evaluateCondition`/`buildConditionContext`, `resolveAssetUrl`/
   `resolveAssetSources`, `classifyClass`/`classifyClassString`,
