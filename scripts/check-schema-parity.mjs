@@ -8,16 +8,39 @@ SPDX-License-Identifier: MPL-2.0
  * Schema-parity check for the @selfhelp/shared plugin SDK.
  *
  * Confirms that the TypeScript types shipped under `src/plugin-sdk/*.ts`
- * still describe every required top-level property of the corresponding
- * JSON Schemas published by the host backend repository. Catches the
- * common drift case where someone adds a new required field to a JSON
- * Schema without updating the TS mirror (or vice versa).
+ * and `src/types/**` still describe every required property of the
+ * corresponding JSON Schemas published by the host backend repository.
+ * Catches the common drift case where someone adds/renames a required
+ * field in a JSON Schema without updating the TS mirror (or vice versa).
  *
- * The check is intentionally lightweight: it only verifies that for each
- * top-level required property of every schema, the field name appears
- * inside the TypeScript source for the matching SDK file. It does NOT
- * try to be a full TS/JSON-schema bridge - that is reserved for the
- * generated types step the team can layer on top later.
+ * What this check DOES (strengthened beyond bare token-presence):
+ *   1. Comment-stripping — the TS source is stripped of `//` and block
+ *      comments BEFORE matching, so a field that survives only in a stale
+ *      comment no longer counts as "present" (kills a false-negative class
+ *      the previous raw token scan missed).
+ *   2. Presence — every required field name of the mapped schema object
+ *      must appear as a live token in the comment-stripped TS source.
+ *
+ * What this check DELIBERATELY does NOT do (documented limitation): it is
+ * a NAME/presence-level guard, not a full TS<->JSON-schema bridge. It does
+ * NOT validate:
+ *   - required-vs-optional modeling (a schema-`required` field may be
+ *     declared `field?:` in the TS mirror — a regex cannot reliably tie a
+ *     property to its owning interface, since one file routinely holds both
+ *     the authoritative type and an error/partial variant, e.g.
+ *     `IBaseApiResponse` (required) next to `IApiError` (`data?`));
+ *   - value types (e.g. `acl_version` is `string|null` in the schema but
+ *     `string|number|null` in the TS mirror);
+ *   - nested object/array SHAPES (e.g. user-data `roles`/`groups` are
+ *     arrays of `{id,name,description}` objects in the schema but `string[]`
+ *     in `IUserData` today — a real structural drift this guard is blind to);
+ *   - enum membership or union narrowing.
+ * That deeper, structural drift is caught by the cross-repo
+ * `ecosystem-compat.yml` gate, which BUILDS `@selfhelp/shared` and then
+ * type-checks + tests the frontend and mobile against the unreleased build —
+ * i.e. the TS compiler validates the real shapes where they are actually
+ * consumed. Treat this script as the fast first-line *name* guard and
+ * `ecosystem-compat` as the authoritative *structural* gate.
  *
  * Exit code 0 = parity OK, 1 = drift detected, 2 = environment / wiring
  * problem (schema files missing, can't load, etc.).
@@ -25,11 +48,11 @@ SPDX-License-Identifier: MPL-2.0
  * Usage:
  *   node scripts/check-schema-parity.mjs
  *
- * The CI workflow `.github/workflows/plugin-sdk-check.yml` invokes this
- * script. The script tolerates the schemas being absent locally (when
- * working without a backend checkout next to the shared repo) by
- * exiting 0 with a `SKIP` line - intentionally lenient to keep local
- * developers unblocked.
+ * Invoked on PRs by `.github/workflows/shared-tests.yml` (the shared gate)
+ * and cross-repo by `sh-selfhelp_backend/.github/workflows/ecosystem-compat.yml`.
+ * The script tolerates the schemas being absent locally (when working
+ * without a backend checkout next to the shared repo) by exiting 0 with a
+ * `SKIP` line - intentionally lenient to keep local developers unblocked.
  */
 
 import { readFile } from 'node:fs/promises';
@@ -125,9 +148,24 @@ function getByPath(obj, segments) {
     return cur;
 }
 
+/**
+ * Strip `//` line comments and block comments from TS source so a field
+ * that only survives in a comment is not mistaken for a live declaration.
+ * (String-literal contents are left intact; that is acceptable here since
+ * we only match field-name tokens, not arbitrary prose.)
+ */
+function stripComments(source) {
+    return source
+        .replace(/\/\*[\s\S]*?\*\//g, ' ')
+        .replace(/(^|[^:])\/\/[^\n]*/g, '$1 ');
+}
+
+function escapeToken(token) {
+    return token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function tokenPresent(source, token) {
-    const re = new RegExp(`\\b${token.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')}\\b`);
-    return re.test(source);
+    return new RegExp(`\\b${escapeToken(token)}\\b`).test(source);
 }
 
 async function readJson(file) {
@@ -147,7 +185,7 @@ async function checkPluginSchemas() {
         if (!existsSync(sourcePath)) { log(`ERROR: SDK source missing for ${label}: ${sourcePath}`); drift = true; continue; }
 
         const schemaJson = await readJson(schemaPath);
-        const sourceCode = await readFile(sourcePath, 'utf8');
+        const sourceCode = stripComments(await readFile(sourcePath, 'utf8'));
         const required = Array.isArray(schemaJson.required) ? schemaJson.required : [];
         if (required.length === 0) { log(`WARN: ${label} schema has no top-level "required"; nothing to check.`); continue; }
 
@@ -174,7 +212,7 @@ async function checkResponseSchemas() {
         if (!existsSync(sourcePath)) { log(`ERROR: TS type missing for ${label}: ${sourcePath}`); drift = true; continue; }
 
         const schemaJson = await readJson(schemaPath);
-        const sourceCode = await readFile(sourcePath, 'utf8');
+        const sourceCode = stripComments(await readFile(sourcePath, 'utf8'));
         const fields = getByPath(schemaJson, requiredPath);
         if (!Array.isArray(fields)) {
             log(`WARN: ${label} - required path [${requiredPath.join('.')}] not found in ${schemaFile}; skipping.`);
