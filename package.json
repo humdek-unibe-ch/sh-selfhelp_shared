@@ -38,6 +38,11 @@
       "types": "./dist/plugin-sdk/index.d.ts",
       "import": "./dist/plugin-sdk/index.mjs",
       "require": "./dist/plugin-sdk/index.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "import": "./dist/testing/index.mjs",
+      "require": "./dist/testing/index.js"
     }
   },
   "files": [
@@ -47,11 +52,12 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts src/plugin-sdk/index.ts --format cjs,esm --dts --clean --no-splitting",
-    "dev": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts src/plugin-sdk/index.ts --format cjs,esm --dts --watch --no-splitting",
+    "build": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts src/plugin-sdk/index.ts src/testing/index.ts --format cjs,esm --dts --clean --no-splitting",
+    "dev": "tsup src/index.ts src/registry/index.ts src/theme/index.ts src/theme/tailwind.ts src/plugin-sdk/index.ts src/testing/index.ts --format cjs,esm --dts --watch --no-splitting",
     "lint": "eslint . --ext .ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
+    "test:coverage": "vitest run --coverage",
     "check:schemas": "node scripts/check-schema-parity.mjs",
     "prepublishOnly": "npm run build",
     "headers:check": "license-check-and-add check -f license-check-and-add-config.json",
@@ -75,6 +81,7 @@
     "@types/react": "^19.2.15",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
+    "@vitest/coverage-istanbul": "^2.1.9",
     "eslint": "^9.18.0",
     "license-check-and-add": "^4.0.5",
     "react": "^19.2.6",

@@ -9,6 +9,42 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## [Unreleased]
+
+### Added
+
+- Blocking Vitest coverage gate (ecosystem testing strategy, Slice 10).
+  Added `@vitest/coverage-istanbul`, a `vitest.config.ts` with a coverage
+  threshold (>= 60% lines/functions/statements/branches) scoped to the
+  framework-free runtime-helper bundle (interpolation, condition,
+  asset-URL, CMS-class classifier, page transform), and a `test:coverage`
+  script. `shared-tests.yml` now runs `npm run test:coverage`, so a
+  coverage regression on those shared contracts fails CI (currently ~97%
+  lines). Implements canonical Testing Rule 20 (warning -> blocking). The
+  istanbul provider is used instead of v8 because v8 double-counts files on
+  Windows (phantom 0% entries) and would fail the gate locally.
+- New public subpath export `@selfhelp/shared/testing` — the plugin
+  certification kit. Scaffold release: `definePluginCertification`
+  (frozen API shape), `CERTIFICATION_CHECKS`/`CERTIFICATION_KIT_VERSION`,
+  a fully-working in-memory `mockMercureHub` (Mercure recorder for tests,
+  no polling), and `seedFromLockFile`. The executable certification
+  runner lands in a later release; the public surface is stable now so
+  plugin repos can import it without churn.
+- Vitest unit tests for the runtime helpers (`replaceCalcedValues`,
+  `evaluateCondition`/`buildConditionContext`, `resolveAssetUrl`/
+  `resolveAssetSources`, `classifyClass`/`classifyClassString`,
+  `transformPageData`/`transformPagesData`) and the testing kit.
+
+### Changed
+
+- `scripts/check-schema-parity.mjs` now also checks API response
+  contracts (`config/schemas/api/v1`: response envelope, auth login,
+  form submit) against the shared TS types, not only the plugin SDK
+  schemas. The form-submit data shape is flagged as a tracked
+  `knownDrift` warning pending cross-repo reconciliation
+  (`submitted_at` / `user_authenticated` are in the backend schema but
+  not in `IFormSubmitData`).
+
 ## [1.2.1] - 2026-05-28
 
 ### Fixed

@@ -39,91 +39,141 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SHARED_ROOT = path.resolve(__dirname, '..');
-const BACKEND_SCHEMA_DIR = path.resolve(SHARED_ROOT, '..', 'sh-selfhelp_backend', 'docs', 'plugins');
+const BACKEND_ROOT = path.resolve(SHARED_ROOT, '..', 'sh-selfhelp_backend');
+const BACKEND_PLUGIN_SCHEMA_DIR = path.join(BACKEND_ROOT, 'docs', 'plugins');
+const BACKEND_API_SCHEMA_DIR = path.join(BACKEND_ROOT, 'config', 'schemas', 'api', 'v1');
 
-const SCHEMA_MAPPING = [
+/**
+ * Plugin SDK schemas: the TS mirror must contain every top-level required
+ * property of the JSON Schema (`mode: 'required'`).
+ */
+const PLUGIN_SCHEMA_MAPPING = [
+    { schemaFile: 'plugin-manifest.schema.json', sourceFile: 'src/plugin-sdk/manifest.ts', label: 'plugin manifest' },
+    { schemaFile: 'plugin-registry.schema.json', sourceFile: 'src/plugin-sdk/registry.ts', label: 'plugin registry' },
+    { schemaFile: 'plugin-lock.schema.json', sourceFile: 'src/plugin-sdk/lock.ts', label: 'plugin lock file' },
+];
+
+/**
+ * API response schemas consumed by the frontend/mobile (canonical Testing
+ * Rule 25 / 28). `requiredPath` points at the JSON Schema `required` array
+ * for the consumed object (the authoritative contract — optional/dev-only
+ * fields such as `_debug` are intentionally excluded). Every required field
+ * must appear in the shared TS type. `knownDrift: true` downgrades a mismatch
+ * to a WARNING (ratchet) for a documented, pre-existing discrepancy that needs
+ * cross-repo resolution — never to silently hide NEW drift.
+ */
+const RESPONSE_SCHEMA_MAPPING = [
     {
-        schemaFile: 'plugin-manifest.schema.json',
-        sourceFile: 'src/plugin-sdk/manifest.ts',
-        label: 'plugin manifest',
+        schemaFile: 'common/_response_envelope.json',
+        sourceFile: 'src/types/api/envelope.ts',
+        label: 'response envelope',
+        requiredPath: ['required'],
     },
     {
-        schemaFile: 'plugin-registry.schema.json',
-        sourceFile: 'src/plugin-sdk/registry.ts',
-        label: 'plugin registry',
+        schemaFile: 'responses/auth/login.json',
+        sourceFile: 'src/types/api/auth.ts',
+        label: 'auth login data',
+        requiredPath: ['properties', 'data', 'required'],
     },
     {
-        schemaFile: 'plugin-lock.schema.json',
-        sourceFile: 'src/plugin-sdk/lock.ts',
-        label: 'plugin lock file',
+        // KNOWN DRIFT: backend form_submitted.data requires {record_id,
+        // section_id, page_id, submitted_at, user_authenticated}; shared
+        // IFormSubmitData models {record_id, success, redirect_url, message,
+        // field_errors}. The two shapes need cross-repo reconciliation (which
+        // response does the frontend actually consume?) before the TS type is
+        // changed. Tracked as a warning so the drift stays VISIBLE without
+        // blocking CI.
+        schemaFile: 'responses/frontend/form_submitted.json',
+        sourceFile: 'src/types/api/forms.ts',
+        label: 'form submit data',
+        requiredPath: ['allOf', 1, 'properties', 'data', 'required'],
+        knownDrift: true,
     },
 ];
 
 let drift = false;
 const lines = [];
+const log = (line) => lines.push(line);
 
-function log(line) {
-    lines.push(line);
+function getByPath(obj, segments) {
+    let cur = obj;
+    for (const seg of segments) {
+        if (cur == null || typeof cur !== 'object') return undefined;
+        cur = cur[seg];
+    }
+    return cur;
 }
 
-if (!existsSync(BACKEND_SCHEMA_DIR)) {
-    log(`SKIP: backend schema directory not found at ${BACKEND_SCHEMA_DIR}.`);
-    log('      Run this check from a workspace where the sh-selfhelp_backend repository is checked out as a sibling.');
-    process.stdout.write(`${lines.join('\n')}\n`);
-    process.exit(0);
+function tokenPresent(source, token) {
+    const re = new RegExp(`\\b${token.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')}\\b`);
+    return re.test(source);
 }
 
-for (const { schemaFile, sourceFile, label } of SCHEMA_MAPPING) {
-    const schemaPath = path.join(BACKEND_SCHEMA_DIR, schemaFile);
-    const sourcePath = path.resolve(SHARED_ROOT, sourceFile);
+async function readJson(file) {
+    return JSON.parse(await readFile(file, 'utf8'));
+}
 
-    if (!existsSync(schemaPath)) {
-        log(`ERROR: schema missing for ${label}: ${schemaPath}`);
-        drift = true;
-        continue;
+/** Plugin SDK schemas: check top-level required props against the TS mirror. */
+async function checkPluginSchemas() {
+    if (!existsSync(BACKEND_PLUGIN_SCHEMA_DIR)) {
+        log(`SKIP: backend plugin schema dir not found at ${BACKEND_PLUGIN_SCHEMA_DIR} (sibling backend checkout required).`);
+        return;
     }
-    if (!existsSync(sourcePath)) {
-        log(`ERROR: SDK source missing for ${label}: ${sourcePath}`);
-        drift = true;
-        continue;
-    }
+    for (const { schemaFile, sourceFile, label } of PLUGIN_SCHEMA_MAPPING) {
+        const schemaPath = path.join(BACKEND_PLUGIN_SCHEMA_DIR, schemaFile);
+        const sourcePath = path.resolve(SHARED_ROOT, sourceFile);
+        if (!existsSync(schemaPath)) { log(`ERROR: schema missing for ${label}: ${schemaPath}`); drift = true; continue; }
+        if (!existsSync(sourcePath)) { log(`ERROR: SDK source missing for ${label}: ${sourcePath}`); drift = true; continue; }
 
-    let schemaJson;
-    let sourceCode;
-    try {
-        const raw = await readFile(schemaPath, 'utf8');
-        schemaJson = JSON.parse(raw);
-    } catch (err) {
-        log(`ERROR: cannot parse ${schemaFile}: ${err.message}`);
-        drift = true;
-        continue;
-    }
-    try {
-        sourceCode = await readFile(sourcePath, 'utf8');
-    } catch (err) {
-        log(`ERROR: cannot read ${sourceFile}: ${err.message}`);
-        drift = true;
-        continue;
-    }
+        const schemaJson = await readJson(schemaPath);
+        const sourceCode = await readFile(sourcePath, 'utf8');
+        const required = Array.isArray(schemaJson.required) ? schemaJson.required : [];
+        if (required.length === 0) { log(`WARN: ${label} schema has no top-level "required"; nothing to check.`); continue; }
 
-    const required = Array.isArray(schemaJson.required) ? schemaJson.required : [];
-    if (required.length === 0) {
-        log(`WARN: ${label} schema has no top-level "required" array; nothing to check.`);
-        continue;
-    }
-
-    const missing = required.filter((prop) => {
-        const tokenRegex = new RegExp(`\\b${prop.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')}\\b`);
-        return !tokenRegex.test(sourceCode);
-    });
-
-    if (missing.length === 0) {
-        log(`OK:    ${label} - all ${required.length} required properties present in ${sourceFile}.`);
-    } else {
-        drift = true;
-        log(`DRIFT: ${label} - required schema properties missing from ${sourceFile}: ${missing.join(', ')}`);
+        const missing = required.filter((p) => !tokenPresent(sourceCode, p));
+        if (missing.length === 0) {
+            log(`OK:    ${label} - all ${required.length} required properties present in ${sourceFile}.`);
+        } else {
+            drift = true;
+            log(`DRIFT: ${label} - required schema properties missing from ${sourceFile}: ${missing.join(', ')}`);
+        }
     }
 }
+
+/** API response schemas: check consumed data fields against the TS type. */
+async function checkResponseSchemas() {
+    if (!existsSync(BACKEND_API_SCHEMA_DIR)) {
+        log(`SKIP: backend API schema dir not found at ${BACKEND_API_SCHEMA_DIR} (sibling backend checkout required).`);
+        return;
+    }
+    for (const { schemaFile, sourceFile, label, requiredPath, knownDrift } of RESPONSE_SCHEMA_MAPPING) {
+        const schemaPath = path.join(BACKEND_API_SCHEMA_DIR, schemaFile);
+        const sourcePath = path.resolve(SHARED_ROOT, sourceFile);
+        if (!existsSync(schemaPath)) { log(`ERROR: response schema missing for ${label}: ${schemaPath}`); drift = true; continue; }
+        if (!existsSync(sourcePath)) { log(`ERROR: TS type missing for ${label}: ${sourcePath}`); drift = true; continue; }
+
+        const schemaJson = await readJson(schemaPath);
+        const sourceCode = await readFile(sourcePath, 'utf8');
+        const fields = getByPath(schemaJson, requiredPath);
+        if (!Array.isArray(fields)) {
+            log(`WARN: ${label} - required path [${requiredPath.join('.')}] not found in ${schemaFile}; skipping.`);
+            continue;
+        }
+
+        const missing = fields.filter((f) => !tokenPresent(sourceCode, f));
+        if (missing.length === 0) {
+            log(`OK:    ${label} - all ${fields.length} required response fields present in ${sourceFile}.`);
+        } else if (knownDrift) {
+            log(`WARN(known-drift): ${label} - fields missing from ${sourceFile}: ${missing.join(', ')} (needs cross-repo reconciliation).`);
+        } else {
+            drift = true;
+            log(`DRIFT: ${label} - response fields missing from ${sourceFile}: ${missing.join(', ')}`);
+        }
+    }
+}
+
+await checkPluginSchemas();
+await checkResponseSchemas();
 
 process.stdout.write(`${lines.join('\n')}\n`);
 process.exit(drift ? 1 : 0);
