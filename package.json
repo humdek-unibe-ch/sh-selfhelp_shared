@@ -58,6 +58,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
     "test:coverage": "vitest run --coverage",
+    "test:changed": "vitest run --changed --passWithNoTests",
+    "test:release": "npm run headers:check && npm run typecheck && npm run check:schemas && npm run test:coverage && npm run build",
     "check:schemas": "node scripts/check-schema-parity.mjs",
     "prepublishOnly": "npm run build",
     "headers:check": "license-check-and-add check -f license-check-and-add-config.json",
