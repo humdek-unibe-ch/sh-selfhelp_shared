@@ -94,6 +94,16 @@ export interface IPluginManifestSecurity {
 
 export interface IPluginManifestDataAccess {
     /**
+     * Dedicated tables the plugin owns (created by its migrations). Must be
+     * `lowercase_snake_case` (schema pattern `^[a-z][a-z0-9_]*$`).
+     */
+    ownedTables?: string[];
+    /**
+     * Prefix for CMS `data_tables` rows the plugin creates at runtime. Must be
+     * `lowercase_snake_case` ending in `_` (schema pattern `^[a-z][a-z0-9_]*_$`).
+     */
+    ownedDataTablePrefix?: string;
+    /**
      * Tables the plugin reads. May be `dataTable:*` for any plugin-owned
      * data table, `lookup:<typeCode>` for lookup reads, `dataTable:my`
      * for tables created by this plugin.

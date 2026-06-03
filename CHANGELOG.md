@@ -9,6 +9,55 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## [Unreleased]
+
+### Added
+
+- Blocking Vitest coverage gate (ecosystem testing strategy, Slice 10).
+  Added `@vitest/coverage-istanbul`, a `vitest.config.ts` with a coverage
+  threshold (>= 60% lines/functions/statements/branches) scoped to the
+  framework-free runtime-helper bundle (interpolation, condition,
+  asset-URL, CMS-class classifier, page transform), and a `test:coverage`
+  script. `shared-tests.yml` now runs `npm run test:coverage`, so a
+  coverage regression on those shared contracts fails CI (currently ~97%
+  lines). Implements canonical Testing Rule 20 (warning -> blocking). The
+  istanbul provider is used instead of v8 because v8 double-counts files on
+  Windows (phantom 0% entries) and would fail the gate locally.
+- New public subpath export `@selfhelp/shared/testing` — the plugin
+  certification kit (`CERTIFICATION_KIT_VERSION` `1.0.0`).
+  `definePluginCertification(config).run(manifest)` now performs the real
+  **static manifest certification** and returns a typed
+  `IPluginCertificationReport`: ordered checks `manifest-valid`,
+  `capabilities-vs-trust-level`, `compatibility-shape`,
+  `lookup-ownership`, `db-naming` (also exported individually as
+  `checkManifestValid`, `checkCapabilitiesVsTrustLevel`,
+  `checkCompatibilityShape`, `checkLookupOwnership`, `checkDbNaming`, and
+  `runCertificationChecks`). Built on the existing plugin SDK
+  (`IPluginManifest` + semver helpers) so manifest typing/range parsing is
+  not re-implemented. Runtime install/lifecycle remains the backend host
+  certification's responsibility — the kit gates the manifest before
+  publishing; the host gates the actual install. Also ships the
+  fully-working in-memory `mockMercureHub` (Mercure recorder, no polling)
+  and `seedFromLockFile`.
+- `IPluginManifestDataAccess` now mirrors the manifest schema's
+  `ownedTables` and `ownedDataTablePrefix` fields (previously only
+  `read`/`write`/`delete` were typed), so the `db-naming` certification
+  check is fully typed against the real manifest.
+- Vitest unit tests for the runtime helpers (`replaceCalcedValues`,
+  `evaluateCondition`/`buildConditionContext`, `resolveAssetUrl`/
+  `resolveAssetSources`, `classifyClass`/`classifyClassString`,
+  `transformPageData`/`transformPagesData`) and the testing kit.
+
+### Changed
+
+- `scripts/check-schema-parity.mjs` now also checks API response
+  contracts (`config/schemas/api/v1`: response envelope, auth login,
+  form submit) against the shared TS types, not only the plugin SDK
+  schemas. The form-submit data shape is flagged as a tracked
+  `knownDrift` warning pending cross-repo reconciliation
+  (`submitted_at` / `user_authenticated` are in the backend schema but
+  not in `IFormSubmitData`).
+
 ## [1.2.1] - 2026-05-28
 
 ### Fixed
