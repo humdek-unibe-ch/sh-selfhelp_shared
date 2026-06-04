@@ -6,7 +6,7 @@ Applies to: `@selfhelp/shared`.
 Last verified: 2026-06-03.
 Source of truth: `package.json` (`version`, `scripts`, `publishConfig`), `LICENSE`, `header.txt`, and `license-check-and-add-config.json`.
 
-`@selfhelp/shared` is published to npm under public access. The first stable release was `1.0.0`; the package is currently at `1.2.2`. The `@selfhelp/shared` semver is the anchor for cross-repo compatibility (see the backend `docs/developer/cross-repo-compatibility-matrix.md`).
+`@selfhelp/shared` is published to npm under public access. The first stable release was `1.0.0`; the package is currently at `1.2.3`. The `@selfhelp/shared` semver is the anchor for cross-repo compatibility (see the backend `docs/developer/cross-repo-compatibility-matrix.md`).
 
 ## Versioning policy
 

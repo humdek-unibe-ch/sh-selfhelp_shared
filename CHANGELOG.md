@@ -9,10 +9,20 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
-## [Unreleased]
+## [1.2.3] - 2026-06-04
 
 ### Added
 
+- Registration-lifecycle CMS label fields on the auth styles so the
+  previously hardcoded frontend UI text becomes admin-managed. All are
+  optional `IContentField<string>` (additive, no consumer break):
+  `IRegisterStyle` gains `label_code`, `code_placeholder`,
+  `label_go_home`, `label_go_to_login`; `ILoginStyle` gains
+  `label_register`; `IValidateStyle` gains the activation status text
+  `loading_title`, `loading_text`, `error_title`, `error_heading`,
+  `error_text`, `success_title`, and `redirect_text` (use `{seconds}`
+  as the countdown placeholder). Defaults + en-GB/de-CH translations are
+  seeded backend-side by `Version20260604111011`.
 - Blocking Vitest coverage gate (ecosystem testing strategy, Slice 10).
   Added `@vitest/coverage-istanbul`, a `vitest.config.ts` with a coverage
   threshold (>= 60% lines/functions/statements/branches) scoped to the

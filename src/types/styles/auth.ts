@@ -14,6 +14,8 @@ export interface ILoginStyle extends IStyleWithSpacing {
     alert_fail?: IContentField<string>;
     login_title?: IContentField<string>;
     type?: IContentField<string>;
+    /** Label of the link that opens the registration page. */
+    label_register?: IContentField<string>;
 }
 
 export interface IRegisterStyle extends IStyleWithSpacing {
@@ -26,6 +28,14 @@ export interface IRegisterStyle extends IStyleWithSpacing {
     title?: IContentField<string>;
     success?: IContentField<string>;
     open_registration?: IContentField<string>;
+    /** Label above the validation-code input (code-required mode only). */
+    label_code?: IContentField<string>;
+    /** Placeholder inside the validation-code input. */
+    code_placeholder?: IContentField<string>;
+    /** Label of the post-registration "return home" button. */
+    label_go_home?: IContentField<string>;
+    /** Label of the post-registration "open login" button. */
+    label_go_to_login?: IContentField<string>;
 }
 
 export interface IValidateStyle extends IStyleWithSpacing {
@@ -63,6 +73,15 @@ export interface IValidateStyle extends IStyleWithSpacing {
     mantine_card_padding?: IContentField<string>;
     mantine_radius?: IContentField<TMantineRadius>;
     mantine_border?: IContentField<string>;
+    /** Activation lifecycle status text (shown after the registration email). */
+    loading_title?: IContentField<string>;
+    loading_text?: IContentField<string>;
+    error_title?: IContentField<string>;
+    error_heading?: IContentField<string>;
+    error_text?: IContentField<string>;
+    success_title?: IContentField<string>;
+    /** Countdown text; use {seconds} as the placeholder. */
+    redirect_text?: IContentField<string>;
 }
 
 export interface IResetPasswordStyle extends IStyleWithSpacing {
