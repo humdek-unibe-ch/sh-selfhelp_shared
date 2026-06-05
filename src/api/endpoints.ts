@@ -24,6 +24,7 @@ export const ENDPOINTS = {
         UPDATE_NAME: `${API_VERSION_PREFIX}/auth/user/name`,
         UPDATE_PASSWORD: `${API_VERSION_PREFIX}/auth/user/password`,
         UPDATE_TIMEZONE: `${API_VERSION_PREFIX}/auth/user/timezone`,
+        UPDATE_COMMUNICATION_PREFERENCES: `${API_VERSION_PREFIX}/auth/user/communication-preferences`,
         DELETE_ACCOUNT: `${API_VERSION_PREFIX}/auth/user/account`,
         VALIDATE_TOKEN: (userId: number, token: string): string =>
             `${API_VERSION_PREFIX}/validate/${userId}/${token}`,

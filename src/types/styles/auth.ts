@@ -137,6 +137,16 @@ export interface IProfileStyle extends IStyleWithSpacing {
     profile_timezone_change_error_required?: IContentField<string>;
     profile_timezone_change_error_general?: IContentField<string>;
 
+    profile_communication_preferences_title?: IContentField<string>;
+    profile_communication_preferences_description?: IContentField<string>;
+    profile_receive_notifications_label?: IContentField<string>;
+    profile_receive_notifications_description?: IContentField<string>;
+    profile_receive_emails_label?: IContentField<string>;
+    profile_receive_emails_description?: IContentField<string>;
+    profile_communication_preferences_button?: IContentField<string>;
+    profile_communication_preferences_success?: IContentField<string>;
+    profile_communication_preferences_error_general?: IContentField<string>;
+
     profile_password_reset_title?: IContentField<string>;
     profile_password_reset_description?: IContentField<string>;
     profile_password_reset_label_current?: IContentField<string>;

@@ -9,6 +9,26 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## [1.2.4] - 2026-06-05
+
+### Added
+
+- Communication preferences support in profile section. `IUserData` gains
+  `receives_notifications` and `receives_emails` boolean fields.
+- New CMS endpoint `UPDATE_COMMUNICATION_PREFERENCES` for updating user
+  communication preferences.
+- Communication preferences CMS label fields on `IProfileStyle`: 
+  `profile_communication_preferences_title`,
+  `profile_communication_preferences_description`,
+  `profile_receive_notifications_label`,
+  `profile_receive_notifications_description`,
+  `profile_receive_emails_label`,
+  `profile_receive_emails_description`,
+  `profile_communication_preferences_button`,
+  `profile_communication_preferences_success`, and
+  `profile_communication_preferences_error_general`.
+- New permission `ADMIN_SCHEDULED_JOB_MANAGE` for scheduled job management.
+
 ## [1.2.3] - 2026-06-04
 
 ### Added
