@@ -9,6 +9,65 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## [1.3.2]
+
+### Changed
+
+- Maintenance release: cut a clean published version for consumers to pin.
+  Supersedes the `1.3.1` test publish; no functional or API changes since
+  `1.3.0`.
+
+## [1.3.0]
+
+### Added
+
+- `ENDPOINTS.AUTH.FORGOT_PASSWORD` (`/cms-api/v1/auth/forgot-password`) and
+  `ENDPOINTS.AUTH.RESET_PASSWORD` (`/cms-api/v1/auth/reset-password`) so the
+  password-recovery flow is part of the shared API contract (issue #31). The
+  web frontend and the mobile app now build these requests from shared
+  constants instead of local/ad-hoc paths.
+- Request DTOs `IForgotPasswordRequest` and `IResetPasswordRequest`, and
+  response types `IForgotPasswordResponse` / `IResetPasswordResponse`,
+  mirroring the backend `requests/auth/forgot_password.json` and
+  `reset_password.json` schemas. `scripts/check-schema-parity.mjs` now covers
+  these request schemas.
+
+## [1.2.5]
+
+### Changed
+
+- `IResetPasswordStyle` now models the full two-step reset flow instead of
+  just the "request a recovery mail" screen. Added optional CMS fields for
+  the set-password mode: `reset_title`, `reset_label_pw`,
+  `reset_pw_placeholder`, `reset_label_pw_confirm`,
+  `reset_pw_confirm_placeholder`, `reset_label_submit`,
+  `reset_success_title`, `reset_alert_success`, `reset_redirect_text`,
+  `reset_error_invalid_token`, `reset_error_pw_short`, and
+  `reset_error_pw_mismatch`.
+- Removed the stale legacy `text_md` and `email_user` fields from
+  `IResetPasswordStyle` so the shared contract matches the backend
+  `resetPassword` style schema.
+
+## [1.2.4] - 2026-06-05
+
+### Added
+
+- Communication preferences support in profile section. `IUserData` gains
+  `receives_notifications` and `receives_emails` boolean fields.
+- New CMS endpoint `UPDATE_COMMUNICATION_PREFERENCES` for updating user
+  communication preferences.
+- Communication preferences CMS label fields on `IProfileStyle`: 
+  `profile_communication_preferences_title`,
+  `profile_communication_preferences_description`,
+  `profile_receive_notifications_label`,
+  `profile_receive_notifications_description`,
+  `profile_receive_emails_label`,
+  `profile_receive_emails_description`,
+  `profile_communication_preferences_button`,
+  `profile_communication_preferences_success`, and
+  `profile_communication_preferences_error_general`.
+- New permission `ADMIN_SCHEDULED_JOB_MANAGE` for scheduled job management.
+
 ## [1.2.3] - 2026-06-04
 
 ### Added

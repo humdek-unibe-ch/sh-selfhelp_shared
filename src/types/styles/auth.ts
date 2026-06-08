@@ -87,13 +87,23 @@ export interface IValidateStyle extends IStyleWithSpacing {
 export interface IResetPasswordStyle extends IStyleWithSpacing {
     style_name: 'resetPassword';
     label_pw_reset?: IContentField<string>;
-    text_md?: IContentField<string>;
     type?: IContentField<string>;
     alert_success?: IContentField<string>;
     placeholder?: IContentField<string>;
-    email_user?: IContentField<string>;
     subject_user?: IContentField<string>;
     is_html?: IContentField<string>;
+    reset_title?: IContentField<string>;
+    reset_label_pw?: IContentField<string>;
+    reset_pw_placeholder?: IContentField<string>;
+    reset_label_pw_confirm?: IContentField<string>;
+    reset_pw_confirm_placeholder?: IContentField<string>;
+    reset_label_submit?: IContentField<string>;
+    reset_success_title?: IContentField<string>;
+    reset_alert_success?: IContentField<string>;
+    reset_redirect_text?: IContentField<string>;
+    reset_error_invalid_token?: IContentField<string>;
+    reset_error_pw_short?: IContentField<string>;
+    reset_error_pw_mismatch?: IContentField<string>;
 }
 
 export interface ITwoFactorAuthStyle extends IStyleWithSpacing {
@@ -136,6 +146,16 @@ export interface IProfileStyle extends IStyleWithSpacing {
     profile_timezone_change_success?: IContentField<string>;
     profile_timezone_change_error_required?: IContentField<string>;
     profile_timezone_change_error_general?: IContentField<string>;
+
+    profile_communication_preferences_title?: IContentField<string>;
+    profile_communication_preferences_description?: IContentField<string>;
+    profile_receive_notifications_label?: IContentField<string>;
+    profile_receive_notifications_description?: IContentField<string>;
+    profile_receive_emails_label?: IContentField<string>;
+    profile_receive_emails_description?: IContentField<string>;
+    profile_communication_preferences_button?: IContentField<string>;
+    profile_communication_preferences_success?: IContentField<string>;
+    profile_communication_preferences_error_general?: IContentField<string>;
 
     profile_password_reset_title?: IContentField<string>;
     profile_password_reset_description?: IContentField<string>;

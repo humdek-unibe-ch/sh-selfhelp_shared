@@ -1,0 +1,71 @@
+# SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+# SPDX-License-Identifier: MPL-2.0
+#
+# Automated npm publish for @selfhelp/shared via npm Trusted Publishing
+# (GitHub OIDC). Fires ONLY on version tag pushes (`v*`). No npm token is
+# stored in the repo or in GitHub secrets: npm exchanges this workflow's
+# OIDC id-token for a short-lived publish credential, which also produces
+# provenance attestations automatically.
+#
+# One-time setup on npmjs.com (Package -> Settings -> Trusted Publisher ->
+# GitHub Actions), done once by a package owner before the first run:
+#   - Organization:   humdek-unibe-ch
+#   - Repository:     sh-selfhelp_shared
+#   - Workflow file:  publish.yml
+#   - Environment:    (leave blank)
+#
+# Full release flow: docs/developer/release-and-versioning.md
+
+name: publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read      # checkout
+  id-token: write     # required for npm Trusted Publishing (OIDC)
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Build, test, and publish to npm
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      # Node 22 ships npm 10.x; npm Trusted Publishing (OIDC) requires
+      # npm >= 11.5.1. Upgrade so `npm publish` performs the OIDC token
+      # exchange instead of expecting a stored auth token.
+      - name: Upgrade npm (OIDC-capable)
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      # No NODE_AUTH_TOKEN: with `id-token: write` and a configured Trusted
+      # Publisher on npmjs.com, npm authenticates via OIDC and attaches
+      # provenance automatically.
+      - name: Publish to npm
+        run: npm publish

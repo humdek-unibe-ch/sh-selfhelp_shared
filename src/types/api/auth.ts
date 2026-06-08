@@ -20,6 +20,18 @@ export interface IRefreshRequest {
     refresh_token: string;
 }
 
+/** POST /auth/forgot-password — request a recovery email. */
+export interface IForgotPasswordRequest {
+    email: string;
+}
+
+/** POST /auth/reset-password — set a new password from the one-time token. */
+export interface IResetPasswordRequest {
+    id_users: number;
+    token: string;
+    password: string;
+}
+
 export interface ILoginSuccessData {
     access_token: string;
     refresh_token: string;
@@ -44,3 +56,13 @@ export type ILanguagePreferenceUpdateResponse = IBaseApiResponse<{
     access_token?: string;
     language_id: number;
 }>;
+
+/**
+ * Generic success for the forgot-password request. The backend always returns
+ * `requested: true` regardless of whether the email matched an account, so the
+ * endpoint cannot be used to enumerate registered users.
+ */
+export type IForgotPasswordResponse = IBaseApiResponse<{ requested: boolean }>;
+
+/** Success when the recovery token was valid and the password was changed. */
+export type IResetPasswordResponse = IBaseApiResponse<{ reset: boolean }>;
