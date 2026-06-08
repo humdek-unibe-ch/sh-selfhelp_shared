@@ -9,6 +9,14 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## [1.3.2]
+
+### Changed
+
+- Maintenance release: cut a clean published version for consumers to pin.
+  Supersedes the `1.3.1` test publish; no functional or API changes since
+  `1.3.0`.
+
 ## [1.3.0]
 
 ### Added
