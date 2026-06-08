@@ -9,6 +9,25 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## [1.4.0]
+
+### Added
+
+- Instance-scoped **system maintenance / update** contracts under
+  `src/types/api/system.ts` for the SelfHelp Manager (`sh-manager`) ↔ CMS ↔
+  admin-UI flow (SelfHelp Manager / Docker Distribution MVP): `ISystemVersion`
+  / `ISystemVersionResponse`, `IUpdatePreflight` / `IUpdatePreflightResponse`,
+  `IUpdateRequest`, `IUpdateStatus` / `IUpdateStatusResponse`,
+  `IUpdateRequestResponse`, plus the `SYSTEM_ENDPOINTS` path constants and the
+  supporting unions (`TUpdatePreflightStatus`, `TUpdateOperationStatus`, …).
+- Hard cross-repo invariant encoded in the types and a regression test:
+  `IUpdateRequest` has **no** `instance_id` — the browser never targets another
+  instance; the backend derives and verifies the instance identity server-side.
+- `check-schema-parity.mjs` now also guards the three new admin response schemas
+  (`responses/admin/system_version.json`, `update_preflight.json`,
+  `update_status.json`) and the `requests/admin/update_request.json` request
+  schema against the shared TS mirrors.
+
 ## [1.3.2]
 
 ### Changed

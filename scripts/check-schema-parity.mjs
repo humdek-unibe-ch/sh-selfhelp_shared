@@ -133,6 +133,30 @@ const RESPONSE_SCHEMA_MAPPING = [
         label: 'form update data',
         requiredPath: ['allOf', 1, 'properties', 'data', 'required'],
     },
+    {
+        // Instance-scoped system version summary consumed by the admin
+        // maintenance UI (ISystemVersion).
+        schemaFile: 'responses/admin/system_version.json',
+        sourceFile: 'src/types/api/system.ts',
+        label: 'system version data (ISystemVersion)',
+        requiredPath: ['properties', 'data', 'required'],
+    },
+    {
+        // Update preflight result consumed by the admin maintenance UI
+        // (IUpdatePreflight).
+        schemaFile: 'responses/admin/update_preflight.json',
+        sourceFile: 'src/types/api/system.ts',
+        label: 'update preflight data (IUpdatePreflight)',
+        requiredPath: ['properties', 'data', 'required'],
+    },
+    {
+        // Update operation status consumed by the admin maintenance UI
+        // (IUpdateStatus).
+        schemaFile: 'responses/admin/update_status.json',
+        sourceFile: 'src/types/api/system.ts',
+        label: 'update status data (IUpdateStatus)',
+        requiredPath: ['properties', 'data', 'required'],
+    },
 ];
 
 /**
@@ -151,6 +175,14 @@ const REQUEST_SCHEMA_MAPPING = [
         schemaFile: 'requests/auth/reset_password.json',
         sourceFile: 'src/types/api/auth.ts',
         label: 'auth reset-password request (IResetPasswordRequest)',
+        requiredPath: ['required'],
+    },
+    {
+        // Instance-scoped update request. The schema deliberately forbids
+        // `instance_id` (server-derived); the TS DTO IUpdateRequest matches.
+        schemaFile: 'requests/admin/update_request.json',
+        sourceFile: 'src/types/api/system.ts',
+        label: 'system update request (IUpdateRequest)',
         requiredPath: ['required'],
     },
 ];
