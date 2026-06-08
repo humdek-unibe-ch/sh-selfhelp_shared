@@ -150,6 +150,14 @@ const RESPONSE_SCHEMA_MAPPING = [
         requiredPath: ['properties', 'data', 'required'],
     },
     {
+        // Maintenance-mode state read/written by the admin maintenance UI
+        // (ISystemMaintenance).
+        schemaFile: 'responses/admin/system_maintenance.json',
+        sourceFile: 'src/types/api/system.ts',
+        label: 'system maintenance data (ISystemMaintenance)',
+        requiredPath: ['properties', 'data', 'required'],
+    },
+    {
         // Update preflight result consumed by the admin maintenance UI
         // (IUpdatePreflight).
         schemaFile: 'responses/admin/update_preflight.json',
@@ -191,6 +199,14 @@ const REQUEST_SCHEMA_MAPPING = [
         schemaFile: 'requests/admin/update_request.json',
         sourceFile: 'src/types/api/system.ts',
         label: 'system update request (IUpdateRequest)',
+        requiredPath: ['required'],
+    },
+    {
+        // Instance-scoped maintenance toggle. The schema forbids `instance_id`
+        // (server-derived); the TS DTO IMaintenanceSetRequest matches.
+        schemaFile: 'requests/admin/maintenance_set.json',
+        sourceFile: 'src/types/api/system.ts',
+        label: 'system maintenance set request (IMaintenanceSetRequest)',
         requiredPath: ['required'],
     },
 ];

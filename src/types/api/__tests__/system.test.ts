@@ -6,6 +6,8 @@
 import { describe, expect, it } from 'vitest';
 import { SYSTEM_ENDPOINTS } from '../system';
 import type {
+    IMaintenanceSetRequest,
+    ISystemMaintenance,
     ISystemVersion,
     IUpdatePreflight,
     IUpdateRequest,
@@ -22,9 +24,29 @@ import type {
 describe('system maintenance contracts', () => {
     it('exposes admin system endpoints under /cms-api/v1/admin/system', () => {
         expect(SYSTEM_ENDPOINTS.VERSION).toBe('/cms-api/v1/admin/system/version');
+        expect(SYSTEM_ENDPOINTS.HEALTH).toBe('/cms-api/v1/admin/system/health');
+        expect(SYSTEM_ENDPOINTS.MAINTENANCE).toBe('/cms-api/v1/admin/system/maintenance');
         expect(SYSTEM_ENDPOINTS.UPDATE_PREFLIGHT).toBe('/cms-api/v1/admin/system/update/preflight');
         expect(SYSTEM_ENDPOINTS.UPDATE_REQUEST).toBe('/cms-api/v1/admin/system/update/request');
         expect(SYSTEM_ENDPOINTS.UPDATE_STATUS).toBe('/cms-api/v1/admin/system/update/status');
+    });
+
+    it('maintenance state models the env-forced + safe-mode flags and carries no secret', () => {
+        const state: ISystemMaintenance = {
+            enabled: true,
+            forced_by_env: false,
+            message: 'Upgrade window',
+            since: '2026-06-08T18:00:00Z',
+            updated_by: 'user:42',
+            safe_mode: false,
+        };
+        expect(state.enabled).toBe(true);
+        expect(state.forced_by_env).toBe(false);
+    });
+
+    it('maintenance set request never includes an instance_id (server-derived only)', () => {
+        const req: IMaintenanceSetRequest = { enabled: true, message: 'window' };
+        expect(Object.keys(req)).not.toContain('instance_id');
     });
 
     it('update request DTO never includes an instance_id (server-derived only)', () => {
