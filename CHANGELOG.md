@@ -9,6 +9,22 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## [1.2.5]
+
+### Changed
+
+- `IResetPasswordStyle` now models the full two-step reset flow instead of
+  just the "request a recovery mail" screen. Added optional CMS fields for
+  the set-password mode: `reset_title`, `reset_label_pw`,
+  `reset_pw_placeholder`, `reset_label_pw_confirm`,
+  `reset_pw_confirm_placeholder`, `reset_label_submit`,
+  `reset_success_title`, `reset_alert_success`, `reset_redirect_text`,
+  `reset_error_invalid_token`, `reset_error_pw_short`, and
+  `reset_error_pw_mismatch`.
+- Removed the stale legacy `text_md` and `email_user` fields from
+  `IResetPasswordStyle` so the shared contract matches the backend
+  `resetPassword` style schema.
+
 ## [1.2.4] - 2026-06-05
 
 ### Added
