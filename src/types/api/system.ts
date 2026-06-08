@@ -20,6 +20,7 @@ const SYSTEM_PREFIX = '/cms-api/v1/admin/system';
 /** Admin system maintenance endpoints (web admin; not part of the mobile subset). */
 export const SYSTEM_ENDPOINTS = {
     VERSION: `${SYSTEM_PREFIX}/version`,
+    HEALTH: `${SYSTEM_PREFIX}/health`,
     UPDATE_PREFLIGHT: `${SYSTEM_PREFIX}/update/preflight`,
     UPDATE_REQUEST: `${SYSTEM_PREFIX}/update/request`,
     UPDATE_STATUS: `${SYSTEM_PREFIX}/update/status`,
@@ -44,6 +45,50 @@ export interface ISystemVersion {
     installed_plugins: ISystemInstalledPlugin[];
 }
 export type ISystemVersionResponse = IBaseApiResponse<ISystemVersion>;
+
+/** Overall verdict for the aggregated system health endpoint. */
+export type TSystemHealthOverall = 'healthy' | 'degraded' | 'down';
+
+/** Per-subsystem health status. `not_configured`/`unknown` are informational. */
+export type TSystemComponentStatus =
+    | 'ok'
+    | 'down'
+    | 'degraded'
+    | 'configured'
+    | 'not_configured'
+    | 'unknown';
+
+export interface ISystemHealthComponent {
+    name: string;
+    status: TSystemComponentStatus;
+    detail: string;
+}
+
+/**
+ * GET /admin/system/health — aggregated, instance-scoped health/status.
+ * Never contains secrets: connection strings are reduced to configured/not.
+ */
+export interface ISystemHealth {
+    instance_id: string;
+    overall: TSystemHealthOverall;
+    checked_at: string;
+    safe_mode: boolean;
+    maintenance_mode: boolean;
+    version: {
+        selfhelp: string;
+        backend: string;
+        frontend: string;
+        plugin_api: string;
+        database_migration: string;
+    };
+    update: {
+        operation_id: string;
+        status: string;
+        progress_percent: number;
+    };
+    components: ISystemHealthComponent[];
+}
+export type ISystemHealthResponse = IBaseApiResponse<ISystemHealth>;
 
 export type TUpdatePreflightStatus = 'ok' | 'warning' | 'blocked';
 export type TUpdateCheckSeverity = 'info' | 'warning' | 'error';

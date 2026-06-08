@@ -142,6 +142,14 @@ const RESPONSE_SCHEMA_MAPPING = [
         requiredPath: ['properties', 'data', 'required'],
     },
     {
+        // Aggregated instance-scoped health/status consumed by the admin
+        // maintenance UI (ISystemHealth).
+        schemaFile: 'responses/admin/system_health.json',
+        sourceFile: 'src/types/api/system.ts',
+        label: 'system health data (ISystemHealth)',
+        requiredPath: ['properties', 'data', 'required'],
+    },
+    {
         // Update preflight result consumed by the admin maintenance UI
         // (IUpdatePreflight).
         schemaFile: 'responses/admin/update_preflight.json',
