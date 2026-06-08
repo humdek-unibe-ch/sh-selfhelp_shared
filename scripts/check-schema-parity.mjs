@@ -135,6 +135,26 @@ const RESPONSE_SCHEMA_MAPPING = [
     },
 ];
 
+/**
+ * Request schemas for public endpoints consumed by the frontend/mobile. Every
+ * required request field must be present in the shared TS request DTO so the
+ * cross-repo contract (Testing Rule 25) covers the request side too.
+ */
+const REQUEST_SCHEMA_MAPPING = [
+    {
+        schemaFile: 'requests/auth/forgot_password.json',
+        sourceFile: 'src/types/api/auth.ts',
+        label: 'auth forgot-password request (IForgotPasswordRequest)',
+        requiredPath: ['required'],
+    },
+    {
+        schemaFile: 'requests/auth/reset_password.json',
+        sourceFile: 'src/types/api/auth.ts',
+        label: 'auth reset-password request (IResetPasswordRequest)',
+        requiredPath: ['required'],
+    },
+];
+
 let drift = false;
 const lines = [];
 const log = (line) => lines.push(line);
@@ -231,11 +251,42 @@ async function checkResponseSchemas() {
     }
 }
 
+/** Request schemas: check required request fields against the TS request DTO. */
+async function checkRequestSchemas() {
+    if (!existsSync(BACKEND_API_SCHEMA_DIR)) {
+        log(`SKIP: backend API schema dir not found at ${BACKEND_API_SCHEMA_DIR} (sibling backend checkout required).`);
+        return;
+    }
+    for (const { schemaFile, sourceFile, label, requiredPath } of REQUEST_SCHEMA_MAPPING) {
+        const schemaPath = path.join(BACKEND_API_SCHEMA_DIR, schemaFile);
+        const sourcePath = path.resolve(SHARED_ROOT, sourceFile);
+        if (!existsSync(schemaPath)) { log(`ERROR: request schema missing for ${label}: ${schemaPath}`); drift = true; continue; }
+        if (!existsSync(sourcePath)) { log(`ERROR: TS type missing for ${label}: ${sourcePath}`); drift = true; continue; }
+
+        const schemaJson = await readJson(schemaPath);
+        const sourceCode = stripComments(await readFile(sourcePath, 'utf8'));
+        const fields = getByPath(schemaJson, requiredPath);
+        if (!Array.isArray(fields)) {
+            log(`WARN: ${label} - required path [${requiredPath.join('.')}] not found in ${schemaFile}; skipping.`);
+            continue;
+        }
+
+        const missing = fields.filter((f) => !tokenPresent(sourceCode, f));
+        if (missing.length === 0) {
+            log(`OK:    ${label} - all ${fields.length} required request fields present in ${sourceFile}.`);
+        } else {
+            drift = true;
+            log(`DRIFT: ${label} - request fields missing from ${sourceFile}: ${missing.join(', ')}`);
+        }
+    }
+}
+
 await checkPluginSchemas();
 await checkResponseSchemas();
+await checkRequestSchemas();
 
 const count = (prefix) => lines.filter((l) => l.startsWith(prefix)).length;
-const total = PLUGIN_SCHEMA_MAPPING.length + RESPONSE_SCHEMA_MAPPING.length;
+const total = PLUGIN_SCHEMA_MAPPING.length + RESPONSE_SCHEMA_MAPPING.length + REQUEST_SCHEMA_MAPPING.length;
 log('');
 log(
     `SUMMARY: ${count('OK:')} OK, ${count('DRIFT:')} DRIFT, ${count('ERROR:')} ERROR, `

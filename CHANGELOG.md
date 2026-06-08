@@ -9,6 +9,21 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## [1.3.0]
+
+### Added
+
+- `ENDPOINTS.AUTH.FORGOT_PASSWORD` (`/cms-api/v1/auth/forgot-password`) and
+  `ENDPOINTS.AUTH.RESET_PASSWORD` (`/cms-api/v1/auth/reset-password`) so the
+  password-recovery flow is part of the shared API contract (issue #31). The
+  web frontend and the mobile app now build these requests from shared
+  constants instead of local/ad-hoc paths.
+- Request DTOs `IForgotPasswordRequest` and `IResetPasswordRequest`, and
+  response types `IForgotPasswordResponse` / `IResetPasswordResponse`,
+  mirroring the backend `requests/auth/forgot_password.json` and
+  `reset_password.json` schemas. `scripts/check-schema-parity.mjs` now covers
+  these request schemas.
+
 ## [1.2.5]
 
 ### Changed
