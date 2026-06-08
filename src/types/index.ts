@@ -4,6 +4,7 @@ SPDX-License-Identifier: MPL-2.0
 */
 export * from './styles/base';
 export * from './styles/auth';
+export * from './styles/error';
 export * from './styles/layout';
 export * from './styles/typography';
 export * from './styles/media';
