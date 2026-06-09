@@ -158,6 +158,14 @@ const RESPONSE_SCHEMA_MAPPING = [
         requiredPath: ['properties', 'data', 'required'],
     },
     {
+        // Security advisories filtered to installed components, consumed by the
+        // admin maintenance UI (ISystemAdvisories).
+        schemaFile: 'responses/admin/system_advisories.json',
+        sourceFile: 'src/types/api/system.ts',
+        label: 'system advisories data (ISystemAdvisories)',
+        requiredPath: ['properties', 'data', 'required'],
+    },
+    {
         // Update preflight result consumed by the admin maintenance UI
         // (IUpdatePreflight).
         schemaFile: 'responses/admin/update_preflight.json',
