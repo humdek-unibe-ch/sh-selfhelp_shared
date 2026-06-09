@@ -9,6 +9,18 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## [Unreleased]
+
+### Added
+
+- `TUpdateOperationStatus` gains the `idle` member: the honest state the backend
+  returns for an instance that has never run an update (instead of a misleading
+  `succeeded`/100%). Additive contract change — exhaustive consumers (e.g. a
+  `Record<TUpdateOperationStatus, …>`) must add an `idle` branch. Ship as the
+  next minor (`1.5.0`); the frontend mirror in
+  `sh-selfhelp_frontend/src/types/responses/admin/system.types.ts` already
+  tracks it.
+
 ## [1.4.0]
 
 ### Added
