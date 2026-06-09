@@ -167,6 +167,38 @@ export interface IUpdatePreflightCheck {
     current_version?: string;
     target_version?: string;
     required_range?: string;
+    /** Whether this compatibility error blocks the update (mirrors `CompatibilityError.blocking`). */
+    blocking?: boolean;
+    /**
+     * For `plugin_compatibility` checks: whether the blocking plugin is pinned and
+     * therefore must be unpinned (or removed) before it can be updated to a
+     * compatible version. Absent on non-plugin checks.
+     */
+    pinned?: boolean;
+}
+
+/**
+ * The single, standardized compatibility-error object used by BOTH the core
+ * update preflight AND the plugin install/update flow, so an operator sees the
+ * SAME shape regardless of which installer raised it.
+ *
+ * Canonical cross-repo contract (the field set MUST match on every side):
+ *   - backend `App\Plugin\Registry\Unified\CompatibilityError::toArray()`,
+ *   - SelfHelp Manager `@shm/resolver` `CompatibilityError`,
+ *   - frontend `IPluginCompatibilityError`.
+ *
+ * The compatibility fields embedded in {@link IUpdatePreflightCheck} mirror this
+ * shape (a preflight check additionally carries the generic `code`/`severity`
+ * and the plugin-specific `pinned` affordance). Snake_case is the wire contract.
+ */
+export interface ICompatibilityError {
+    component: 'core' | 'frontend' | 'plugin';
+    component_id: string;
+    current_version: string | null;
+    target_version: string | null;
+    required_range: string;
+    blocking: boolean;
+    message: string;
 }
 
 export interface IUpdatePreflightOption {

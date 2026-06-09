@@ -180,6 +180,49 @@ describe('system maintenance contracts', () => {
         expect(status.progress_percent).toBe(42);
     });
 
+    it('carries the standardized compatibility-error fields on a blocked preflight check', () => {
+        // A plugin_compatibility check raised by the core-update preflight when an
+        // installed (pinned) plugin does not admit the target core version. This is
+        // the SAME standardized compatibility-error shape the plugin install/update
+        // flow emits (backend CompatibilityError::toArray()), so the admin/operator
+        // sees the blocking component + the required range, not just a message.
+        const blocked: IUpdatePreflight = {
+            preflight_id: 'pf-002',
+            status: 'blocked',
+            instance_id: 'inst-a',
+            current_version: '0.1.0',
+            target_version: '0.2.0',
+            checks: [
+                {
+                    code: 'plugin_compatibility',
+                    severity: 'error',
+                    message:
+                        'Plugin sh2-shp-survey-js requires SelfHelp >=0.1.0 <0.2.0 and is not compatible with target version 0.2.0 (current 0.1.0).',
+                    component: 'plugin',
+                    component_id: 'sh2-shp-survey-js',
+                    current_version: '0.1.0',
+                    target_version: '0.2.0',
+                    required_range: '>=0.1.0 <0.2.0',
+                    blocking: true,
+                    pinned: true,
+                },
+            ],
+            options: [],
+            database: { destructive: false, requires_backup: true, manual_confirmation_required: false },
+            rollback: { automatic_before_migrations: true, automatic_after_destructive_migrations: false },
+        };
+
+        const check = blocked.checks[0]!;
+        expect(blocked.status).toBe('blocked');
+        expect(check.component).toBe('plugin');
+        expect(check.component_id).toBe('sh2-shp-survey-js');
+        expect(check.required_range).toBe('>=0.1.0 <0.2.0');
+        expect(check.current_version).toBe('0.1.0');
+        expect(check.target_version).toBe('0.2.0');
+        expect(check.blocking).toBe(true);
+        expect(check.pinned).toBe(true);
+    });
+
     it('covers the manager-driven terminal lifecycle states', () => {
         // The states the SelfHelp Manager writes back as an operation finishes.
         const terminal: TUpdateOperationStatus[] = ['succeeded', 'failed', 'rolled_back', 'rollback_failed', 'rejected'];

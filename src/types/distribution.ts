@@ -20,7 +20,16 @@ SPDX-License-Identifier: MPL-2.0
  * snake_case CMS API contracts in `./api/system`) these contracts are camelCase.
  */
 
-export type ReleaseChannel = 'stable' | 'beta' | 'nightly';
+/**
+ * Canonical release channels, shared verbatim across the registry wire schema
+ * (`sh2-plugin-registry/registry.schema.json`), the SelfHelp Manager
+ * (`@shm/schemas`), and the backend (`RegistryReleaseRef::CHANNELS`). `test` is
+ * the staging/rehearsal channel used to dry-run a publish→install→update before
+ * promoting to `stable`. Kept as a runtime tuple so cross-repo parity can be
+ * asserted (see `__tests__/channel-parity.test.ts`).
+ */
+export const RELEASE_CHANNELS = ['stable', 'beta', 'nightly', 'test'] as const;
+export type ReleaseChannel = (typeof RELEASE_CHANNELS)[number];
 export type InstanceMode = 'production' | 'local';
 export type TrustLevel = 'official' | 'reviewed' | 'untrusted';
 export type AdvisorySeverity = 'low' | 'medium' | 'high' | 'critical';
