@@ -98,7 +98,7 @@ describe('distribution contracts compile and are usable', () => {
             publishedAt: '2026-06-05T12:00:00Z',
             baseUrl: 'https://example/',
             publisher: { name: 'SelfHelp', url: 'https://example/' },
-            core: [{ id: 'selfhelp-core-8.0.0', version: '8.0.0', channel: 'stable', releaseUrl: 'releases/core/x.json' }],
+            core: [{ id: 'selfhelp-core-0.1.0', version: '0.1.0', channel: 'stable', releaseUrl: 'releases/core/x.json' }],
             frontend: [],
             scheduler: [],
             worker: [],
@@ -106,20 +106,20 @@ describe('distribution contracts compile and are usable', () => {
         };
         const core: CoreRelease = {
             kind: 'selfhelp-core-release',
-            id: 'selfhelp-core-8.0.0',
-            version: '8.0.0',
+            id: 'selfhelp-core-0.1.0',
+            version: '0.1.0',
             channel: 'stable',
             releasedAt: '2026-06-01T00:00:00Z',
-            minimumDirectUpgradeFrom: '8.0.0-dev',
-            pluginApiVersion: '2.1',
+            minimumDirectUpgradeFrom: '0.1.0',
+            pluginApiVersion: '0.1.0',
             backend: { image: 'b', digest: 'sha256:1' },
             worker: { image: 'w', digest: 'sha256:2' },
             scheduler: { image: 's', digest: 'sha256:3' },
-            frontendCompatibility: { requiredFrontendRange: '>=8.0.0 <8.1.0' },
+            frontendCompatibility: { requiredFrontendRange: '>=0.1.0 <0.2.0' },
             database: { migrationRange: 'A..B', destructive: false, requiresBackup: true, manualConfirmationRequired: false },
             security: { signature: 'sig', keyId: 'selfhelp-official-2026' },
         };
-        expect(index.core[0]?.version).toBe('8.0.0');
+        expect(index.core[0]?.version).toBe('0.1.0');
         expect(core.kind).toBe('selfhelp-core-release');
         // Plan invariant: no automatic rollback is promised after destructive migrations.
     });
@@ -128,10 +128,10 @@ describe('distribution contracts compile and are usable', () => {
         const plugin: PluginRelease = {
             kind: 'selfhelp-plugin-release',
             id: 'surveyjs',
-            version: '1.0.0',
+            version: '0.1.0',
             channel: 'stable',
             official: true,
-            compatibility: { core: '>=8.0.0 <9.0.0', pluginApi: '2.1' },
+            compatibility: { core: '>=0.1.0 <0.2.0', pluginApi: '0.1.0' },
             artifacts: { manifestUrl: 'm', archiveUrl: 'a', sha256: 'sha256:0' },
             security: { signature: 'sig', keyId: 'selfhelp-official-2026' },
         };
@@ -141,9 +141,9 @@ describe('distribution contracts compile and are usable', () => {
                 {
                     id: 'SH-2026-0001',
                     severity: 'high',
-                    affected: [{ kind: 'core', versions: '<8.0.1' }],
-                    fixed: [{ kind: 'core', version: '8.0.1' }],
-                    recommendedAction: 'Update to 8.0.1.',
+                    affected: [{ kind: 'core', versions: '<0.1.1' }],
+                    fixed: [{ kind: 'core', version: '0.1.1' }],
+                    recommendedAction: 'Update to 0.1.1.',
                     blocked: true,
                 },
             ],
@@ -152,7 +152,7 @@ describe('distribution contracts compile and are usable', () => {
             schemaVersion: '1.0',
             rules: [
                 {
-                    selfhelp: '>=8.0.0 <9.0.0',
+                    selfhelp: '>=0.1.0 <0.2.0',
                     runtime: {
                         mysql: { supportedVersions: '8.x', recommendedImage: 'mysql:8.4' },
                         redis: { supportedVersions: '7.x', recommendedImage: 'redis:7.2' },
