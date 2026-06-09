@@ -156,6 +156,17 @@ export interface IUpdatePreflightCheck {
     code: string;
     severity: TUpdateCheckSeverity;
     message: string;
+    /**
+     * Standardized compatibility-error fields. Version/compatibility checks
+     * (e.g. `plugin_compatibility`) populate these so the admin/operator sees
+     * exactly which component blocks which target and the range it requires.
+     * Absent on non-compatibility checks.
+     */
+    component?: string;
+    component_id?: string;
+    current_version?: string;
+    target_version?: string;
+    required_range?: string;
 }
 
 export interface IUpdatePreflightOption {
