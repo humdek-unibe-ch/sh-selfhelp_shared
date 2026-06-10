@@ -117,7 +117,7 @@ describe('distribution contracts compile and are usable', () => {
             scheduler: { image: 's', digest: 'sha256:3' },
             frontendCompatibility: { requiredFrontendRange: '>=0.1.0 <0.2.0' },
             database: { migrationRange: 'A..B', destructive: false, requiresBackup: true, manualConfirmationRequired: false },
-            security: { signature: 'sig', keyId: 'selfhelp-official-2026' },
+            security: { signature: 'sig', keyId: 'selfhelp-dev-fixture' },
         };
         expect(index.core[0]?.version).toBe('0.1.0');
         expect(core.kind).toBe('selfhelp-core-release');
@@ -133,7 +133,7 @@ describe('distribution contracts compile and are usable', () => {
             official: true,
             compatibility: { core: '>=0.1.0 <0.2.0', pluginApi: '0.1.0' },
             artifacts: { manifestUrl: 'm', archiveUrl: 'a', sha256: 'sha256:0' },
-            security: { signature: 'sig', keyId: 'selfhelp-official-2026' },
+            security: { signature: 'sig', keyId: 'selfhelp-dev-fixture' },
         };
         const advisories: AdvisoryFeed = {
             schemaVersion: '1.0',
