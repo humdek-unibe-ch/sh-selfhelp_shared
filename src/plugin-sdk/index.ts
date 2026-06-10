@@ -51,10 +51,12 @@ export type {
 
 export type {
     IPluginRegistry,
-    IPluginRegistryEntry,
-    IPluginRegistryVersionEntry,
+    IRegistryReleaseRef,
+    IRegistrySignatureBlock,
+    IPluginRelease,
     TPluginRegistryChannel,
 } from './registry';
+export { PLUGIN_REGISTRY_CHANNELS } from './registry';
 
 export type {
     IPluginLock,

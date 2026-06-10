@@ -9,6 +9,53 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## [1.4.0]
+
+### Added
+
+- `TUpdateOperationStatus` gains the `idle` member: the honest state the backend
+  returns for an instance that has never run an update (instead of a misleading
+  `succeeded`/100%). Additive contract change — exhaustive consumers (e.g. a
+  `Record<TUpdateOperationStatus, …>`) must add an `idle` branch. Ship as the
+  next minor (`1.5.0`); the frontend mirror in
+  `sh-selfhelp_frontend/src/types/responses/admin/system.types.ts` already
+  tracks it.
+
+- Instance-scoped **system maintenance / update** contracts under
+  `src/types/api/system.ts` for the SelfHelp Manager (`sh-manager`) ↔ CMS ↔
+  admin-UI flow (SelfHelp Manager / Docker Distribution MVP): `ISystemVersion`
+  / `ISystemVersionResponse`, `IUpdatePreflight` / `IUpdatePreflightResponse`,
+  `IUpdateRequest`, `IUpdateStatus` / `IUpdateStatusResponse`,
+  `IUpdateRequestResponse`, plus the `SYSTEM_ENDPOINTS` path constants and the
+  supporting unions (`TUpdatePreflightStatus`, `TUpdateOperationStatus`, …).
+- Hard cross-repo invariant encoded in the types and a regression test:
+  `IUpdateRequest` has **no** `instance_id` — the browser never targets another
+  instance; the backend derives and verifies the instance identity server-side.
+- `check-schema-parity.mjs` now also guards the three new admin response schemas
+  (`responses/admin/system_version.json`, `update_preflight.json`,
+  `update_status.json`) and the `requests/admin/update_request.json` request
+  schema against the shared TS mirrors.
+- `ICompatibilityError` in `src/types/api/system.ts` — the standardized
+  compatibility-error shape (`component`, `component_id`, `current_version`,
+  `target_version`, `required_range`, `blocking`, `message`) shared verbatim by
+  the backend `CompatibilityError`, the SelfHelp Manager resolver, and the
+  frontend Available/preflight UI, with a parity test
+  (`compatibility-error-parity.test.ts`).
+
+### Changed
+
+- **Unified registry types** (`src/plugin-sdk/registry.ts`). `IPluginRegistry`
+  now mirrors the unified `registry.json`: required `schemaVersion`,
+  `requiresManager`, `baseUrl`, and the five release-ref arrays `core` /
+  `frontend` / `scheduler` / `worker` / `plugins`. New `IRegistryReleaseRef`
+  (`{id, version, channel, releaseUrl, blocked?}`) and `IPluginRelease` (the
+  standalone signed plugin release document: `compatibility.{core,pluginApi}`,
+  `artifacts.{manifestUrl,archiveUrl,sha256}`, Ed25519 `security`). The legacy
+  single-version inline `IPluginRegistryEntry` / `IPluginRegistryVersionEntry`
+  were removed (no consumer; replaced by the multi-version release-ref model).
+  Mirrors the backend `plugin-registry.schema.json` +
+  `config/schemas/registry/plugin-release.schema.json`.
+
 ## [1.3.2]
 
 ### Changed
