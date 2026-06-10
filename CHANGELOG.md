@@ -9,7 +9,7 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
-## [Unreleased]
+## [1.4.0]
 
 ### Added
 
@@ -20,10 +20,6 @@ This project follows semantic versioning.
   next minor (`1.5.0`); the frontend mirror in
   `sh-selfhelp_frontend/src/types/responses/admin/system.types.ts` already
   tracks it.
-
-## [1.4.0]
-
-### Added
 
 - Instance-scoped **system maintenance / update** contracts under
   `src/types/api/system.ts` for the SelfHelp Manager (`sh-manager`) ↔ CMS ↔
