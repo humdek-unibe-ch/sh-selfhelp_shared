@@ -181,6 +181,14 @@ const RESPONSE_SCHEMA_MAPPING = [
         label: 'update status data (IUpdateStatus)',
         requiredPath: ['properties', 'data', 'required'],
     },
+    {
+        // Registry-published core versions feeding the admin update picker
+        // (IUpdateReleases).
+        schemaFile: 'responses/admin/update_releases.json',
+        sourceFile: 'src/types/api/system.ts',
+        label: 'update releases data (IUpdateReleases)',
+        requiredPath: ['properties', 'data', 'required'],
+    },
 ];
 
 /**

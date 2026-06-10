@@ -26,6 +26,7 @@ export const SYSTEM_ENDPOINTS = {
     UPDATE_PREFLIGHT: `${SYSTEM_PREFIX}/update/preflight`,
     UPDATE_REQUEST: `${SYSTEM_PREFIX}/update/request`,
     UPDATE_STATUS: `${SYSTEM_PREFIX}/update/status`,
+    UPDATE_RELEASES: `${SYSTEM_PREFIX}/update/releases`,
 } as const;
 
 export interface ISystemInstalledPlugin {
@@ -33,6 +34,13 @@ export interface ISystemInstalledPlugin {
     version: string;
     compatible: boolean;
 }
+
+/**
+ * How the backend runtime is deployed. `docker` = the production image
+ * published by docker-release.yml (SELFHELP_DEPLOYMENT is baked into the
+ * image); `source` = composer dev / bare checkout (the default).
+ */
+export type TSystemDeployment = 'docker' | 'source';
 
 /** GET /admin/system/version — current instance version summary. */
 export interface ISystemVersion {
@@ -42,6 +50,7 @@ export interface ISystemVersion {
     frontend_version: string;
     plugin_api_version: string;
     database_migration_version: string;
+    deployment: TSystemDeployment;
     safe_mode: boolean;
     maintenance_mode: boolean;
     installed_plugins: ISystemInstalledPlugin[];
@@ -206,6 +215,27 @@ export interface IUpdatePreflightOption {
     version?: string;
     label: string;
 }
+
+/** One core version published in the official registry index. */
+export interface IUpdateRelease {
+    version: string;
+    channel: 'stable' | 'beta' | 'nightly' | 'test';
+    /** Whether the registry marks this release as blocked (e.g. by a security advisory). */
+    blocked: boolean;
+}
+
+/**
+ * GET /admin/system/update/releases — core versions published in the official
+ * registry (newest first) for the "Request an update" version picker.
+ * `available: false` means the registry could not be reached; the UI falls
+ * back to manual version entry instead of blocking.
+ */
+export interface IUpdateReleases {
+    available: boolean;
+    current_version: string;
+    releases: IUpdateRelease[];
+}
+export type IUpdateReleasesResponse = IBaseApiResponse<IUpdateReleases>;
 
 /** GET /admin/system/update/preflight — latest preflight for THIS instance. */
 export interface IUpdatePreflight {
