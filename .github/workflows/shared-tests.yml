@@ -14,6 +14,14 @@
 #      cover the backend JSON-schema contracts. The backend is checked out as
 #      a sibling so the check is binding (it SKIPs cleanly when absent).
 #
+# SIBLING REF RESOLUTION (same-branch-or-main): coordinated cross-repo work
+# happens on equally named feature branches. The backend sibling is checked
+# out at the branch with the SAME NAME as this PR/push when it exists in
+# sh-selfhelp_backend, falling back to `main`. This keeps the parity gate
+# meaningful on feature branches (new backend schemas live on the feature
+# branch, not on main yet) without weakening the main-vs-main gate.
+# See sh-selfhelp_backend/docs/developer/branch-merge-order.md.
+#
 # Referenced by branch protection on `main` (Slice 10).
 
 name: shared-tests
@@ -44,13 +52,29 @@ jobs:
         with:
           path: sh-selfhelp_shared
 
+      - name: Resolve backend ref (same branch as this build, else main)
+        id: backend-ref
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          BRANCH="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          REF="main"
+          if [ -n "$BRANCH" ] && [ "$BRANCH" != "main" ] && \
+             git ls-remote --exit-code --heads \
+               "https://x-access-token:${GH_TOKEN}@github.com/humdek-unibe-ch/sh-selfhelp_backend.git" \
+               "refs/heads/${BRANCH}" > /dev/null 2>&1; then
+            REF="$BRANCH"
+          fi
+          echo "ref=${REF}" >> "$GITHUB_OUTPUT"
+          echo "Resolved sh-selfhelp_backend ref: ${REF} (build branch: ${BRANCH})"
+
       - name: Checkout backend (for JSON schemas)
         uses: actions/checkout@v4
         with:
           repository: humdek-unibe-ch/sh-selfhelp_backend
-          ref: main
+          ref: ${{ steps.backend-ref.outputs.ref }}
           path: sh-selfhelp_backend
-        continue-on-error: true
 
       - name: Set up Node 22
         uses: actions/setup-node@v4
