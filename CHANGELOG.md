@@ -9,6 +9,24 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## [1.5.0]
+
+### Added
+
+- `ISystemVersion.deployment` (`TSystemDeployment = 'docker' | 'source'`): the
+  backend now reports how it is deployed so the admin maintenance UI can
+  distinguish a managed Docker-image install from a source/dev checkout.
+  Additive but **required** in the response — consumers' fixtures/mocks must
+  add the field (the backend schema `responses/admin/system_version.json`
+  requires it).
+- Update-picker contracts for `GET /admin/system/update/releases`:
+  `IUpdateRelease`, `IUpdateReleases`, `IUpdateReleasesResponse`, and the
+  `SYSTEM_ENDPOINTS.UPDATE_RELEASES` path constant. The endpoint lists
+  registry-published core versions (newest first) and fails soft to
+  `available: false` when the registry is unreachable.
+- `check-schema-parity.mjs` now also guards
+  `responses/admin/update_releases.json` against `IUpdateReleases`.
+
 ## [1.4.0]
 
 ### Added
