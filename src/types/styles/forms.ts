@@ -437,3 +437,31 @@ export interface IProgressSectionStyle extends IBaseStyle {
     mantine_tooltip_position?: IContentField<string>;
     use_mantine_style?: IContentField<string>;
 }
+
+export interface IShowUserInputStyle extends IBaseStyle {
+    style_name: 'showUserInput';
+    data_table?: IContentField<string>;
+    own_entries_only?: IContentField<string>;
+    show_timestamp?: IContentField<string>;
+    anchor?: IContentField<string>;
+    fields_map?: IContentField<string>;
+    dt_sortable?: IContentField<string>;
+    dt_searching?: IContentField<string>;
+    dt_paginate?: IContentField<string>;
+    dt_info?: IContentField<string>;
+    dt_default_order_column?: IContentField<string>;
+    dt_default_order_dir?: IContentField<string>;
+    csv_export?: IContentField<string>;
+    delete_entry?: IContentField<string>;
+    delete_modal_title?: IContentField<string>;
+    delete_modal_body?: IContentField<string>;
+    mantine_spacing_margin_padding?: IContentField<string>;
+    mantine_table_striped?: IContentField<string>;
+    mantine_table_highlight_on_hover?: IContentField<string>;
+    mantine_table_with_table_border?: IContentField<string>;
+    mantine_table_with_column_borders?: IContentField<string>;
+    mantine_table_with_row_borders?: IContentField<string>;
+    mantine_table_sticky_header?: IContentField<string>;
+    mantine_table_caption_side?: IContentField<string>;
+    entries?: Array<Record<string, unknown>>;
+}
