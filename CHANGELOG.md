@@ -9,6 +9,20 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.6.0
+
+### Added
+
+- `IUpdateStatus.manager` (`IUpdateStatusManager`): manager-loop visibility on
+  the update status — `configured` (instance has a manager token),
+  `last_seen_at` (last authenticated manager poll, null = never), and
+  `requested_stale` (the latest operation sat in `requested` too long without
+  the manager claiming it). Additive but **required** in the response — the
+  backend schema `responses/admin/update_status.json` requires it; consumers'
+  fixtures/mocks must add the block.
+
+## [Unreleased]
+
 ## [1.5.0]
 
 ### Added
