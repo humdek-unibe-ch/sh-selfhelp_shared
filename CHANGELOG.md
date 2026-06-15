@@ -9,6 +9,30 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.6.1
+
+### Added
+
+- Frontend-only update contracts (the frontend ships independently of the core,
+  so an instance on the newest core can still move to a newer compatible
+  frontend): the `SYSTEM_ENDPOINTS.UPDATE_FRONTEND_RELEASES` /
+  `UPDATE_FRONTEND_PREFLIGHT` / `UPDATE_FRONTEND_REQUEST` path constants, the
+  `TUpdateKind = 'core' | 'frontend'` discriminator, `IFrontendUpdateRequest`
+  (`target_version` + `preflight_id` — no `accepted_migration_risk`, a frontend
+  swap is stateless), `IFrontendUpdateRequestResponse` (carries
+  `kind: 'frontend'` + `target_frontend_version`), and the
+  `IFrontendUpdateReleases(Response)` / `IFrontendUpdatePreflight(Response)`
+  aliases (the frontend reuses the core releases/preflight shapes).
+
+### Changed
+
+- `IUpdateStatus` gains two **required** fields: `kind` (`TUpdateKind`) and
+  `target_frontend_version` (`string | null`), so the status UI can label a
+  frontend-only operation correctly. Additive but required in the response (the
+  backend schema `responses/admin/update_status.json` requires both); consumers'
+  fixtures/mocks must add them (`kind: 'core'`, `target_frontend_version: null`
+  for a core/idle status).
+
 ## v1.6.0
 
 ### Added

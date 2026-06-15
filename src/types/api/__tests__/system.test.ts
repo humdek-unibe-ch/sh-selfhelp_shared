@@ -6,6 +6,10 @@
 import { describe, expect, it } from 'vitest';
 import { SYSTEM_ENDPOINTS } from '../system';
 import type {
+    IFrontendUpdatePreflight,
+    IFrontendUpdateReleases,
+    IFrontendUpdateRequest,
+    IFrontendUpdateRequestResponse,
     IMaintenanceSetRequest,
     ISystemAdvisories,
     ISystemAdvisoriesResponse,
@@ -19,6 +23,7 @@ import type {
     IUpdateStatus,
     IUpdateStatusResponse,
     TSystemAdvisorySeverity,
+    TUpdateKind,
     TUpdateOperationStatus,
 } from '../system';
 
@@ -38,6 +43,13 @@ describe('system maintenance contracts', () => {
         expect(SYSTEM_ENDPOINTS.UPDATE_PREFLIGHT).toBe('/cms-api/v1/admin/system/update/preflight');
         expect(SYSTEM_ENDPOINTS.UPDATE_REQUEST).toBe('/cms-api/v1/admin/system/update/request');
         expect(SYSTEM_ENDPOINTS.UPDATE_STATUS).toBe('/cms-api/v1/admin/system/update/status');
+        expect(SYSTEM_ENDPOINTS.UPDATE_RELEASES).toBe('/cms-api/v1/admin/system/update/releases');
+    });
+
+    it('exposes the frontend-only update endpoints under update/frontend', () => {
+        expect(SYSTEM_ENDPOINTS.UPDATE_FRONTEND_RELEASES).toBe('/cms-api/v1/admin/system/update/frontend/releases');
+        expect(SYSTEM_ENDPOINTS.UPDATE_FRONTEND_PREFLIGHT).toBe('/cms-api/v1/admin/system/update/frontend/preflight');
+        expect(SYSTEM_ENDPOINTS.UPDATE_FRONTEND_REQUEST).toBe('/cms-api/v1/admin/system/update/frontend/request');
     });
 
     it('advisories model the registry feed filtered to installed components', () => {
@@ -168,7 +180,9 @@ describe('system maintenance contracts', () => {
             instance_id: 'inst-a',
             operation_id: 'op-001',
             status: 'running',
+            kind: 'core',
             target_version: '1.5.0',
+            target_frontend_version: null,
             progress_percent: 42,
             steps: [{ name: 'backup', status: 'succeeded' }],
             requested_at: '2026-06-08T00:00:00Z',
@@ -231,7 +245,9 @@ describe('system maintenance contracts', () => {
                 instance_id: 'inst-a',
                 operation_id: 'op-term',
                 status: s,
+                kind: 'core',
                 target_version: '8.0.1',
+                target_frontend_version: null,
                 progress_percent: 100,
                 steps: [],
                 requested_at: '2026-06-08T00:00:00Z',
@@ -271,7 +287,9 @@ describe('system maintenance contracts', () => {
                 instance_id: 'inst-a',
                 operation_id: 'op-001',
                 status: 'succeeded',
+                kind: 'core',
                 target_version: '8.0.1',
+                target_frontend_version: null,
                 progress_percent: 100,
                 steps: [{ name: 'migrate', status: 'succeeded' }],
                 requested_at: '2026-06-08T00:00:00Z',
@@ -283,5 +301,83 @@ describe('system maintenance contracts', () => {
         expect(requested.data.status).toBe('requested');
         expect(requested.status).toBe(202);
         expect(statusResponse.data.status).toBe('succeeded');
+    });
+
+    it('frontend-only update request omits instance_id AND the destructive-migration risk fields', () => {
+        // A frontend swap is stateless: there is no destructive migration to
+        // confirm, so — unlike IUpdateRequest — the frontend request body has no
+        // `accepted_migration_risk`/`typed_confirmation`, and (like every update
+        // request) no `instance_id` (the backend derives + verifies it).
+        const req: IFrontendUpdateRequest = { target_version: '0.1.7', preflight_id: 'fe-pf-001' };
+        const keys = Object.keys(req);
+        expect(keys).not.toContain('instance_id');
+        expect(keys).not.toContain('accepted_migration_risk');
+        expect(keys).not.toContain('typed_confirmation');
+        expect(keys.sort()).toEqual(['preflight_id', 'target_version']);
+    });
+
+    it('frontend releases + preflight reuse the core shapes but the preflight is never destructive', () => {
+        const releases: IFrontendUpdateReleases = {
+            available: true,
+            current_version: '0.1.5',
+            releases: [
+                { version: '0.1.7', channel: 'stable', blocked: false },
+                { version: '0.1.5', channel: 'stable', blocked: false },
+            ],
+        };
+        const preflight: IFrontendUpdatePreflight = {
+            preflight_id: 'fe-pf-001',
+            status: 'ok',
+            instance_id: 'inst-a',
+            current_version: '0.1.5',
+            target_version: '0.1.7',
+            checks: [{ code: 'resource', severity: 'info', message: 'Manager performs the authoritative checks.' }],
+            options: [{ type: 'frontend', version: '0.1.7', label: 'SelfHelp frontend 0.1.7' }],
+            // The frontend is stateless: a swap is never destructive and needs no backup.
+            database: { destructive: false, requires_backup: false, manual_confirmation_required: false },
+            rollback: { automatic_before_migrations: true, automatic_after_destructive_migrations: true },
+        };
+
+        expect(releases.releases[0]?.version).toBe('0.1.7');
+        expect(preflight.database.destructive).toBe(false);
+        expect(preflight.database.requires_backup).toBe(false);
+    });
+
+    it('a frontend-kind status/response carries the targeted frontend version', () => {
+        const kinds: TUpdateKind[] = ['core', 'frontend'];
+        expect(kinds).toEqual(['core', 'frontend']);
+
+        const status: IUpdateStatus = {
+            instance_id: 'inst-a',
+            operation_id: 'op-fe-1',
+            status: 'update_running',
+            kind: 'frontend',
+            target_version: '0.1.7',
+            target_frontend_version: '0.1.7',
+            progress_percent: 50,
+            steps: [{ name: 'pull', status: 'succeeded' }],
+            requested_at: '2026-06-15T00:00:00Z',
+            updated_at: '2026-06-15T00:01:00Z',
+        };
+
+        const accepted: IFrontendUpdateRequestResponse = {
+            status: 202,
+            message: 'Accepted',
+            error: null,
+            logged_in: true,
+            meta: { version: 'v1', timestamp: '2026-06-15T00:00:00Z' },
+            data: {
+                operation_id: 'op-fe-1',
+                instance_id: 'inst-a',
+                status: 'requested',
+                kind: 'frontend',
+                target_frontend_version: '0.1.7',
+            },
+        };
+
+        expect(status.kind).toBe('frontend');
+        expect(status.target_frontend_version).toBe('0.1.7');
+        expect(accepted.data.kind).toBe('frontend');
+        expect(accepted.data.target_frontend_version).toBe('0.1.7');
     });
 });

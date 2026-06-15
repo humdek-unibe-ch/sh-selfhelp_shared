@@ -189,6 +189,15 @@ const RESPONSE_SCHEMA_MAPPING = [
         label: 'update releases data (IUpdateReleases)',
         requiredPath: ['properties', 'data', 'required'],
     },
+    {
+        // Frontend-only update request acknowledgement (202) consumed by the
+        // admin maintenance UI (IFrontendUpdateRequestResponse) — carries
+        // kind:'frontend' + the targeted frontend version.
+        schemaFile: 'responses/admin/frontend_update_request.json',
+        sourceFile: 'src/types/api/system.ts',
+        label: 'frontend update request data (IFrontendUpdateRequestResponse)',
+        requiredPath: ['properties', 'data', 'required'],
+    },
 ];
 
 /**
@@ -223,6 +232,15 @@ const REQUEST_SCHEMA_MAPPING = [
         schemaFile: 'requests/admin/maintenance_set.json',
         sourceFile: 'src/types/api/system.ts',
         label: 'system maintenance set request (IMaintenanceSetRequest)',
+        requiredPath: ['required'],
+    },
+    {
+        // Instance-scoped FRONTEND-only update request. The schema forbids
+        // `instance_id` AND the destructive-migration risk fields (a frontend
+        // swap is stateless); the TS DTO IFrontendUpdateRequest matches.
+        schemaFile: 'requests/admin/frontend_update_request.json',
+        sourceFile: 'src/types/api/system.ts',
+        label: 'system frontend update request (IFrontendUpdateRequest)',
         requiredPath: ['required'],
     },
 ];

@@ -27,7 +27,18 @@ export const SYSTEM_ENDPOINTS = {
     UPDATE_REQUEST: `${SYSTEM_PREFIX}/update/request`,
     UPDATE_STATUS: `${SYSTEM_PREFIX}/update/status`,
     UPDATE_RELEASES: `${SYSTEM_PREFIX}/update/releases`,
+    // Frontend-only update flow. The frontend ships independently of the core,
+    // so an instance already on the newest core can still move to a newer
+    // compatible frontend. These reuse the core preflight/releases response
+    // shapes; the request body omits `accepted_migration_risk` (a frontend swap
+    // is stateless — no destructive migration, no backup).
+    UPDATE_FRONTEND_RELEASES: `${SYSTEM_PREFIX}/update/frontend/releases`,
+    UPDATE_FRONTEND_PREFLIGHT: `${SYSTEM_PREFIX}/update/frontend/preflight`,
+    UPDATE_FRONTEND_REQUEST: `${SYSTEM_PREFIX}/update/frontend/request`,
 } as const;
+
+/** Discriminates a core (full-stack) update from a frontend-only update. */
+export type TUpdateKind = 'core' | 'frontend';
 
 export interface ISystemInstalledPlugin {
     id: string;
@@ -321,7 +332,19 @@ export interface IUpdateStatus {
     instance_id: string;
     operation_id: string;
     status: TUpdateOperationStatus;
+    /**
+     * Whether the latest operation is a full-stack core update or a frontend-only
+     * update. `idle` (no operation yet) reports `core`. Lets the status UI label a
+     * frontend swap correctly instead of implying a core upgrade.
+     */
+    kind: TUpdateKind;
     target_version: string;
+    /**
+     * The frontend version a `frontend`-kind operation targets; `null` for a
+     * core operation (the manager resolves the compatible frontend itself) and
+     * for the synthetic `idle` status.
+     */
+    target_frontend_version: string | null;
     progress_percent: number;
     steps: IUpdateStep[];
     requested_at: string;
@@ -335,4 +358,47 @@ export type IUpdateRequestResponse = IBaseApiResponse<{
     operation_id: string;
     instance_id: string;
     status: TUpdateOperationStatus;
+}>;
+
+/**
+ * POST /admin/system/update/frontend/request — request a FRONTEND-only update
+ * for THIS instance. Like {@link IUpdateRequest} it carries no `instance_id`
+ * (the backend derives + verifies it), but it also omits
+ * `accepted_migration_risk`/`typed_confirmation`: a frontend swap is stateless,
+ * so there is no destructive migration to confirm. The SelfHelp Manager
+ * re-resolves the signed frontend release and is the final authority on
+ * compatibility before it swaps the container.
+ */
+export interface IFrontendUpdateRequest {
+    target_version: string;
+    preflight_id: string;
+}
+
+/**
+ * GET /admin/system/update/frontend/releases — frontend versions published in
+ * the official registry (newest first). Reuses {@link IUpdateReleases}:
+ * `current_version` is the instance's installed frontend version and
+ * `available: false` means the registry was unreachable (fall back to manual
+ * entry). Aliased for call-site clarity.
+ */
+export type IFrontendUpdateReleases = IUpdateReleases;
+export type IFrontendUpdateReleasesResponse = IUpdateReleasesResponse;
+
+/**
+ * GET /admin/system/update/frontend/preflight — lightweight compatibility
+ * verdict for a frontend-only target. Reuses {@link IUpdatePreflight}; the
+ * frontend is stateless so `database.destructive`/`requires_backup` are always
+ * false and the authoritative frontend ⇄ core + signature checks are deferred to
+ * the manager. Aliased for call-site clarity.
+ */
+export type IFrontendUpdatePreflight = IUpdatePreflight;
+export type IFrontendUpdatePreflightResponse = IUpdatePreflightResponse;
+
+/** POST /admin/system/update/frontend/request — accepted frontend-update record. */
+export type IFrontendUpdateRequestResponse = IBaseApiResponse<{
+    operation_id: string;
+    instance_id: string;
+    status: TUpdateOperationStatus;
+    kind: 'frontend';
+    target_frontend_version: string;
 }>;
