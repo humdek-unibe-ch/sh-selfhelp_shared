@@ -15,6 +15,8 @@ export const ENDPOINTS = {
         TWO_FACTOR_VERIFY: `${API_VERSION_PREFIX}/auth/two-factor-verify`,
         LOGOUT: `${API_VERSION_PREFIX}/auth/logout`,
         REFRESH: `${API_VERSION_PREFIX}/auth/refresh-token`,
+        FORGOT_PASSWORD: `${API_VERSION_PREFIX}/auth/forgot-password`,
+        RESET_PASSWORD: `${API_VERSION_PREFIX}/auth/reset-password`,
         SET_LANGUAGE: `${API_VERSION_PREFIX}/auth/set-language`,
         USER_DATA: `${API_VERSION_PREFIX}/auth/user-data`,
         EVENTS: `${API_VERSION_PREFIX}/auth/events`,
@@ -24,6 +26,7 @@ export const ENDPOINTS = {
         UPDATE_NAME: `${API_VERSION_PREFIX}/auth/user/name`,
         UPDATE_PASSWORD: `${API_VERSION_PREFIX}/auth/user/password`,
         UPDATE_TIMEZONE: `${API_VERSION_PREFIX}/auth/user/timezone`,
+        UPDATE_COMMUNICATION_PREFERENCES: `${API_VERSION_PREFIX}/auth/user/communication-preferences`,
         DELETE_ACCOUNT: `${API_VERSION_PREFIX}/auth/user/account`,
         VALIDATE_TOKEN: (userId: number, token: string): string =>
             `${API_VERSION_PREFIX}/validate/${userId}/${token}`,

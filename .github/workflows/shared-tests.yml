@@ -1,0 +1,102 @@
+# SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+# SPDX-License-Identifier: MPL-2.0
+#
+# Shared package test gate (Slice 5).
+#
+# The test-tier gate for @selfhelp/shared (complements plugin-sdk-check.yml,
+# which is the SDK build/contract gate). On every PR to main it runs:
+#   1. Type-check (tsc --noEmit).
+#   2. Vitest unit tests for the runtime helpers (interpolation, condition,
+#      asset URL, css_mobile classifier, page transform) + the testing kit,
+#      with a BLOCKING coverage gate (>= 60% on the runtime-helper bundle,
+#      canonical Testing Rule 20 / plan §23: warning -> blocking).
+#   3. Schema-parity check (canonical Testing Rule 25): shared TS types must
+#      cover the backend JSON-schema contracts. The backend is checked out as
+#      a sibling so the check is binding (it SKIPs cleanly when absent).
+#
+# SIBLING REF RESOLUTION (same-branch-or-main): coordinated cross-repo work
+# happens on equally named feature branches. The backend sibling is checked
+# out at the branch with the SAME NAME as this PR/push when it exists in
+# sh-selfhelp_backend, falling back to `main`. This keeps the parity gate
+# meaningful on feature branches (new backend schemas live on the feature
+# branch, not on main yet) without weakening the main-vs-main gate.
+# See sh-selfhelp_backend/docs/developer/branch-merge-order.md.
+#
+# Referenced by branch protection on `main` (Slice 10).
+
+name: shared-tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: shared-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  shared-tests:
+    name: Type-check + Vitest + schema parity
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout shared package
+        uses: actions/checkout@v4
+        with:
+          path: sh-selfhelp_shared
+
+      - name: Resolve backend ref (same branch as this build, else main)
+        id: backend-ref
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          BRANCH="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          REF="main"
+          if [ -n "$BRANCH" ] && [ "$BRANCH" != "main" ] && \
+             git ls-remote --exit-code --heads \
+               "https://x-access-token:${GH_TOKEN}@github.com/humdek-unibe-ch/sh-selfhelp_backend.git" \
+               "refs/heads/${BRANCH}" > /dev/null 2>&1; then
+            REF="$BRANCH"
+          fi
+          echo "ref=${REF}" >> "$GITHUB_OUTPUT"
+          echo "Resolved sh-selfhelp_backend ref: ${REF} (build branch: ${BRANCH})"
+
+      - name: Checkout backend (for JSON schemas)
+        uses: actions/checkout@v4
+        with:
+          repository: humdek-unibe-ch/sh-selfhelp_backend
+          ref: ${{ steps.backend-ref.outputs.ref }}
+          path: sh-selfhelp_backend
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: sh-selfhelp_shared/package-lock.json
+
+      - name: Install dependencies
+        working-directory: sh-selfhelp_shared
+        run: npm ci
+
+      - name: Type-check
+        working-directory: sh-selfhelp_shared
+        run: npm run typecheck
+
+      - name: Vitest unit tests + coverage gate (blocking)
+        working-directory: sh-selfhelp_shared
+        # `--coverage` runs every test AND fails the job if the runtime-helper
+        # bundle drops below the 60% threshold in vitest.config.ts.
+        run: npm run test:coverage
+
+      - name: Schema parity (TS types vs backend JSON schemas)
+        working-directory: sh-selfhelp_shared
+        run: npm run check:schemas

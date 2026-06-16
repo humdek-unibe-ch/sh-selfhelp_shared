@@ -14,6 +14,8 @@ export interface ILoginStyle extends IStyleWithSpacing {
     alert_fail?: IContentField<string>;
     login_title?: IContentField<string>;
     type?: IContentField<string>;
+    /** Label of the link that opens the registration page. */
+    label_register?: IContentField<string>;
 }
 
 export interface IRegisterStyle extends IStyleWithSpacing {
@@ -25,6 +27,15 @@ export interface IRegisterStyle extends IStyleWithSpacing {
     alert_success?: IContentField<string>;
     title?: IContentField<string>;
     success?: IContentField<string>;
+    open_registration?: IContentField<string>;
+    /** Label above the validation-code input (code-required mode only). */
+    label_code?: IContentField<string>;
+    /** Placeholder inside the validation-code input. */
+    code_placeholder?: IContentField<string>;
+    /** Label of the post-registration "return home" button. */
+    label_go_home?: IContentField<string>;
+    /** Label of the post-registration "open login" button. */
+    label_go_to_login?: IContentField<string>;
 }
 
 export interface IValidateStyle extends IStyleWithSpacing {
@@ -62,18 +73,37 @@ export interface IValidateStyle extends IStyleWithSpacing {
     mantine_card_padding?: IContentField<string>;
     mantine_radius?: IContentField<TMantineRadius>;
     mantine_border?: IContentField<string>;
+    /** Activation lifecycle status text (shown after the registration email). */
+    loading_title?: IContentField<string>;
+    loading_text?: IContentField<string>;
+    error_title?: IContentField<string>;
+    error_heading?: IContentField<string>;
+    error_text?: IContentField<string>;
+    success_title?: IContentField<string>;
+    /** Countdown text; use {seconds} as the placeholder. */
+    redirect_text?: IContentField<string>;
 }
 
 export interface IResetPasswordStyle extends IStyleWithSpacing {
     style_name: 'resetPassword';
     label_pw_reset?: IContentField<string>;
-    text_md?: IContentField<string>;
     type?: IContentField<string>;
     alert_success?: IContentField<string>;
     placeholder?: IContentField<string>;
-    email_user?: IContentField<string>;
     subject_user?: IContentField<string>;
     is_html?: IContentField<string>;
+    reset_title?: IContentField<string>;
+    reset_label_pw?: IContentField<string>;
+    reset_pw_placeholder?: IContentField<string>;
+    reset_label_pw_confirm?: IContentField<string>;
+    reset_pw_confirm_placeholder?: IContentField<string>;
+    reset_label_submit?: IContentField<string>;
+    reset_success_title?: IContentField<string>;
+    reset_alert_success?: IContentField<string>;
+    reset_redirect_text?: IContentField<string>;
+    reset_error_invalid_token?: IContentField<string>;
+    reset_error_pw_short?: IContentField<string>;
+    reset_error_pw_mismatch?: IContentField<string>;
 }
 
 export interface ITwoFactorAuthStyle extends IStyleWithSpacing {
@@ -116,6 +146,16 @@ export interface IProfileStyle extends IStyleWithSpacing {
     profile_timezone_change_success?: IContentField<string>;
     profile_timezone_change_error_required?: IContentField<string>;
     profile_timezone_change_error_general?: IContentField<string>;
+
+    profile_communication_preferences_title?: IContentField<string>;
+    profile_communication_preferences_description?: IContentField<string>;
+    profile_receive_notifications_label?: IContentField<string>;
+    profile_receive_notifications_description?: IContentField<string>;
+    profile_receive_emails_label?: IContentField<string>;
+    profile_receive_emails_description?: IContentField<string>;
+    profile_communication_preferences_button?: IContentField<string>;
+    profile_communication_preferences_success?: IContentField<string>;
+    profile_communication_preferences_error_general?: IContentField<string>;
 
     profile_password_reset_title?: IContentField<string>;
     profile_password_reset_description?: IContentField<string>;

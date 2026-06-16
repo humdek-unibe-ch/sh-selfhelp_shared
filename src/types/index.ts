@@ -15,4 +15,5 @@ export * from './styles/unknown';
 export * from './pages';
 export * from './auth';
 export * from './api';
+export * from './distribution';
 export * from './mantine/common';

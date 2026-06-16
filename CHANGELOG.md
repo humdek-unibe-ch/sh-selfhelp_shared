@@ -9,6 +9,227 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.6.1
+
+### Added
+
+- Frontend-only update contracts (the frontend ships independently of the core,
+  so an instance on the newest core can still move to a newer compatible
+  frontend): the `SYSTEM_ENDPOINTS.UPDATE_FRONTEND_RELEASES` /
+  `UPDATE_FRONTEND_PREFLIGHT` / `UPDATE_FRONTEND_REQUEST` path constants, the
+  `TUpdateKind = 'core' | 'frontend'` discriminator, `IFrontendUpdateRequest`
+  (`target_version` + `preflight_id` — no `accepted_migration_risk`, a frontend
+  swap is stateless), `IFrontendUpdateRequestResponse` (carries
+  `kind: 'frontend'` + `target_frontend_version`), and the
+  `IFrontendUpdateReleases(Response)` / `IFrontendUpdatePreflight(Response)`
+  aliases (the frontend reuses the core releases/preflight shapes).
+
+### Changed
+
+- `IUpdateStatus` gains two **required** fields: `kind` (`TUpdateKind`) and
+  `target_frontend_version` (`string | null`), so the status UI can label a
+  frontend-only operation correctly. Additive but required in the response (the
+  backend schema `responses/admin/update_status.json` requires both); consumers'
+  fixtures/mocks must add them (`kind: 'core'`, `target_frontend_version: null`
+  for a core/idle status).
+
+## v1.6.0
+
+### Added
+
+- `IUpdateStatus.manager` (`IUpdateStatusManager`): manager-loop visibility on
+  the update status — `configured` (instance has a manager token),
+  `last_seen_at` (last authenticated manager poll, null = never), and
+  `requested_stale` (the latest operation sat in `requested` too long without
+  the manager claiming it). Additive but **required** in the response — the
+  backend schema `responses/admin/update_status.json` requires it; consumers'
+  fixtures/mocks must add the block.
+
+## [Unreleased]
+
+## [1.5.0]
+
+### Added
+
+- `ISystemVersion.deployment` (`TSystemDeployment = 'docker' | 'source'`): the
+  backend now reports how it is deployed so the admin maintenance UI can
+  distinguish a managed Docker-image install from a source/dev checkout.
+  Additive but **required** in the response — consumers' fixtures/mocks must
+  add the field (the backend schema `responses/admin/system_version.json`
+  requires it).
+- Update-picker contracts for `GET /admin/system/update/releases`:
+  `IUpdateRelease`, `IUpdateReleases`, `IUpdateReleasesResponse`, and the
+  `SYSTEM_ENDPOINTS.UPDATE_RELEASES` path constant. The endpoint lists
+  registry-published core versions (newest first) and fails soft to
+  `available: false` when the registry is unreachable.
+- `check-schema-parity.mjs` now also guards
+  `responses/admin/update_releases.json` against `IUpdateReleases`.
+
+## [1.4.0]
+
+### Added
+
+- `TUpdateOperationStatus` gains the `idle` member: the honest state the backend
+  returns for an instance that has never run an update (instead of a misleading
+  `succeeded`/100%). Additive contract change — exhaustive consumers (e.g. a
+  `Record<TUpdateOperationStatus, …>`) must add an `idle` branch. Ship as the
+  next minor (`1.5.0`); the frontend mirror in
+  `sh-selfhelp_frontend/src/types/responses/admin/system.types.ts` already
+  tracks it.
+
+- Instance-scoped **system maintenance / update** contracts under
+  `src/types/api/system.ts` for the SelfHelp Manager (`sh-manager`) ↔ CMS ↔
+  admin-UI flow (SelfHelp Manager / Docker Distribution MVP): `ISystemVersion`
+  / `ISystemVersionResponse`, `IUpdatePreflight` / `IUpdatePreflightResponse`,
+  `IUpdateRequest`, `IUpdateStatus` / `IUpdateStatusResponse`,
+  `IUpdateRequestResponse`, plus the `SYSTEM_ENDPOINTS` path constants and the
+  supporting unions (`TUpdatePreflightStatus`, `TUpdateOperationStatus`, …).
+- Hard cross-repo invariant encoded in the types and a regression test:
+  `IUpdateRequest` has **no** `instance_id` — the browser never targets another
+  instance; the backend derives and verifies the instance identity server-side.
+- `check-schema-parity.mjs` now also guards the three new admin response schemas
+  (`responses/admin/system_version.json`, `update_preflight.json`,
+  `update_status.json`) and the `requests/admin/update_request.json` request
+  schema against the shared TS mirrors.
+- `ICompatibilityError` in `src/types/api/system.ts` — the standardized
+  compatibility-error shape (`component`, `component_id`, `current_version`,
+  `target_version`, `required_range`, `blocking`, `message`) shared verbatim by
+  the backend `CompatibilityError`, the SelfHelp Manager resolver, and the
+  frontend Available/preflight UI, with a parity test
+  (`compatibility-error-parity.test.ts`).
+
+### Changed
+
+- **Unified registry types** (`src/plugin-sdk/registry.ts`). `IPluginRegistry`
+  now mirrors the unified `registry.json`: required `schemaVersion`,
+  `requiresManager`, `baseUrl`, and the five release-ref arrays `core` /
+  `frontend` / `scheduler` / `worker` / `plugins`. New `IRegistryReleaseRef`
+  (`{id, version, channel, releaseUrl, blocked?}`) and `IPluginRelease` (the
+  standalone signed plugin release document: `compatibility.{core,pluginApi}`,
+  `artifacts.{manifestUrl,archiveUrl,sha256}`, Ed25519 `security`). The legacy
+  single-version inline `IPluginRegistryEntry` / `IPluginRegistryVersionEntry`
+  were removed (no consumer; replaced by the multi-version release-ref model).
+  Mirrors the backend `plugin-registry.schema.json` +
+  `config/schemas/registry/plugin-release.schema.json`.
+
+## [1.3.2]
+
+### Changed
+
+- Maintenance release: cut a clean published version for consumers to pin.
+  Supersedes the `1.3.1` test publish; no functional or API changes since
+  `1.3.0`.
+
+## [1.3.0]
+
+### Added
+
+- `ENDPOINTS.AUTH.FORGOT_PASSWORD` (`/cms-api/v1/auth/forgot-password`) and
+  `ENDPOINTS.AUTH.RESET_PASSWORD` (`/cms-api/v1/auth/reset-password`) so the
+  password-recovery flow is part of the shared API contract (issue #31). The
+  web frontend and the mobile app now build these requests from shared
+  constants instead of local/ad-hoc paths.
+- Request DTOs `IForgotPasswordRequest` and `IResetPasswordRequest`, and
+  response types `IForgotPasswordResponse` / `IResetPasswordResponse`,
+  mirroring the backend `requests/auth/forgot_password.json` and
+  `reset_password.json` schemas. `scripts/check-schema-parity.mjs` now covers
+  these request schemas.
+
+## [1.2.5]
+
+### Changed
+
+- `IResetPasswordStyle` now models the full two-step reset flow instead of
+  just the "request a recovery mail" screen. Added optional CMS fields for
+  the set-password mode: `reset_title`, `reset_label_pw`,
+  `reset_pw_placeholder`, `reset_label_pw_confirm`,
+  `reset_pw_confirm_placeholder`, `reset_label_submit`,
+  `reset_success_title`, `reset_alert_success`, `reset_redirect_text`,
+  `reset_error_invalid_token`, `reset_error_pw_short`, and
+  `reset_error_pw_mismatch`.
+- Removed the stale legacy `text_md` and `email_user` fields from
+  `IResetPasswordStyle` so the shared contract matches the backend
+  `resetPassword` style schema.
+
+## [1.2.4] - 2026-06-05
+
+### Added
+
+- Communication preferences support in profile section. `IUserData` gains
+  `receives_notifications` and `receives_emails` boolean fields.
+- New CMS endpoint `UPDATE_COMMUNICATION_PREFERENCES` for updating user
+  communication preferences.
+- Communication preferences CMS label fields on `IProfileStyle`: 
+  `profile_communication_preferences_title`,
+  `profile_communication_preferences_description`,
+  `profile_receive_notifications_label`,
+  `profile_receive_notifications_description`,
+  `profile_receive_emails_label`,
+  `profile_receive_emails_description`,
+  `profile_communication_preferences_button`,
+  `profile_communication_preferences_success`, and
+  `profile_communication_preferences_error_general`.
+- New permission `ADMIN_SCHEDULED_JOB_MANAGE` for scheduled job management.
+
+## [1.2.3] - 2026-06-04
+
+### Added
+
+- Registration-lifecycle CMS label fields on the auth styles so the
+  previously hardcoded frontend UI text becomes admin-managed. All are
+  optional `IContentField<string>` (additive, no consumer break):
+  `IRegisterStyle` gains `label_code`, `code_placeholder`,
+  `label_go_home`, `label_go_to_login`; `ILoginStyle` gains
+  `label_register`; `IValidateStyle` gains the activation status text
+  `loading_title`, `loading_text`, `error_title`, `error_heading`,
+  `error_text`, `success_title`, and `redirect_text` (use `{seconds}`
+  as the countdown placeholder). Defaults + en-GB/de-CH translations are
+  seeded backend-side by `Version20260604111011`.
+- Blocking Vitest coverage gate (ecosystem testing strategy, Slice 10).
+  Added `@vitest/coverage-istanbul`, a `vitest.config.ts` with a coverage
+  threshold (>= 60% lines/functions/statements/branches) scoped to the
+  framework-free runtime-helper bundle (interpolation, condition,
+  asset-URL, CMS-class classifier, page transform), and a `test:coverage`
+  script. `shared-tests.yml` now runs `npm run test:coverage`, so a
+  coverage regression on those shared contracts fails CI (currently ~97%
+  lines). Implements canonical Testing Rule 20 (warning -> blocking). The
+  istanbul provider is used instead of v8 because v8 double-counts files on
+  Windows (phantom 0% entries) and would fail the gate locally.
+- New public subpath export `@selfhelp/shared/testing` — the plugin
+  certification kit (`CERTIFICATION_KIT_VERSION` `1.0.0`).
+  `definePluginCertification(config).run(manifest)` now performs the real
+  **static manifest certification** and returns a typed
+  `IPluginCertificationReport`: ordered checks `manifest-valid`,
+  `capabilities-vs-trust-level`, `compatibility-shape`,
+  `lookup-ownership`, `db-naming` (also exported individually as
+  `checkManifestValid`, `checkCapabilitiesVsTrustLevel`,
+  `checkCompatibilityShape`, `checkLookupOwnership`, `checkDbNaming`, and
+  `runCertificationChecks`). Built on the existing plugin SDK
+  (`IPluginManifest` + semver helpers) so manifest typing/range parsing is
+  not re-implemented. Runtime install/lifecycle remains the backend host
+  certification's responsibility — the kit gates the manifest before
+  publishing; the host gates the actual install. Also ships the
+  fully-working in-memory `mockMercureHub` (Mercure recorder, no polling)
+  and `seedFromLockFile`.
+- `IPluginManifestDataAccess` now mirrors the manifest schema's
+  `ownedTables` and `ownedDataTablePrefix` fields (previously only
+  `read`/`write`/`delete` were typed), so the `db-naming` certification
+  check is fully typed against the real manifest.
+- Vitest unit tests for the runtime helpers (`replaceCalcedValues`,
+  `evaluateCondition`/`buildConditionContext`, `resolveAssetUrl`/
+  `resolveAssetSources`, `classifyClass`/`classifyClassString`,
+  `transformPageData`/`transformPagesData`) and the testing kit.
+
+### Changed
+
+- `scripts/check-schema-parity.mjs` now also checks API response
+  contracts (`config/schemas/api/v1`: response envelope, auth login,
+  form submit) against the shared TS types, not only the plugin SDK
+  schemas. The form-submit data shape is flagged as a tracked
+  `knownDrift` warning pending cross-repo reconciliation
+  (`submitted_at` / `user_authenticated` are in the backend schema but
+  not in `IFormSubmitData`).
+
 ## [1.2.1] - 2026-05-28
 
 ### Fixed

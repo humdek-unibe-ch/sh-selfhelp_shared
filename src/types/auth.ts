@@ -25,6 +25,8 @@ export interface IUserData {
     timezone_id: number | null;
     timezone: string | null;
     blocked: boolean;
+    receives_notifications: boolean;
+    receives_emails: boolean;
     user_type: string | null;
     language: ILanguagePreference | null;
     languages?: ILanguagePreference[];
@@ -97,6 +99,7 @@ export const PERMISSIONS = {
     ADMIN_SCHEDULED_JOB_READ: 'admin.scheduled_job.read',
     ADMIN_SCHEDULED_JOB_EXECUTE: 'admin.scheduled_job.execute',
     ADMIN_SCHEDULED_JOB_DELETE: 'admin.scheduled_job.delete',
+    ADMIN_SCHEDULED_JOB_MANAGE: 'admin.scheduled_job.manage',
     ADMIN_SECTION_DELETE: 'admin.section.delete',
     ADMIN_SETTINGS: 'admin.settings',
     ADMIN_CMS_PREFERENCES_READ: 'admin.cms_preferences.read',
