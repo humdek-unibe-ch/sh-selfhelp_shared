@@ -9,6 +9,29 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.7.0
+
+### Added
+
+- Error-page style contracts in a new `styles/error.ts` (re-exported from the
+  package root): `INoAccessStyle` (the 403 `no-access` / `no-access-guest`
+  pages), `INotFoundStyle` (the 404 page) and `IMissingStyle`. Each carries the
+  shared `title` / `message` / `button_label` (plus `login_label` /
+  `show_login` for the access-denied variants) copy fields and the
+  `mantine_color` / `mantine_radius` / `mantine_shadow` /
+  `mantine_button_variant` / `show_icon` presentation fields that the new
+  styled system error pages render.
+- `IShowUserInputStyle` + `IShowUserInputEntry` (`styles/forms.ts`): the
+  contract for the new **showUserInput** style, which renders a form's
+  collected entries as a table. It covers the data-table feature flags
+  (`dt_sortable` / `dt_searching` / `dt_paginate` / `dt_info` /
+  `dt_default_order_column` / `dt_default_order_dir`), `csv_export`,
+  `delete_entry` with translatable `delete_modal_title` / `delete_modal_body`,
+  column remapping via `fields_map`, `own_entries_only` / `show_timestamp`, the
+  full `mantine_table_*` styling set, and the `entries` array — where each row
+  exposes `record_id`, `id_users` and the per-row `_can_delete` flag the
+  renderer uses to show a trash icon only for rows the current user may delete.
+
 ## v1.6.1
 
 ### Added
