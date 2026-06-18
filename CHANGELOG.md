@@ -9,6 +9,25 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.11.0
+
+### Added
+
+- **Mobile UI adapter contract is now a single public source
+  (`IMobileUiAdapters` + the `IMobile*Props` capability interfaces).** Mobile
+  rendering plan sections 8.3 / 9: both mobile tiers (the public app's
+  open-source adapters and the private `@selfhelp/mobile-pro-ui` overrides) now
+  consume one contract from `@selfhelp/shared` instead of each repo keeping a
+  hand-synced copy. The module is type-only (it imports `react` types and the
+  shared semantic scales `THeroUiSize`/`THeroUiButtonVariant`; it pulls in no
+  React Native runtime dependency), which is why it lives here rather than in a
+  separate contract package. The milestone-one capability set is
+  `MobileButton`, `MobileText`, `MobileContainer`, `MobileCard`, `MobileInput`,
+  `MobileTextarea`, `MobileSwitch`, `MobileCheckbox`, `MobileSelect`, and
+  `MobileModal`. Covered by a contract test (`src/types/__tests__`) that locks
+  the exact set; consumers enforce the shape at compile time
+  (`ossAdapters`/`proAdapters: IMobileUiAdapters`).
+
 ## v1.10.0
 
 ### Changed
