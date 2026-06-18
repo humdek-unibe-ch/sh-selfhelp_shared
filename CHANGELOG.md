@@ -9,6 +9,42 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.7.2
+
+### Added
+
+- `InstanceManifest` now models the optional `backupSchedule`
+  (`BackupSchedulePolicy` + `BackupRetentionPolicy`) and `envOverrides` fields,
+  mirroring the manager's authoritative manifest contract
+  (`sh-manager/packages/schemas/src/types.ts`). Both are optional — additive and
+  backward compatible. This restores the cross-repo `distribution.test.ts`
+  parity check, which was red against the manager's `instance-manifest.json`
+  example fixture.
+
+### Changed
+
+- **Lint is now a blocking CI gate.** `npm run lint -- --max-warnings=0` runs on
+  every PR/push to `main` (`plugin-sdk-check.yml`) and before npm publish
+  (`publish.yml` now runs headers → lint → typecheck → build → test before
+  `npm publish`). The strict, type-aware ESLint flat config already existed but
+  was not enforced by any workflow; no lint rules were changed and no runtime
+  behavior changed.
+
+## v1.7.1
+
+### Changed
+
+- Documented the `frontend_compatibility` preflight check code in the
+  system-maintenance contract (`types/api/system.ts`). The frontend-only update
+  preflight (`IFrontendUpdatePreflight`) now carries the standardized
+  `ICompatibilityError` fields under a `frontend_compatibility` check when the
+  running core forbids the target frontend, or the target frontend needs a
+  different core — the bidirectional frontend ⇄ core rule the SelfHelp Manager
+  enforces, now mirrored by the CMS so its verdict matches the manager's instead
+  of always reporting "OK". No shape change: `IUpdatePreflightCheck` already
+  carries `code` plus the compatibility fields, so this is a documentation /
+  contract-clarification release (additive, backward compatible).
+
 ## v1.7.0
 
 ### Added
