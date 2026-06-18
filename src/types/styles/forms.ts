@@ -446,7 +446,7 @@ export interface IShowUserInputEntry {
 }
 
 export interface IShowUserInputStyle extends IBaseStyle {
-    style_name: 'showUserInput';
+    style_name: 'show-user-input';
     own_entries_only?: IContentField<string>;
     show_timestamp?: IContentField<string>;
     dt_sortable?: IContentField<string>;

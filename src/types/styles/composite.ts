@@ -113,16 +113,16 @@ export interface IListItemStyle extends IStyleWithSpacing {
 }
 
 export interface IEntryListStyle extends IBaseStyle {
-    style_name: 'entryList';
+    style_name: 'entry-list';
     line_clamp?: IContentField<TMantineLineClamp>;
 }
 
 export interface IEntryRecordStyle extends IBaseStyle {
-    style_name: 'entryRecord';
+    style_name: 'entry-record';
 }
 
 export interface IEntryRecordDeleteStyle extends IBaseStyle {
-    style_name: 'entryRecordDelete';
+    style_name: 'entry-record-delete';
 }
 
 export interface ILoopStyle extends IBaseStyle {

@@ -36,7 +36,7 @@ export interface IContentField<T> {
  * - `condition` is a JSON-Logic expression evaluated client-side for
  *   visibility (mirrors backend `ConditionService`).
  * - `data_config` is an optional JSON config string used by data-bound
- *   styles (entryList, formUserInputRecord, …).
+ *   styles (entry-list, form-record, …).
  */
 export interface IBaseStyle {
     id: number;

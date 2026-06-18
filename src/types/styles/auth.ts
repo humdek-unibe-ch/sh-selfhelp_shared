@@ -85,7 +85,7 @@ export interface IValidateStyle extends IStyleWithSpacing {
 }
 
 export interface IResetPasswordStyle extends IStyleWithSpacing {
-    style_name: 'resetPassword';
+    style_name: 'reset-password';
     label_pw_reset?: IContentField<string>;
     type?: IContentField<string>;
     alert_success?: IContentField<string>;
@@ -107,7 +107,7 @@ export interface IResetPasswordStyle extends IStyleWithSpacing {
 }
 
 export interface ITwoFactorAuthStyle extends IStyleWithSpacing {
-    style_name: 'twoFactorAuth';
+    style_name: 'two-factor-auth';
     label_code?: IContentField<string>;
     label_submit?: IContentField<string>;
     alert_fail?: IContentField<string>;

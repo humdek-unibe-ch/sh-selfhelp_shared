@@ -9,6 +9,30 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.8.0
+
+### Changed
+
+- **BREAKING (shipped as a minor by request): CMS style names are now
+  kebab-case.** The `style_name` discriminator on the core style contracts was
+  renamed from camelCase to kebab-case so the cross-repo style catalog uses one
+  casing everywhere (backend `styles` seeds/DB, this package, the frontend
+  `BasicStyle` dispatcher, and the mobile renderers). Renamed: `resetPassword` →
+  `reset-password`, `twoFactorAuth` → `two-factor-auth`, `noAccess` →
+  `no-access`, `notFound` → `not-found`, `entryList` → `entry-list`,
+  `entryRecord` → `entry-record`, `entryRecordDelete` → `entry-record-delete`,
+  `showUserInput` → `show-user-input`. The TypeScript interface names
+  (`IResetPasswordStyle`, `IEntryListStyle`, …) are unchanged — only the
+  `style_name` string literal moved.
+- Because this is a breaking contract change released as a **minor** (1.8.0),
+  consumers on a `^1.7.x` range pick it up on their next install. It must land in
+  lockstep: the backend renames the matching `styles.name` rows (sections
+  reference styles by FK id, so it is a metadata rename, not a content
+  migration), and the frontend/mobile update their local style-name unions +
+  dispatcher keys in the same release.
+- `AGENTS.md` now mandates kebab-case style names; the previous "preserve legacy
+  camelCase names" guidance was reversed.
+
 ## v1.7.2
 
 ### Added

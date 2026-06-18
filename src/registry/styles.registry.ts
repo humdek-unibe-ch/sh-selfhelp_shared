@@ -81,8 +81,8 @@ export const BASE_STYLE_REGISTRY = {
     login: { description: 'User login form', category: 'auth', frontendOnly: true, canHaveChildren: false },
     register: { description: 'User registration form', category: 'auth', frontendOnly: true, canHaveChildren: false },
     validate: { description: 'Email/account validation flow', category: 'auth', frontendOnly: true, canHaveChildren: true },
-    resetPassword: { description: 'Reset password form', category: 'auth', frontendOnly: true, canHaveChildren: false },
-    twoFactorAuth: { description: 'Two-factor auth code form', category: 'auth', frontendOnly: true, canHaveChildren: false },
+    'reset-password': { description: 'Reset password form', category: 'auth', frontendOnly: true, canHaveChildren: false },
+    'two-factor-auth': { description: 'Two-factor auth code form', category: 'auth', frontendOnly: true, canHaveChildren: false },
     profile: { description: 'User profile management', category: 'auth', frontendOnly: true, canHaveChildren: false },
 
     // ===== layout =====
@@ -168,9 +168,9 @@ export const BASE_STYLE_REGISTRY = {
     timeline: { description: 'Mantine Timeline', category: 'composite', frontendOnly: true, canHaveChildren: true },
     list: { description: 'Mantine List', category: 'composite', frontendOnly: true, canHaveChildren: true },
     'list-item': { description: 'Mantine List.Item', category: 'composite', frontendOnly: true, canHaveChildren: true },
-    entryList: { description: 'Data-driven list of entries (form-log table)', category: 'composite', frontendOnly: true, canHaveChildren: true },
-    entryRecord: { description: 'Single-record container', category: 'composite', frontendOnly: true, canHaveChildren: true },
-    entryRecordDelete: { description: 'Inline delete confirmation for an entry', category: 'composite', frontendOnly: true, canHaveChildren: false },
+    'entry-list': { description: 'Data-driven list of entries (form-log table)', category: 'composite', frontendOnly: true, canHaveChildren: true },
+    'entry-record': { description: 'Single-record container', category: 'composite', frontendOnly: true, canHaveChildren: true },
+    'entry-record-delete': { description: 'Inline delete confirmation for an entry', category: 'composite', frontendOnly: true, canHaveChildren: false },
     loop: { description: 'Loop / repeater over backend-provided rows', category: 'composite', frontendOnly: true, canHaveChildren: true },
 } as const satisfies Record<string, IStyleRegistryEntry>;
 

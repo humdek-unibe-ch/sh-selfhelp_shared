@@ -55,7 +55,7 @@ These rules apply to every documentation change in active SelfHelp2 repositories
 ## Architecture Rules
 
 - Treat source files as shared contracts for multiple consumers.
-- Keep backend wire names intact, especially snake_case fields and legacy style names.
+- Keep backend wire names intact, especially snake_case field names. Style names follow kebab-case (the legacy camelCase forms were renamed in v1.8.0); coordinate any further style rename across backend, frontend, and mobile in lockstep.
 - `style_name` is the discriminator for CMS styles.
 - Every user-facing style must be represented in both `TStyle` and `STYLE_REGISTRY`.
 - `STYLE_REGISTRY` is the runtime style registry; `TStyle` is the compile-time style union.
@@ -70,7 +70,7 @@ These rules apply to every documentation change in active SelfHelp2 repositories
 - Use `I...` names for interfaces and `T...` names for type aliases.
 - Use `IContentField<T>` for CMS field values.
 - Use literal `style_name` values in style interfaces.
-- Preserve existing style-name formats, including kebab-case names and legacy camelCase names such as `resetPassword`, `twoFactorAuth`, `entryList`, `entryRecord`, and `entryRecordDelete`.
+- Style names are **kebab-case** (e.g. `reset-password`, `two-factor-auth`, `entry-list`, `entry-record`, `entry-record-delete`, `no-access`, `not-found`, `show-user-input`). The legacy camelCase forms (`resetPassword`, `twoFactorAuth`, `entryList`, `entryRecord`, `entryRecordDelete`, …) were renamed to kebab-case in v1.8.0; new styles must be registered kebab-case and the backend seeds/DB, this package, the frontend, and the mobile renderers must stay in lockstep.
 - Use `mantine_...` field names when matching CMS/Mantine-backed fields.
 - Use `'0' | '1'` string unions where existing CMS boolean-like fields use strings.
 - Keep optional backend fields optional unless the backend guarantees them.

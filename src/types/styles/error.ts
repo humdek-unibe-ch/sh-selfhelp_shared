@@ -5,7 +5,7 @@ SPDX-License-Identifier: MPL-2.0
 import type { IContentField, IStyleWithSpacing } from './base';
 
 export interface INoAccessStyle extends IStyleWithSpacing {
-    style_name: 'noAccess';
+    style_name: 'no-access';
     title?: IContentField<string>;
     message?: IContentField<string>;
     button_label?: IContentField<string>;
@@ -19,7 +19,7 @@ export interface INoAccessStyle extends IStyleWithSpacing {
 }
 
 export interface INotFoundStyle extends IStyleWithSpacing {
-    style_name: 'notFound';
+    style_name: 'not-found';
     title?: IContentField<string>;
     message?: IContentField<string>;
     button_label?: IContentField<string>;
