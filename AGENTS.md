@@ -20,7 +20,7 @@ This repository is not a backend application. It does not contain controllers, e
 - `tsup` for CJS, ESM, and declaration builds
 - `json-logic-js` for condition evaluation
 - Vitest is configured; runtime-helper + testing-kit tests live under `src/**/__tests__/`
-- ESLint is listed, but no ESLint v9 config is currently present
+- ESLint 9 flat config (`eslint.config.mjs`) with `typescript-eslint` (type-aware) + `eslint-plugin-unused-imports`; type-aware linting uses the lint-only `tsconfig.eslint.json`
 - License headers are managed with `license-check-and-add`
 - Package output is generated into `dist/`
 
@@ -87,7 +87,7 @@ These rules apply to every documentation change in active SelfHelp2 repositories
 - Do not edit `dist` manually.
 - Update exports when adding public modules.
 - Update README/CHANGELOG when public API or package behavior changes.
-- Run `npm run typecheck` before finishing changes.
+- Run `npm run lint` and `npm run typecheck` before finishing changes, and fix any lint failures with behavior-preserving fixes (see "Linting & Quality Gates").
 - Add or update tests for runtime helpers when changing behavior.
 
 ## Security Rules
@@ -128,8 +128,9 @@ These rules apply to every documentation change in active SelfHelp2 repositories
 - `npm run typecheck` currently passes and should be run for all changes.
 - `npm run test` runs Vitest; the runtime-helper tests (`replaceCalcedValues`, `evaluateCondition`/`buildConditionContext`, `resolveAssetUrl`, `classifyClass`/`classifyClassString`, `transformPageData`) and the testing-kit stability test pass.
 - Add Vitest tests for changed runtime helpers such as condition evaluation, interpolation, asset URL handling, class classification, spacing, and page transforms.
-- `npm run lint` currently fails until an ESLint v9 flat config is added.
-- `npm run headers:check` currently fails on `README.md` and `CHANGELOG.md`; confirm/fix license config before treating it as a required gate.
+- `npm run lint` runs the ESLint 9 flat config (`eslint.config.mjs`) and currently passes with zero errors/warnings (`--max-warnings=0`); `npm run lint:fix` applies the safe auto-fixes. Lint is a required gate — see "Linting & Quality Gates".
+- `npm run headers:check` currently passes (all source carries the SPDX header).
+- `npm run test` now passes both with and without a sibling `sh-manager` checkout. The cross-repo `distribution.test.ts` parity check (`describe.runIf(hasManager)`) was previously red against the manager `instance-manifest.json` fixture because the shared `distribution.ts` type did not model the manifest's `backupSchedule` key; the type now mirrors the manager's authoritative contract (`BackupSchedulePolicy` + `BackupRetentionPolicy`, plus the optional `envOverrides`), so the parity test is green. Both additions are optional fields — additive and non-breaking to the published type. Keep this type in sync with `sh-manager/packages/schemas/src/types.ts` when the manifest contract changes.
 - Avoid running `npm run build` unless generated `dist` changes are intended.
 
 ### Canonical Testing Rules (all SelfHelp repos)
@@ -181,6 +182,36 @@ These are the canonical SelfHelp testing policy, shared verbatim across the back
 - **Coverage gate state (rule 20):** `@selfhelp/shared` owns the **only blocking** coverage gate in the ecosystem. `vitest.config.ts` enforces `thresholds` (istanbul provider, ≥ 60% lines/functions/statements/branches on the framework-free runtime-helper bundle); `shared-tests.yml` runs `npm run test:coverage` and the job **fails below threshold** (currently ~97%). `npm test` alone does **not** run the gate. The backend/frontend/mobile/plugin "rule 20" targets are advisory/staged or planned — see each repo's note and the host `docs/developer/15-testing-guidelines.md` "Coverage gates". Istanbul (not v8) is deliberate: the v8 provider double-counts files on Windows and would fail the gate locally.
 - Standard shared test commands: `npm test`, `npm run test:coverage` (the blocking gate), `npm run check:schemas`, `npm run typecheck`, `npm run build`, `npm run test:release` (headers + typecheck + schemas + coverage + build). Do not invent new names.
 
+## Linting & Quality Gates
+
+Linting and package quality checks are **mandatory** whenever code is changed. These checks are not optional polish; they protect the published contract that the web frontend and mobile app depend on.
+
+### When to run what
+
+- After changing **any** TypeScript source, test, script, or package export, the agent **must** run `npm run lint`. If lint fails, the agent **must** fix the issues before finishing the task. `npm run lint:fix` applies the safe auto-fixes (unused-import removal, unnecessary-assertion removal, type-import normalization); resolve the rest by hand.
+- For **source or public API changes**, the agent must also run `npm run typecheck` and `npm run build` (the build verifies CJS + ESM + declaration output for all six entry points: `.`, `./registry`, `./theme`, `./tailwind`, `./plugin-sdk`, `./testing`).
+- For **schema / API contract changes**, the agent must run `npm run check:schemas`.
+- Before **release-related changes**, the agent must run `npm run test:release` (`headers:check` + `typecheck` + `test:coverage` + `build`).
+- The final response must mention the commands that were run and their result.
+- **CI enforces lint as a blocking, zero-warning gate.** `npm run lint -- --max-warnings=0` runs on every PR/push to `main` (`plugin-sdk-check.yml`, alongside headers → typecheck → build → schema parity → tests) and again before the npm publish (`publish.yml` runs headers → lint → typecheck → build → test before `npm publish`). Generated output (`dist/**`, `coverage/**`) is ignored by the flat config so the run is deterministic. Never merge or publish on a red gate, and do not weaken these workflows to go green.
+
+### How fixes must be made
+
+- All lint fixes must be **behavior-preserving and mechanical**: remove truly-unused imports/variables, prefix intentionally-unused identifiers with `_`, replace `any` with `unknown`/generics/existing types, add `void`/type-only imports, drop unnecessary assertions, etc.
+- Do **not** change functionality, runtime behavior, or control flow only to satisfy lint.
+- Do **not** change public exports, package entry points (`main`/`module`/`types`/`exports`), or declaration semantics only to satisfy lint. Preserving the public API wins over silencing a lint error.
+- If a lint issue cannot be fixed without a possible functionality or compatibility change, do **not** guess: add a **narrow, inline** `eslint-disable-next-line` with a comment explaining why, keep it minimal, and report it.
+
+### Rules that must stay enforced
+
+- Unused imports are not allowed.
+- Unused variables are not allowed unless prefixed with `_`.
+- Explicit `any` is not allowed unless there is a narrow, documented inline exception. The `no-unsafe-*` family (assignment/member-access/call/return) keeps `any` from propagating through the type system; it is relaxed only in test fixtures.
+- Unhandled / floating promises (`no-floating-promises`) and misused promises (`no-misused-promises`) are not allowed (mark intentional fire-and-forget with `void`).
+- Consistent, side-effect-free type imports (`consistent-type-imports`) and no duplicate imports.
+- ESLint rules must **not** be disabled globally (file-level or whole-rule) to hide problems; use narrow inline exceptions only.
+- SPDX / license headers must be preserved on every source file (`npm run headers:check` must pass).
+
 ## Build / Dev Commands
 
 - `npm install`: install dependencies.
@@ -188,7 +219,8 @@ These are the canonical SelfHelp testing policy, shared verbatim across the back
 - `npm run build`: build CJS, ESM, and declaration files into `dist`.
 - `npm run dev`: run `tsup` in watch mode.
 - `npm run test`: run Vitest.
-- `npm run lint`: run ESLint once config is fixed.
+- `npm run lint`: run ESLint 9 (type-aware flat config).
+- `npm run lint:fix`: run ESLint with `--fix` (applies only the safe, behavior-preserving auto-fixes).
 - `npm run headers:add`: add SPDX headers.
 - `npm run headers:check`: check SPDX headers.
 - `npm run headers:remove`: remove SPDX headers.

@@ -50,7 +50,7 @@ function interfaceFields(source: string, name: string): string[] {
         const line = rawLine.trim();
         if (line === '' || line.startsWith('//') || line.startsWith('*') || line.startsWith('/*')) continue;
         const m = /^([A-Za-z_][A-Za-z0-9_]*)\??\s*:/.exec(line);
-        if (m) fields.push(m[1]!);
+        if (m) fields.push(m[1]);
     }
     return fields;
 }

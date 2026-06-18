@@ -67,7 +67,7 @@ describe('release-channel enum parity', () => {
         const matches = [...src.matchAll(/channel:\s*\{\s*enum:\s*(\[[^\]]*\])/g)];
         expect(matches.length).toBeGreaterThan(0);
         for (const m of matches) {
-            const arr = JSON.parse(m[1]!.replace(/'/g, '"')) as string[];
+            const arr = JSON.parse(m[1].replace(/'/g, '"')) as string[];
             expect([...arr].sort()).toEqual([...CANONICAL].sort());
         }
     });

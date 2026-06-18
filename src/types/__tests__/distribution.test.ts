@@ -53,7 +53,7 @@ const SPEC: Record<string, { required: string[]; optional?: string[]; kind?: str
     },
     'instance-manifest.json': {
         required: ['manifestVersion', 'instanceId', 'displayName', 'domain', 'mode', 'createdAt', 'updatedAt', 'registry', 'versions', 'images', 'routing', 'installedPlugins'],
-        optional: ['resources'],
+        optional: ['resources', 'backupSchedule', 'envOverrides'],
     },
     'instance-lock.json': {
         required: ['lockfileVersion', 'generatedAt', 'registry', 'core', 'services', 'plugins'],

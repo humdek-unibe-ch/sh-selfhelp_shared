@@ -121,6 +121,29 @@ export interface InstanceResourceConfig {
     logMaxFiles?: number;
 }
 
+/**
+ * GFS (grandfather-father-son) retention numbers for SCHEDULED backups.
+ * Mirrors the manager's authoritative `BackupRetentionPolicy`
+ * (sh-manager/packages/schemas/src/types.ts).
+ */
+export interface BackupRetentionPolicy {
+    daily: number;
+    weekly: number;
+    monthly: number;
+    maxAgeDays: number;
+}
+
+/**
+ * Per-instance nightly backup schedule stored in the instance manifest.
+ * Mirrors the manager's authoritative `BackupSchedulePolicy`.
+ */
+export interface BackupSchedulePolicy {
+    enabled: boolean;
+    /** Daily run time as `HH:MM` in the manager server's local time. */
+    time: string;
+    retention: BackupRetentionPolicy;
+}
+
 export interface InstanceManifest {
     manifestVersion: number;
     instanceId: string;
@@ -139,6 +162,14 @@ export interface InstanceManifest {
     routing: InstanceRouting;
     installedPlugins: InstalledPlugin[];
     resources?: InstanceResourceConfig;
+    /** Optional scheduled-backup policy; absent = no scheduled backups. */
+    backupSchedule?: BackupSchedulePolicy;
+    /**
+     * Operator-set non-secret environment overrides merged on top of the
+     * generated `.env`. Manager-controlled structural keys and secrets are
+     * never stored here. Mirrors the manager's authoritative manifest contract.
+     */
+    envOverrides?: Record<string, string>;
 }
 
 // ---------------------------------------------------------------------------

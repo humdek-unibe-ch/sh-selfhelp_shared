@@ -58,6 +58,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # A published artifact must pass the same quality gate as a PR before it is
+      # built and pushed to npm — never publish something that would fail CI.
+      - name: License headers
+        run: npm run headers:check
+
+      - name: Lint
+        run: npm run lint -- --max-warnings=0
+
+      - name: Type-check
+        run: npm run typecheck
+
       - name: Build
         run: npm run build
 

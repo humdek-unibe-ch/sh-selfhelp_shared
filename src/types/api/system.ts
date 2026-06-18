@@ -178,9 +178,11 @@ export interface IUpdatePreflightCheck {
     message: string;
     /**
      * Standardized compatibility-error fields. Version/compatibility checks
-     * (e.g. `plugin_compatibility`) populate these so the admin/operator sees
-     * exactly which component blocks which target and the range it requires.
-     * Absent on non-compatibility checks.
+     * (`plugin_compatibility` for a core update blocked by an installed plugin;
+     * `frontend_compatibility` for a frontend-only update the running core
+     * forbids or that needs a different core) populate these so the
+     * admin/operator sees exactly which component blocks which target and the
+     * range it requires. Absent on non-compatibility checks.
      */
     component?: string;
     component_id?: string;
@@ -385,11 +387,16 @@ export type IFrontendUpdateReleases = IUpdateReleases;
 export type IFrontendUpdateReleasesResponse = IUpdateReleasesResponse;
 
 /**
- * GET /admin/system/update/frontend/preflight — lightweight compatibility
- * verdict for a frontend-only target. Reuses {@link IUpdatePreflight}; the
- * frontend is stateless so `database.destructive`/`requires_backup` are always
- * false and the authoritative frontend ⇄ core + signature checks are deferred to
- * the manager. Aliased for call-site clarity.
+ * GET /admin/system/update/frontend/preflight — compatibility verdict for a
+ * frontend-only target. Reuses {@link IUpdatePreflight}; the frontend is
+ * stateless so `database.destructive`/`requires_backup` are always false. The
+ * frontend ⇄ core compatibility rule IS evaluated here (as a
+ * `frontend_compatibility` check) against the same signed registry metadata the
+ * SelfHelp Manager resolves, so the CMS verdict matches the manager's instead of
+ * always reporting "OK"; the manager still re-verifies signatures + image
+ * digests at execution and remains the final authority (it also enforces the
+ * running core's range from the instance lock when the core release has left the
+ * registry). Aliased for call-site clarity.
  */
 export type IFrontendUpdatePreflight = IUpdatePreflight;
 export type IFrontendUpdatePreflightResponse = IUpdatePreflightResponse;
