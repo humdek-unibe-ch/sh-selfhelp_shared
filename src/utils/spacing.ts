@@ -55,7 +55,10 @@ export function spacingToClasses(
     spacingToTailwind: Record<string, string>
 ): string[] {
     const classes: string[] = [];
-    for (const [key, raw] of Object.entries(spacing)) {
+    // `Object.entries` widens the value of an index-signature-free interface to
+    // `any`; restate the real `ISpacingValue` value type so the computed lookup
+    // below stays type-safe. Runtime behaviour is unchanged.
+    for (const [key, raw] of Object.entries(spacing) as Array<[string, string | undefined]>) {
         if (!raw) continue;
         const tail = spacingToTailwind[raw] ?? raw;
         classes.push(`${key}-${tail}`);

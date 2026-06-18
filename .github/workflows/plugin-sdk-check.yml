@@ -92,6 +92,13 @@ jobs:
         working-directory: sh-selfhelp_shared
         run: npm run headers:check
 
+      # Blocking lint gate (zero warnings). The strict, type-aware flat config
+      # in eslint.config.mjs is only meaningful if CI enforces it; --max-warnings=0
+      # makes the run deterministic.
+      - name: Lint
+        working-directory: sh-selfhelp_shared
+        run: npm run lint -- --max-warnings=0
+
       - name: Type-check
         working-directory: sh-selfhelp_shared
         run: npm run typecheck

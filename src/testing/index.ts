@@ -468,12 +468,12 @@ export interface ILockFileSeed {
 export function seedFromLockFile(lockJson: unknown): ILockFileSeed {
     const plugins: ILockFilePluginEntry[] = [];
     if (lockJson && typeof lockJson === 'object' && 'plugins' in lockJson) {
-        const raw = (lockJson as { plugins: unknown }).plugins;
+        const raw = lockJson.plugins;
         if (raw && typeof raw === 'object') {
             for (const [pluginId, entry] of Object.entries(raw as Record<string, unknown>)) {
                 const version =
                     entry && typeof entry === 'object' && 'version' in entry
-                        ? String((entry as { version: unknown }).version)
+                        ? String(entry.version)
                         : '0.0.0';
                 plugins.push({ pluginId, version });
             }

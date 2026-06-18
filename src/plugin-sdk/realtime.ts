@@ -167,7 +167,7 @@ export function usePluginRealtime<TPayload = unknown>(
     useEffect(() => {
         if (!enabled) {
             setIsOnline(false);
-            return;
+            return undefined;
         }
 
         const factory = transportFactory ?? (isEventSourceAvailable() ? defaultTransportFactory : null);
@@ -176,7 +176,7 @@ export function usePluginRealtime<TPayload = unknown>(
             // `react-native-sse`). Stay quiet — the plan forbids polling
             // here; the consumer must render an offline banner instead.
             setIsOnline(false);
-            return;
+            return undefined;
         }
 
         let cancelled = false;
@@ -190,7 +190,7 @@ export function usePluginRealtime<TPayload = unknown>(
         } catch (err) {
             setError(err instanceof Error ? err : new Error(String(err)));
             setIsOnline(false);
-            return;
+            return undefined;
         }
 
         const eventName = `plugin/${pluginId}/${expandedTopic}`;

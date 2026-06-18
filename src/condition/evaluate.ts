@@ -100,7 +100,7 @@ export function evaluateCondition(
         // jsonLogic typings are loose; the result of any boolean rule is
         // a boolean, but rules like {var: 'x'} can return raw values, so
         // we coerce.
-        const raw = jsonLogic.apply(parsed as jsonLogic.RulesLogic, context as Record<string, unknown>);
+        const raw: unknown = jsonLogic.apply(parsed as jsonLogic.RulesLogic, context);
         const visible = Boolean(raw);
         return options.withDebug
             ? { visible, debug: { condition: trimmed, result: visible, variables: { ...context } } }

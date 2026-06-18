@@ -4,27 +4,27 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { SYSTEM_ENDPOINTS } from '../system';
-import type {
-    IFrontendUpdatePreflight,
-    IFrontendUpdateReleases,
-    IFrontendUpdateRequest,
-    IFrontendUpdateRequestResponse,
-    IMaintenanceSetRequest,
-    ISystemAdvisories,
-    ISystemAdvisoriesResponse,
-    ISystemAdvisory,
-    ISystemHealth,
-    ISystemMaintenance,
-    ISystemVersion,
-    IUpdatePreflight,
-    IUpdateRequest,
-    IUpdateRequestResponse,
-    IUpdateStatus,
-    IUpdateStatusResponse,
-    TSystemAdvisorySeverity,
-    TUpdateKind,
-    TUpdateOperationStatus,
+import {
+    SYSTEM_ENDPOINTS,
+    type IFrontendUpdatePreflight,
+    type IFrontendUpdateReleases,
+    type IFrontendUpdateRequest,
+    type IFrontendUpdateRequestResponse,
+    type IMaintenanceSetRequest,
+    type ISystemAdvisories,
+    type ISystemAdvisoriesResponse,
+    type ISystemAdvisory,
+    type ISystemHealth,
+    type ISystemMaintenance,
+    type ISystemVersion,
+    type IUpdatePreflight,
+    type IUpdateRequest,
+    type IUpdateRequestResponse,
+    type IUpdateStatus,
+    type IUpdateStatusResponse,
+    type TSystemAdvisorySeverity,
+    type TUpdateKind,
+    type TUpdateOperationStatus,
 } from '../system';
 
 /**
@@ -226,7 +226,7 @@ describe('system maintenance contracts', () => {
             rollback: { automatic_before_migrations: true, automatic_after_destructive_migrations: false },
         };
 
-        const check = blocked.checks[0]!;
+        const check = blocked.checks[0];
         expect(blocked.status).toBe('blocked');
         expect(check.component).toBe('plugin');
         expect(check.component_id).toBe('sh2-shp-survey-js');
