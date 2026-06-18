@@ -4,9 +4,9 @@ SPDX-License-Identifier: MPL-2.0
 */
 import type { IBaseStyle, IContentField, IStyleWithSpacing } from './base';
 import type {
-    TMantineSize,
     TMantineColor,
-    TMantineRadius,
+    TSharedSize,
+    TSharedRadius,
 } from '../mantine/common';
 
 export type TMantineTextInputVariant = 'default' | 'filled' | 'unstyled';
@@ -34,7 +34,7 @@ export interface IFormStyle extends IStyleWithSpacing {
     btn_cancel_color?: IContentField<string>;
     buttons_variant?: IContentField<string>;
     buttons_position?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface IFormLogStyle extends IFormStyle {
@@ -69,12 +69,12 @@ export interface ITextInputStyle extends IStyleWithSpacing {
     description?: IContentField<string>;
     is_required?: IContentField<string>;
     disabled?: IContentField<string>;
-    mantine_left_icon?: IContentField<string>;
-    mantine_right_icon?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_radius?: IContentField<TMantineRadius>;
-    mantine_text_input_variant?: IContentField<TMantineTextInputVariant>;
+    web_left_icon?: IContentField<string>;
+    web_right_icon?: IContentField<string>;
+    use_web_style?: IContentField<string>;
+    shared_size?: IContentField<TSharedSize>;
+    shared_radius?: IContentField<TSharedRadius>;
+    web_text_input_variant?: IContentField<TMantineTextInputVariant>;
     translatable?: IContentField<TMantineTranslatable>;
 }
 
@@ -90,16 +90,16 @@ export interface ITextareaStyle extends IStyleWithSpacing {
     markdown_editor?: IContentField<string>;
     description?: IContentField<string>;
     disabled?: IContentField<string>;
-    mantine_left_icon?: IContentField<string>;
-    mantine_right_icon?: IContentField<string>;
-    mantine_textarea_autosize?: IContentField<TMantineTextareaAutosize>;
-    mantine_textarea_min_rows?: IContentField<string>;
-    mantine_textarea_max_rows?: IContentField<string>;
-    mantine_textarea_resize?: IContentField<TMantineTextareaResize>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_radius?: IContentField<TMantineRadius>;
-    mantine_textarea_variant?: IContentField<TMantineTextareaVariant>;
-    use_mantine_style?: IContentField<string>;
+    web_left_icon?: IContentField<string>;
+    web_right_icon?: IContentField<string>;
+    web_textarea_autosize?: IContentField<TMantineTextareaAutosize>;
+    web_textarea_min_rows?: IContentField<string>;
+    web_textarea_max_rows?: IContentField<string>;
+    web_textarea_resize?: IContentField<TMantineTextareaResize>;
+    shared_size?: IContentField<TSharedSize>;
+    shared_radius?: IContentField<TSharedRadius>;
+    web_textarea_variant?: IContentField<TMantineTextareaVariant>;
+    use_web_style?: IContentField<string>;
     translatable?: IContentField<TMantineTranslatable>;
 }
 
@@ -112,12 +112,12 @@ export interface IRichTextEditorStyle extends IStyleWithSpacing {
     description?: IContentField<string>;
     is_required?: IContentField<string>;
     disabled?: IContentField<string>;
-    mantine_rich_text_editor_variant?: IContentField<string>;
-    mantine_rich_text_editor_placeholder?: IContentField<string>;
-    mantine_rich_text_editor_bubble_menu?: IContentField<string>;
-    mantine_rich_text_editor_text_color?: IContentField<string>;
-    mantine_rich_text_editor_task_list?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
+    web_rich_text_editor_variant?: IContentField<string>;
+    web_rich_text_editor_placeholder?: IContentField<string>;
+    web_rich_text_editor_bubble_menu?: IContentField<string>;
+    web_rich_text_editor_text_color?: IContentField<string>;
+    web_rich_text_editor_task_list?: IContentField<string>;
+    use_web_style?: IContentField<string>;
     translatable?: IContentField<TMantineTranslatable>;
 }
 
@@ -146,18 +146,18 @@ export interface IRadioStyle extends IStyleWithSpacing {
     is_required?: IContentField<string>;
     items?: IContentField<unknown[]>;
     is_inline?: IContentField<string>;
-    mantine_orientation?: IContentField<string>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_color?: IContentField<TMantineColor>;
-    mantine_radio_options?: IContentField<string>;
-    mantine_radio_label_position?: IContentField<string>;
-    mantine_radio_variant?: IContentField<string>;
-    mantine_radio_card?: IContentField<string>;
-    mantine_tooltip_label?: IContentField<string>;
-    mantine_tooltip_position?: IContentField<string>;
+    shared_orientation?: IContentField<string>;
+    shared_size?: IContentField<TSharedSize>;
+    web_color?: IContentField<TMantineColor>;
+    web_radio_options?: IContentField<string>;
+    web_radio_label_position?: IContentField<string>;
+    web_radio_variant?: IContentField<string>;
+    web_radio_card?: IContentField<string>;
+    web_tooltip_label?: IContentField<string>;
+    web_tooltip_position?: IContentField<string>;
     disabled?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
-    mantine_use_input_wrapper?: IContentField<string>;
+    use_web_style?: IContentField<string>;
+    web_use_input_wrapper?: IContentField<string>;
 }
 
 export interface ICheckboxStyle extends IStyleWithSpacing {
@@ -167,15 +167,15 @@ export interface ICheckboxStyle extends IStyleWithSpacing {
     value?: IContentField<string>;
     is_required?: IContentField<string>;
     checkbox_value?: IContentField<string>;
-    mantine_checkbox_icon?: IContentField<string>;
-    mantine_checkbox_labelPosition?: IContentField<TMantineCheckboxLabelPosition>;
+    web_checkbox_icon?: IContentField<string>;
+    web_checkbox_labelPosition?: IContentField<TMantineCheckboxLabelPosition>;
     description?: IContentField<string>;
     disabled?: IContentField<string>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_radius?: IContentField<TMantineRadius>;
-    mantine_color?: IContentField<TMantineColor>;
-    use_mantine_style?: IContentField<string>;
-    mantine_use_input_wrapper?: IContentField<TMantineUseInputWrapper>;
+    shared_size?: IContentField<TSharedSize>;
+    shared_radius?: IContentField<TSharedRadius>;
+    web_color?: IContentField<TMantineColor>;
+    use_web_style?: IContentField<string>;
+    web_use_input_wrapper?: IContentField<TMantineUseInputWrapper>;
 }
 
 export interface ISliderStyle extends IStyleWithSpacing {
@@ -184,20 +184,20 @@ export interface ISliderStyle extends IStyleWithSpacing {
     description?: IContentField<string>;
     name?: IContentField<string>;
     value?: IContentField<string>;
-    mantine_numeric_min?: IContentField<string>;
-    mantine_numeric_max?: IContentField<string>;
-    mantine_numeric_step?: IContentField<string>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_color?: IContentField<TMantineColor>;
-    mantine_radius?: IContentField<TMantineRadius>;
+    web_numeric_min?: IContentField<string>;
+    web_numeric_max?: IContentField<string>;
+    web_numeric_step?: IContentField<string>;
+    shared_size?: IContentField<TSharedSize>;
+    web_color?: IContentField<TMantineColor>;
+    shared_radius?: IContentField<TSharedRadius>;
     disabled?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
-    mantine_slider_marks_values?: IContentField<string>;
-    mantine_slider_show_label?: IContentField<string>;
-    mantine_slider_labels_always_on?: IContentField<string>;
-    mantine_slider_inverted?: IContentField<string>;
-    mantine_slider_thumb_size?: IContentField<string>;
-    mantine_slider_required?: IContentField<string>;
+    use_web_style?: IContentField<string>;
+    web_slider_marks_values?: IContentField<string>;
+    web_slider_show_label?: IContentField<string>;
+    web_slider_labels_always_on?: IContentField<string>;
+    web_slider_inverted?: IContentField<string>;
+    web_slider_thumb_size?: IContentField<string>;
+    web_slider_required?: IContentField<string>;
 }
 
 export interface IRangeSliderStyle extends IStyleWithSpacing {
@@ -206,18 +206,18 @@ export interface IRangeSliderStyle extends IStyleWithSpacing {
     description?: IContentField<string>;
     name?: IContentField<string>;
     value?: IContentField<string>;
-    mantine_numeric_min?: IContentField<string>;
-    mantine_numeric_max?: IContentField<string>;
-    mantine_numeric_step?: IContentField<string>;
-    mantine_range_slider_marks_values?: IContentField<string>;
-    mantine_range_slider_show_label?: IContentField<string>;
-    mantine_range_slider_labels_always_on?: IContentField<string>;
-    mantine_range_slider_inverted?: IContentField<string>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_color?: IContentField<TMantineColor>;
-    mantine_radius?: IContentField<TMantineRadius>;
+    web_numeric_min?: IContentField<string>;
+    web_numeric_max?: IContentField<string>;
+    web_numeric_step?: IContentField<string>;
+    web_range_slider_marks_values?: IContentField<string>;
+    web_range_slider_show_label?: IContentField<string>;
+    web_range_slider_labels_always_on?: IContentField<string>;
+    web_range_slider_inverted?: IContentField<string>;
+    shared_size?: IContentField<TSharedSize>;
+    web_color?: IContentField<TMantineColor>;
+    shared_radius?: IContentField<TSharedRadius>;
     disabled?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface IDatePickerStyle extends IStyleWithSpacing {
@@ -228,122 +228,122 @@ export interface IDatePickerStyle extends IStyleWithSpacing {
     is_required?: IContentField<string>;
     disabled?: IContentField<string>;
     description?: IContentField<string>;
-    mantine_datepicker_type?: IContentField<string>;
-    mantine_datepicker_format?: IContentField<string>;
-    mantine_datepicker_locale?: IContentField<string>;
-    mantine_datepicker_placeholder?: IContentField<string>;
-    mantine_datepicker_min_date?: IContentField<string>;
-    mantine_datepicker_max_date?: IContentField<string>;
-    mantine_datepicker_first_day_of_week?: IContentField<string>;
-    mantine_datepicker_weekend_days?: IContentField<string>;
-    mantine_datepicker_clearable?: IContentField<string>;
-    mantine_datepicker_allow_deselect?: IContentField<string>;
-    mantine_datepicker_readonly?: IContentField<string>;
-    mantine_datepicker_with_time_grid?: IContentField<string>;
-    mantine_datepicker_consistent_weeks?: IContentField<string>;
-    mantine_datepicker_hide_outside_dates?: IContentField<string>;
-    mantine_datepicker_hide_weekends?: IContentField<string>;
-    mantine_datepicker_time_step?: IContentField<string>;
-    mantine_datepicker_time_format?: IContentField<string>;
-    mantine_datepicker_date_format?: IContentField<string>;
-    mantine_datepicker_time_grid_config?: IContentField<string>;
-    mantine_datepicker_with_seconds?: IContentField<string>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_radius?: IContentField<TMantineRadius>;
-    use_mantine_style?: IContentField<string>;
+    web_datepicker_type?: IContentField<string>;
+    web_datepicker_format?: IContentField<string>;
+    web_datepicker_locale?: IContentField<string>;
+    web_datepicker_placeholder?: IContentField<string>;
+    web_datepicker_min_date?: IContentField<string>;
+    web_datepicker_max_date?: IContentField<string>;
+    web_datepicker_first_day_of_week?: IContentField<string>;
+    web_datepicker_weekend_days?: IContentField<string>;
+    web_datepicker_clearable?: IContentField<string>;
+    web_datepicker_allow_deselect?: IContentField<string>;
+    web_datepicker_readonly?: IContentField<string>;
+    web_datepicker_with_time_grid?: IContentField<string>;
+    web_datepicker_consistent_weeks?: IContentField<string>;
+    web_datepicker_hide_outside_dates?: IContentField<string>;
+    web_datepicker_hide_weekends?: IContentField<string>;
+    web_datepicker_time_step?: IContentField<string>;
+    web_datepicker_time_format?: IContentField<string>;
+    web_datepicker_date_format?: IContentField<string>;
+    web_datepicker_time_grid_config?: IContentField<string>;
+    web_datepicker_with_seconds?: IContentField<string>;
+    shared_size?: IContentField<TSharedSize>;
+    shared_radius?: IContentField<TSharedRadius>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface ISwitchStyle extends IStyleWithSpacing {
     style_name: 'switch';
     label?: IContentField<string>;
     description?: IContentField<string>;
-    mantine_switch_on_label?: IContentField<string>;
-    mantine_switch_off_label?: IContentField<string>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_color?: IContentField<TMantineColor>;
-    mantine_radius?: IContentField<TMantineRadius>;
+    web_switch_on_label?: IContentField<string>;
+    web_switch_off_label?: IContentField<string>;
+    shared_size?: IContentField<TSharedSize>;
+    web_color?: IContentField<TMantineColor>;
+    shared_radius?: IContentField<TSharedRadius>;
     disabled?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
+    use_web_style?: IContentField<string>;
     name?: IContentField<string>;
     is_required?: IContentField<string>;
-    mantine_label_position?: IContentField<string>;
+    web_label_position?: IContentField<string>;
     value?: IContentField<string>;
-    mantine_switch_on_value?: IContentField<string>;
-    mantine_use_input_wrapper?: IContentField<string>;
-    mantine_switch_off_value?: IContentField<string>;
+    web_switch_on_value?: IContentField<string>;
+    web_use_input_wrapper?: IContentField<string>;
+    web_switch_off_value?: IContentField<string>;
 }
 
 export interface IComboboxStyle extends IStyleWithSpacing {
     style_name: 'combobox';
     placeholder?: IContentField<string>;
-    mantine_combobox_options?: IContentField<string>;
+    web_combobox_options?: IContentField<string>;
     disabled?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
+    use_web_style?: IContentField<string>;
     label?: IContentField<string>;
     description?: IContentField<string>;
     name?: IContentField<string>;
     value?: IContentField<string>;
     is_required?: IContentField<string>;
-    mantine_combobox_multi_select?: IContentField<string>;
-    mantine_combobox_searchable?: IContentField<string>;
-    mantine_combobox_creatable?: IContentField<string>;
-    mantine_combobox_clearable?: IContentField<string>;
-    mantine_combobox_separator?: IContentField<string>;
-    mantine_multi_select_max_values?: IContentField<string>;
+    web_combobox_multi_select?: IContentField<string>;
+    web_combobox_searchable?: IContentField<string>;
+    web_combobox_creatable?: IContentField<string>;
+    web_combobox_clearable?: IContentField<string>;
+    web_combobox_separator?: IContentField<string>;
+    web_multi_select_max_values?: IContentField<string>;
 }
 
 export interface IColorInputStyle extends IStyleWithSpacing {
     style_name: 'color-input';
     label?: IContentField<string>;
-    mantine_color_format?: IContentField<string>;
-    mantine_color_input_swatches?: IContentField<string>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_radius?: IContentField<TMantineRadius>;
+    web_color_format?: IContentField<string>;
+    web_color_input_swatches?: IContentField<string>;
+    shared_size?: IContentField<TSharedSize>;
+    shared_radius?: IContentField<TSharedRadius>;
     placeholder?: IContentField<string>;
     name?: IContentField<string>;
     value?: IContentField<string>;
     description?: IContentField<string>;
     is_required?: IContentField<string>;
     disabled?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface IColorPickerStyle extends IStyleWithSpacing {
     style_name: 'color-picker';
     label?: IContentField<string>;
-    mantine_color_format?: IContentField<string>;
-    mantine_color_picker_swatches_per_row?: IContentField<string>;
-    mantine_color_picker_swatches?: IContentField<string>;
-    mantine_color_picker_with_picker?: IContentField<string>;
-    mantine_color_picker_saturation_label?: IContentField<string>;
-    mantine_color_picker_hue_label?: IContentField<string>;
-    mantine_color_picker_alpha_label?: IContentField<string>;
-    mantine_color_picker_as_button?: IContentField<string>;
-    mantine_color_picker_button_label?: IContentField<string>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_fullwidth?: IContentField<string>;
+    web_color_format?: IContentField<string>;
+    web_color_picker_swatches_per_row?: IContentField<string>;
+    web_color_picker_swatches?: IContentField<string>;
+    web_color_picker_with_picker?: IContentField<string>;
+    web_color_picker_saturation_label?: IContentField<string>;
+    web_color_picker_hue_label?: IContentField<string>;
+    web_color_picker_alpha_label?: IContentField<string>;
+    web_color_picker_as_button?: IContentField<string>;
+    web_color_picker_button_label?: IContentField<string>;
+    shared_size?: IContentField<TSharedSize>;
+    shared_full_width?: IContentField<string>;
     name?: IContentField<string>;
     value?: IContentField<string>;
     description?: IContentField<string>;
     is_required?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface IFileInputStyle extends IStyleWithSpacing {
     style_name: 'file-input';
-    mantine_file_input_multiple?: IContentField<string>;
-    mantine_file_input_accept?: IContentField<string>;
-    mantine_file_input_clearable?: IContentField<string>;
-    mantine_file_input_max_size?: IContentField<string>;
-    mantine_file_input_max_files?: IContentField<string>;
-    mantine_file_input_drag_drop?: IContentField<string>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_radius?: IContentField<TMantineRadius>;
-    mantine_left_icon?: IContentField<string>;
-    mantine_right_icon?: IContentField<string>;
+    web_file_input_multiple?: IContentField<string>;
+    web_file_input_accept?: IContentField<string>;
+    web_file_input_clearable?: IContentField<string>;
+    web_file_input_max_size?: IContentField<string>;
+    web_file_input_max_files?: IContentField<string>;
+    web_file_input_drag_drop?: IContentField<string>;
+    shared_size?: IContentField<TSharedSize>;
+    shared_radius?: IContentField<TSharedRadius>;
+    web_left_icon?: IContentField<string>;
+    web_right_icon?: IContentField<string>;
     placeholder?: IContentField<string>;
     disabled?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
+    use_web_style?: IContentField<string>;
     is_required?: IContentField<string>;
     name?: IContentField<string>;
     label?: IContentField<string>;
@@ -352,13 +352,13 @@ export interface IFileInputStyle extends IStyleWithSpacing {
 
 export interface INumberInputStyle extends IStyleWithSpacing {
     style_name: 'number-input';
-    mantine_numeric_min?: IContentField<string>;
-    mantine_numeric_max?: IContentField<string>;
-    mantine_numeric_step?: IContentField<string>;
-    mantine_number_input_decimal_scale?: IContentField<string>;
-    mantine_number_input_clamp_behavior?: IContentField<string>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_radius?: IContentField<TMantineRadius>;
+    web_numeric_min?: IContentField<string>;
+    web_numeric_max?: IContentField<string>;
+    web_numeric_step?: IContentField<string>;
+    web_number_input_decimal_scale?: IContentField<string>;
+    web_number_input_clamp_behavior?: IContentField<string>;
+    shared_size?: IContentField<TSharedSize>;
+    shared_radius?: IContentField<TSharedRadius>;
     placeholder?: IContentField<string>;
     label?: IContentField<string>;
     description?: IContentField<string>;
@@ -366,21 +366,21 @@ export interface INumberInputStyle extends IStyleWithSpacing {
     value?: IContentField<string>;
     is_required?: IContentField<string>;
     disabled?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface ISegmentedControlStyle extends IStyleWithSpacing {
     style_name: 'segmented-control';
-    mantine_segmented_control_data?: IContentField<string>;
-    mantine_orientation?: IContentField<string>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_radius?: IContentField<TMantineRadius>;
-    mantine_color?: IContentField<TMantineColor>;
+    web_segmented_control_data?: IContentField<string>;
+    shared_orientation?: IContentField<string>;
+    shared_size?: IContentField<TSharedSize>;
+    shared_radius?: IContentField<TSharedRadius>;
+    web_color?: IContentField<TMantineColor>;
     fullwidth?: IContentField<string>;
     disabled?: IContentField<string>;
     readonly?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
-    mantine_segmented_control_item_border?: IContentField<string>;
+    use_web_style?: IContentField<string>;
+    web_segmented_control_item_border?: IContentField<string>;
     label?: IContentField<string>;
     description?: IContentField<string>;
     value?: IContentField<string>;
@@ -396,46 +396,46 @@ export interface IRatingStyle extends IStyleWithSpacing {
     disabled?: IContentField<string>;
     value?: IContentField<string>;
     readonly?: IContentField<string>;
-    mantine_rating_count?: IContentField<string>;
-    mantine_rating_fractions?: IContentField<string>;
-    mantine_rating_use_smiles?: IContentField<string>;
-    mantine_rating_empty_icon?: IContentField<string>;
-    mantine_rating_full_icon?: IContentField<string>;
-    mantine_rating_highlight_selected_only?: IContentField<string>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_color?: IContentField<TMantineColor>;
-    use_mantine_style?: IContentField<string>;
+    web_rating_count?: IContentField<string>;
+    web_rating_fractions?: IContentField<string>;
+    web_rating_use_smiles?: IContentField<string>;
+    web_rating_empty_icon?: IContentField<string>;
+    web_rating_full_icon?: IContentField<string>;
+    web_rating_highlight_selected_only?: IContentField<string>;
+    shared_size?: IContentField<TSharedSize>;
+    web_color?: IContentField<TMantineColor>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface IProgressStyle extends IStyleWithSpacing {
     style_name: 'progress';
     value?: IContentField<string>;
-    mantine_color?: IContentField<TMantineColor>;
-    mantine_radius?: IContentField<TMantineRadius>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_progress_striped?: IContentField<string>;
-    mantine_progress_animated?: IContentField<string>;
-    mantine_progress_transition_duration?: IContentField<TMantineProgressTransition>;
-    use_mantine_style?: IContentField<string>;
+    web_color?: IContentField<TMantineColor>;
+    shared_radius?: IContentField<TSharedRadius>;
+    shared_size?: IContentField<TSharedSize>;
+    web_progress_striped?: IContentField<string>;
+    web_progress_animated?: IContentField<string>;
+    web_progress_transition_duration?: IContentField<TMantineProgressTransition>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface IProgressRootStyle extends IBaseStyle {
     style_name: 'progress-root';
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_progress_auto_contrast?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
+    shared_size?: IContentField<TSharedSize>;
+    web_progress_auto_contrast?: IContentField<string>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface IProgressSectionStyle extends IBaseStyle {
     style_name: 'progress-section';
     value?: IContentField<string>;
-    mantine_color?: IContentField<TMantineColor>;
-    mantine_progress_striped?: IContentField<string>;
-    mantine_progress_animated?: IContentField<string>;
+    web_color?: IContentField<TMantineColor>;
+    web_progress_striped?: IContentField<string>;
+    web_progress_animated?: IContentField<string>;
     label?: IContentField<string>;
-    mantine_tooltip_label?: IContentField<string>;
-    mantine_tooltip_position?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
+    web_tooltip_label?: IContentField<string>;
+    web_tooltip_position?: IContentField<string>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface IShowUserInputEntry {
@@ -460,13 +460,13 @@ export interface IShowUserInputStyle extends IBaseStyle {
     fields_map?: IContentField<string>;
     delete_modal_title?: IContentField<string>;
     delete_modal_body?: IContentField<string>;
-    mantine_spacing_margin_padding?: IContentField<string>;
-    mantine_table_striped?: IContentField<string>;
-    mantine_table_highlight_on_hover?: IContentField<string>;
-    mantine_table_with_table_border?: IContentField<string>;
-    mantine_table_with_column_borders?: IContentField<string>;
-    mantine_table_with_row_borders?: IContentField<string>;
-    mantine_table_sticky_header?: IContentField<string>;
-    mantine_table_caption_side?: IContentField<string>;
+    shared_spacing?: IContentField<string>;
+    web_table_striped?: IContentField<string>;
+    web_table_highlight_on_hover?: IContentField<string>;
+    web_table_with_table_border?: IContentField<string>;
+    web_table_with_column_borders?: IContentField<string>;
+    web_table_with_row_borders?: IContentField<string>;
+    web_table_sticky_header?: IContentField<string>;
+    web_table_caption_side?: IContentField<string>;
     entries?: IShowUserInputEntry[];
 }

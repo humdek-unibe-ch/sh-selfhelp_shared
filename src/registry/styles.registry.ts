@@ -34,6 +34,37 @@ SPDX-License-Identifier: MPL-2.0
 
 import type { TStyleName } from '../types/styles/unknown';
 
+/**
+ * Concrete render targets a CMS style can support. The web frontend
+ * renders `web`; the mobile app renders `mobile`.
+ */
+export type TConcretePlatform = 'web' | 'mobile';
+
+/**
+ * Where a style may be placed in the section tree:
+ *   - `any`          (default) — page root or inside any container.
+ *   - `rootOnly`     — page/root level only (e.g. a page-overlay style).
+ *   - `containerOnly`— only inside a parent container, never at page root.
+ *
+ * Distinct from parent/child `rel_styles_allowed_relationships`: placement is a
+ * coarse root-vs-container rule the CMS picker enforces in addition to the
+ * fine-grained compound parent/child rules.
+ */
+export type TStylePlacement = 'any' | 'rootOnly' | 'containerOnly';
+
+/**
+ * CMS-facing render target of a style. Mirrors the backend
+ * `styles.id_render_target` (`styleRenderTargets` lookup) and the
+ * `renderTarget` field returned by the style schema/catalog API. `both`
+ * expands to `['web','mobile']`. A platform's dispatcher silently skips a
+ * style whose render target excludes it — distinct from the
+ * "compatible-but-unimplemented" `UnknownStyle` / "Open on web" fallback.
+ *
+ * Page render target is NOT modelled here: a page's web/mobile/both scope is
+ * the existing `pageAccessTypes` value, never a duplicate page platform field.
+ */
+export type TStylePlatform = TConcretePlatform | 'both';
+
 export interface IStyleRegistryEntry {
     /** Human description for docs / tooling. */
     description: string;
@@ -59,6 +90,25 @@ export interface IStyleRegistryEntry {
      * children traversal.
      */
     canHaveChildren: boolean;
+    /**
+     * Render targets this style supports (compile-time fallback for the
+     * backend `renderTarget`). Omitted = both platforms (`['web','mobile']`),
+     * which is the default for every established core style. A mobile-only
+     * style sets `['mobile']`; a web-only style sets `['web']`. The renderer
+     * reads this through `getStylePlatforms()` / `isStyleSupportedOnPlatform()`
+     * and silently skips styles that do not target the current platform.
+     *
+     * Runtime filtering should prefer the per-section `renderTarget` from the
+     * backend payload when present (installed catalog data may differ from the
+     * app build); this registry value is the compile-time source of truth.
+     */
+    platforms?: readonly TConcretePlatform[];
+    /**
+     * Placement rule in the section tree. Omitted = `any`. The CMS add-section
+     * picker hides `rootOnly` styles when adding as a child and `containerOnly`
+     * styles when adding at page root.
+     */
+    placement?: TStylePlacement;
 }
 
 /**
@@ -172,6 +222,16 @@ export const BASE_STYLE_REGISTRY = {
     'entry-record': { description: 'Single-record container', category: 'composite', frontendOnly: true, canHaveChildren: true },
     'entry-record-delete': { description: 'Inline delete confirmation for an entry', category: 'composite', frontendOnly: true, canHaveChildren: false },
     loop: { description: 'Loop / repeater over backend-provided rows', category: 'composite', frontendOnly: true, canHaveChildren: true },
+    'timeline-item': { description: 'A single entry inside a timeline (child-only)', category: 'composite', frontendOnly: true, canHaveChildren: true },
+
+    // ===== system / data / reference (established backend catalog) =====
+    'no-access': { description: 'Access-denied surface shown when the user lacks page access', category: 'auth', frontendOnly: true, canHaveChildren: false },
+    missing: { description: 'Generic "content missing" system surface', category: 'auth', frontendOnly: true, canHaveChildren: false },
+    'not-found': { description: 'Page-not-found system surface', category: 'auth', frontendOnly: true, canHaveChildren: false },
+    version: { description: 'Build/version diagnostic surface', category: 'auth', frontendOnly: true, canHaveChildren: false },
+    'ref-container': { description: 'Renders content referenced from another section', category: 'layout', frontendOnly: true, canHaveChildren: true },
+    'data-container': { description: 'Data-scoped container (renders subtree against a data scope)', category: 'layout', frontendOnly: true, canHaveChildren: true },
+    'show-user-input': { description: 'Displays previously submitted user input as a list/card view', category: 'forms', frontendOnly: true, canHaveChildren: false },
 } as const satisfies Record<string, IStyleRegistryEntry>;
 
 /**

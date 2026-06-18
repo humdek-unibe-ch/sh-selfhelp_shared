@@ -4,7 +4,6 @@ SPDX-License-Identifier: MPL-2.0
 */
 import type { IBaseStyle, IContentField, IStyleWithSpacing } from './base';
 import type {
-    TMantineSize,
     TMantineColor,
     TMantineRadius,
     TMantineSpacing,
@@ -12,6 +11,8 @@ import type {
     TMantineAccordionVariant,
     TMantineTabsVariant,
     TMantineTimelineLineVariant,
+    TSharedSize,
+    TSharedRadius,
 } from '../mantine/common';
 import type { TMantineWidth, TMantineHeight } from './layout';
 import type { TMantineLineClamp } from './typography';
@@ -39,77 +40,90 @@ export type TMantineListCenter = '0' | '1';
 
 export interface IAccordionStyle extends IStyleWithSpacing {
     style_name: 'accordion';
-    mantine_accordion_variant?: IContentField<TMantineAccordionVariant>;
-    mantine_accordion_multiple?: IContentField<TMantineAccordionMultiple>;
-    mantine_accordion_chevron_position?: IContentField<TMantineAccordionChevronPosition>;
-    mantine_accordion_chevron_size?: IContentField<string>;
-    mantine_accordion_disable_chevron_rotation?: IContentField<TMantineAccordionDisableChevronRotation>;
-    mantine_accordion_loop?: IContentField<TMantineAccordionLoop>;
-    mantine_accordion_transition_duration?: IContentField<string>;
-    mantine_accordion_default_value?: IContentField<string>;
-    mantine_radius?: IContentField<TMantineRadius>;
-    use_mantine_style?: IContentField<string>;
+    web_accordion_variant?: IContentField<TMantineAccordionVariant>;
+    web_accordion_multiple?: IContentField<TMantineAccordionMultiple>;
+    web_accordion_chevron_position?: IContentField<TMantineAccordionChevronPosition>;
+    web_accordion_chevron_size?: IContentField<string>;
+    web_accordion_disable_chevron_rotation?: IContentField<TMantineAccordionDisableChevronRotation>;
+    web_accordion_loop?: IContentField<TMantineAccordionLoop>;
+    web_accordion_transition_duration?: IContentField<string>;
+    web_accordion_default_value?: IContentField<string>;
+    shared_radius?: IContentField<TSharedRadius>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface IAccordionItemStyle extends IStyleWithSpacing {
     style_name: 'accordion-item';
-    mantine_accordion_item_value?: IContentField<string>;
+    web_accordion_item_value?: IContentField<string>;
     label?: IContentField<string>;
-    mantine_accordion_item_icon?: IContentField<string>;
+    web_accordion_item_icon?: IContentField<string>;
     disabled?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface ITabsStyle extends IStyleWithSpacing {
     style_name: 'tabs';
-    mantine_tabs_variant?: IContentField<TMantineTabsVariant>;
-    mantine_tabs_orientation?: IContentField<TMantineOrientation>;
-    mantine_tabs_radius?: IContentField<TMantineRadius>;
-    mantine_color?: IContentField<TMantineColor>;
-    mantine_width?: IContentField<TMantineWidth>;
-    mantine_height?: IContentField<TMantineHeight>;
-    use_mantine_style?: IContentField<string>;
+    web_tabs_variant?: IContentField<TMantineTabsVariant>;
+    web_tabs_orientation?: IContentField<TMantineOrientation>;
+    web_tabs_radius?: IContentField<TMantineRadius>;
+    web_color?: IContentField<TMantineColor>;
+    web_width?: IContentField<TMantineWidth>;
+    web_height?: IContentField<TMantineHeight>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface ITabStyle extends IBaseStyle {
     style_name: 'tab';
     label?: IContentField<string>;
-    mantine_left_icon?: IContentField<string>;
-    mantine_right_icon?: IContentField<string>;
-    mantine_tab_disabled?: IContentField<string>;
-    mantine_width?: IContentField<TMantineWidth>;
-    mantine_height?: IContentField<TMantineHeight>;
-    use_mantine_style?: IContentField<string>;
+    web_left_icon?: IContentField<string>;
+    web_right_icon?: IContentField<string>;
+    web_tab_disabled?: IContentField<string>;
+    web_width?: IContentField<TMantineWidth>;
+    web_height?: IContentField<TMantineHeight>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface ITimelineStyle extends IStyleWithSpacing {
     style_name: 'timeline';
-    mantine_timeline_bullet_size?: IContentField<string>;
-    mantine_timeline_line_width?: IContentField<string>;
-    mantine_timeline_active?: IContentField<string>;
-    mantine_timeline_align?: IContentField<TMantineTimelineAlign>;
-    mantine_timeline_line_variant?: IContentField<TMantineTimelineLineVariant>;
-    mantine_color?: IContentField<TMantineColor>;
-    use_mantine_style?: IContentField<string>;
+    web_timeline_bullet_size?: IContentField<string>;
+    web_timeline_line_width?: IContentField<string>;
+    web_timeline_active?: IContentField<string>;
+    web_timeline_align?: IContentField<TMantineTimelineAlign>;
+    web_timeline_line_variant?: IContentField<TMantineTimelineLineVariant>;
+    web_color?: IContentField<TMantineColor>;
+    use_web_style?: IContentField<string>;
+}
+
+/**
+ * A single entry inside a `timeline`. Child-only style; placement is enforced
+ * by the backend parent/child relationship rules.
+ */
+export interface ITimelineItemStyle extends IBaseStyle {
+    style_name: 'timeline-item';
+    title?: IContentField<string>;
+    web_timeline_item_bullet?: IContentField<string>;
+    web_timeline_item_line_variant?: IContentField<TMantineTimelineLineVariant>;
+    web_color?: IContentField<TMantineColor>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface IListStyle extends IStyleWithSpacing {
     style_name: 'list';
-    mantine_list_type?: IContentField<TMantineListType>;
-    mantine_spacing?: IContentField<TMantineSpacing>;
-    mantine_size?: IContentField<TMantineSize>;
-    use_mantine_style?: IContentField<string>;
-    mantine_list_list_style_type?: IContentField<TMantineListStyleType>;
-    mantine_list_with_padding?: IContentField<TMantineListWithPadding>;
-    mantine_list_center?: IContentField<TMantineListCenter>;
-    mantine_list_icon?: IContentField<string>;
+    web_list_type?: IContentField<TMantineListType>;
+    web_spacing?: IContentField<TMantineSpacing>;
+    shared_size?: IContentField<TSharedSize>;
+    use_web_style?: IContentField<string>;
+    web_list_list_style_type?: IContentField<TMantineListStyleType>;
+    web_list_with_padding?: IContentField<TMantineListWithPadding>;
+    web_list_center?: IContentField<TMantineListCenter>;
+    web_list_icon?: IContentField<string>;
 }
 
 export interface IListItemStyle extends IStyleWithSpacing {
     style_name: 'list-item';
-    mantine_list_item_content?: IContentField<string>;
-    mantine_list_item_icon?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
+    web_list_item_content?: IContentField<string>;
+    web_list_item_icon?: IContentField<string>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface IEntryListStyle extends IBaseStyle {

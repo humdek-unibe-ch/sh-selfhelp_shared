@@ -29,56 +29,56 @@ export type TMantineIconSize = string;
 export interface ITitleStyle extends IStyleWithSpacing {
     style_name: 'title';
     content?: IContentField<string>;
-    mantine_title_order?: IContentField<TMantineTitleOrder>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_title_text_wrap?: IContentField<TMantineTitleTextWrap>;
-    mantine_title_line_clamp?: IContentField<TMantineTitleLineClamp>;
-    use_mantine_style?: IContentField<string>;
+    web_title_order?: IContentField<TMantineTitleOrder>;
+    shared_size?: IContentField<TMantineSize>;
+    web_title_text_wrap?: IContentField<TMantineTitleTextWrap>;
+    web_title_line_clamp?: IContentField<TMantineTitleLineClamp>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface ITextStyle extends IStyleWithSpacing {
     style_name: 'text';
     text?: IContentField<string>;
-    mantine_size?: IContentField<TMantineSize>;
-    mantine_color?: IContentField<TMantineColor>;
-    mantine_text_font_weight?: IContentField<TMantineTextFontWeight>;
-    mantine_text_font_style?: IContentField<TMantineTextFontStyle>;
-    mantine_text_text_decoration?: IContentField<TMantineTextDecoration>;
-    mantine_text_text_transform?: IContentField<TMantineTextTransform>;
-    mantine_text_align?: IContentField<TMantineTextAlign>;
-    mantine_text_variant?: IContentField<TMantineTextVariant>;
-    mantine_text_gradient?: IContentField<string>;
-    mantine_text_truncate?: IContentField<TMantineTextTruncate>;
-    mantine_text_line_clamp?: IContentField<TMantineLineClamp>;
-    mantine_text_inherit?: IContentField<TMantineTextInherit>;
-    mantine_text_span?: IContentField<TMantineTextSpan>;
-    use_mantine_style?: IContentField<string>;
+    shared_size?: IContentField<TMantineSize>;
+    web_color?: IContentField<TMantineColor>;
+    web_text_font_weight?: IContentField<TMantineTextFontWeight>;
+    web_text_font_style?: IContentField<TMantineTextFontStyle>;
+    web_text_text_decoration?: IContentField<TMantineTextDecoration>;
+    web_text_text_transform?: IContentField<TMantineTextTransform>;
+    shared_text_align?: IContentField<TMantineTextAlign>;
+    web_text_variant?: IContentField<TMantineTextVariant>;
+    web_text_gradient?: IContentField<string>;
+    web_text_truncate?: IContentField<TMantineTextTruncate>;
+    web_text_line_clamp?: IContentField<TMantineLineClamp>;
+    web_text_inherit?: IContentField<TMantineTextInherit>;
+    web_text_span?: IContentField<TMantineTextSpan>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface ICodeStyle extends IStyleWithSpacing {
     style_name: 'code';
-    mantine_code_block?: IContentField<string>;
-    mantine_color?: IContentField<TMantineColor>;
-    use_mantine_style?: IContentField<string>;
+    web_code_block?: IContentField<string>;
+    web_color?: IContentField<TMantineColor>;
+    use_web_style?: IContentField<string>;
     content?: IContentField<string>;
 }
 
 export interface IHighlightStyle extends IStyleWithSpacing {
     style_name: 'highlight';
     text?: IContentField<string>;
-    mantine_highlight_highlight?: IContentField<string>;
-    mantine_color?: IContentField<TMantineColor>;
-    use_mantine_style?: IContentField<string>;
+    web_highlight_highlight?: IContentField<string>;
+    web_color?: IContentField<TMantineColor>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface IBlockquoteStyle extends IStyleWithSpacing {
     style_name: 'blockquote';
     content?: IContentField<string>;
     cite?: IContentField<string>;
-    mantine_left_icon?: IContentField<string>;
-    mantine_icon_size?: IContentField<TMantineIconSize>;
-    mantine_color?: IContentField<TMantineColor>;
-    use_mantine_style?: IContentField<string>;
+    web_left_icon?: IContentField<string>;
+    web_icon_size?: IContentField<TMantineIconSize>;
+    web_color?: IContentField<TMantineColor>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface IHtmlTagStyle extends IBaseStyle {
@@ -90,29 +90,29 @@ export interface IHtmlTagStyle extends IBaseStyle {
 export interface IKbdStyle extends IStyleWithSpacing {
     style_name: 'kbd';
     label?: IContentField<string>;
-    mantine_size?: IContentField<TMantineSize>;
-    use_mantine_style?: IContentField<string>;
+    shared_size?: IContentField<TMantineSize>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface ITypographyStyle extends IStyleWithSpacing {
     style_name: 'typography';
-    use_mantine_style?: IContentField<string>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface IFieldsetStyle extends IStyleWithSpacing {
     style_name: 'fieldset';
     label?: IContentField<string>;
     legend?: IContentField<string>;
-    mantine_fieldset_variant?: IContentField<TMantineFieldsetVariant>;
-    mantine_radius?: IContentField<TMantineRadius>;
-    use_mantine_style?: IContentField<string>;
+    web_fieldset_variant?: IContentField<TMantineFieldsetVariant>;
+    shared_radius?: IContentField<TMantineRadius>;
+    use_web_style?: IContentField<string>;
     disabled?: IContentField<string>;
 }
 
 export interface ISpoilerStyle extends IStyleWithSpacing {
     style_name: 'spoiler';
-    mantine_height?: IContentField<TMantineSpoilerMaxHeight>;
-    mantine_spoiler_show_label?: IContentField<string>;
-    mantine_spoiler_hide_label?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
+    web_height?: IContentField<TMantineSpoilerMaxHeight>;
+    web_spoiler_show_label?: IContentField<string>;
+    web_spoiler_hide_label?: IContentField<string>;
+    use_web_style?: IContentField<string>;
 }

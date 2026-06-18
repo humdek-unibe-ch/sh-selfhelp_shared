@@ -16,11 +16,11 @@ export interface IImageStyle extends IStyleWithSpacing {
     img_src?: IContentField<string>;
     height?: IContentField<string>;
     width?: IContentField<string>;
-    mantine_image_fit?: IContentField<TMantineImageFit>;
-    mantine_width?: IContentField<TMantineWidth>;
-    mantine_height?: IContentField<TMantineHeight>;
-    mantine_radius?: IContentField<TMantineRadius>;
-    use_mantine_style?: IContentField<string>;
+    web_image_fit?: IContentField<TMantineImageFit>;
+    web_width?: IContentField<TMantineWidth>;
+    web_height?: IContentField<TMantineHeight>;
+    shared_radius?: IContentField<TMantineRadius>;
+    use_web_style?: IContentField<string>;
 }
 
 export interface IVideoStyle extends IBaseStyle {
@@ -48,21 +48,21 @@ export interface ICarouselStyle extends IStyleWithSpacing {
     has_indicators?: IContentField<string>;
     has_crossfade?: IContentField<string>;
     sources?: IContentField<unknown[]>;
-    mantine_height?: IContentField<string>;
-    mantine_carousel_slide_size?: IContentField<string>;
-    mantine_carousel_slide_gap?: IContentField<string>;
-    mantine_orientation?: IContentField<string>;
-    mantine_control_size?: IContentField<string>;
-    mantine_carousel_controls_offset?: IContentField<string>;
-    mantine_carousel_next_control_icon?: IContentField<string>;
-    mantine_carousel_previous_control_icon?: IContentField<string>;
-    mantine_loop?: IContentField<string>;
+    web_height?: IContentField<string>;
+    web_carousel_slide_size?: IContentField<string>;
+    web_carousel_slide_gap?: IContentField<string>;
+    shared_orientation?: IContentField<string>;
+    web_control_size?: IContentField<string>;
+    web_carousel_controls_offset?: IContentField<string>;
+    web_carousel_next_control_icon?: IContentField<string>;
+    web_carousel_previous_control_icon?: IContentField<string>;
+    web_loop?: IContentField<string>;
     drag_free?: IContentField<string>;
-    mantine_carousel_align?: IContentField<string>;
-    mantine_carousel_contain_scroll?: IContentField<string>;
+    web_carousel_align?: IContentField<string>;
+    web_carousel_contain_scroll?: IContentField<string>;
     skip_snaps?: IContentField<string>;
-    mantine_carousel_in_view_threshold?: IContentField<string>;
-    mantine_carousel_duration?: IContentField<string>;
-    mantine_carousel_embla_options?: IContentField<string>;
-    use_mantine_style?: IContentField<string>;
+    web_carousel_in_view_threshold?: IContentField<string>;
+    web_carousel_duration?: IContentField<string>;
+    web_carousel_embla_options?: IContentField<string>;
+    use_web_style?: IContentField<string>;
 }

@@ -71,7 +71,7 @@ These rules apply to every documentation change in active SelfHelp2 repositories
 - Use `IContentField<T>` for CMS field values.
 - Use literal `style_name` values in style interfaces.
 - Style names are **kebab-case** (e.g. `reset-password`, `two-factor-auth`, `entry-list`, `entry-record`, `entry-record-delete`, `no-access`, `not-found`, `show-user-input`). The legacy camelCase forms (`resetPassword`, `twoFactorAuth`, `entryList`, `entryRecord`, `entryRecordDelete`, …) were renamed to kebab-case in v1.8.0; new styles must be registered kebab-case and the backend seeds/DB, this package, the frontend, and the mobile renderers must stay in lockstep.
-- Use `mantine_...` field names when matching CMS/Mantine-backed fields.
+- Use the cross-platform field-naming taxonomy (mobile rendering plan, section 6), matching the backend re-prefix migration: content/behavior fields stay unprefixed (`label`, `value`, `disabled`, `url`); portable visual semantics use `shared_*` (`shared_size`, `shared_radius`, `shared_spacing`, `shared_align`, …); genuinely web/Mantine-specific fields use `web_*` (`web_variant`, `web_color`, `web_spacing_margin`); native-only fields use `mobile_*`. Do not reintroduce `mantine_*` field names.
 - Use `'0' | '1'` string unions where existing CMS boolean-like fields use strings.
 - Keep optional backend fields optional unless the backend guarantees them.
 - Add the SPDX header to TS/JS source files in the same format already used in `src`.

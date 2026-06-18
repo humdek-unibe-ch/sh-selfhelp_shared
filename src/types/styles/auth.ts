@@ -62,17 +62,17 @@ export interface IValidateStyle extends IStyleWithSpacing {
     label_save?: IContentField<string>;
     label_update?: IContentField<string>;
     label_cancel?: IContentField<string>;
-    mantine_buttons_size?: IContentField<string>;
-    mantine_buttons_radius?: IContentField<string>;
-    mantine_buttons_variant?: IContentField<string>;
-    mantine_buttons_position?: IContentField<string>;
-    mantine_buttons_order?: IContentField<string>;
-    mantine_btn_save_color?: IContentField<string>;
-    mantine_btn_cancel_color?: IContentField<string>;
-    mantine_card_shadow?: IContentField<string>;
-    mantine_card_padding?: IContentField<string>;
-    mantine_radius?: IContentField<TMantineRadius>;
-    mantine_border?: IContentField<string>;
+    web_buttons_size?: IContentField<string>;
+    web_buttons_radius?: IContentField<string>;
+    web_buttons_variant?: IContentField<string>;
+    web_buttons_position?: IContentField<string>;
+    web_buttons_order?: IContentField<string>;
+    web_btn_save_color?: IContentField<string>;
+    web_btn_cancel_color?: IContentField<string>;
+    web_card_shadow?: IContentField<string>;
+    web_card_padding?: IContentField<string>;
+    shared_radius?: IContentField<TMantineRadius>;
+    web_border?: IContentField<string>;
     /** Activation lifecycle status text (shown after the registration email). */
     loading_title?: IContentField<string>;
     loading_text?: IContentField<string>;

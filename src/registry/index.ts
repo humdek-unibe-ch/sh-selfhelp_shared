@@ -9,6 +9,9 @@ import {
     getPluginStyleRegistry,
     type IPluginStyleRegistryEntry,
     type IStyleRegistryEntry,
+    type TConcretePlatform,
+    type TStylePlacement,
+    type TStylePlatform,
 } from './styles.registry';
 
 export * from './styles.registry';
@@ -90,5 +93,75 @@ export function isRegisteredStyleName(name: string): boolean {
 export function getStylePluginId(name: string): string | undefined {
     const plugin = getPluginStyleRegistry()[name];
     return plugin?.pluginId;
+}
+
+/** Default platform set when a style does not declare one (both targets). */
+const DEFAULT_PLATFORMS: readonly TConcretePlatform[] = ['web', 'mobile'];
+
+/**
+ * Resolve the render targets a style supports. Unknown / unregistered
+ * styles and styles that omit `platforms` default to **both** targets,
+ * so existing styles keep rendering everywhere.
+ *
+ * The renderer should prefer an explicit per-section `platform` value
+ * from the backend payload when present; this registry lookup is the
+ * compile-time source of truth for core styles.
+ */
+export function getStylePlatforms(name: string): readonly TConcretePlatform[] {
+    const entry = getRegistryEntryAny(name);
+    return entry?.platforms ?? DEFAULT_PLATFORMS;
+}
+
+/**
+ * Whether a style targets the given concrete platform. Drives the
+ * "silently skip styles not meant for this platform" behaviour in both
+ * the web and mobile dispatchers.
+ */
+export function isStyleSupportedOnPlatform(name: string, platform: TConcretePlatform): boolean {
+    return getStylePlatforms(name).includes(platform);
+}
+
+/** Expand a CMS `TStylePlatform` value into the concrete platform set. */
+export function stylePlatformToSet(platform: TStylePlatform): readonly TConcretePlatform[] {
+    return platform === 'both' ? DEFAULT_PLATFORMS : [platform];
+}
+
+/** Collapse a concrete platform set back into the CMS `TStylePlatform` value. */
+export function setToStylePlatform(set: readonly TConcretePlatform[]): TStylePlatform {
+    const web = set.includes('web');
+    const mobile = set.includes('mobile');
+    if (web && mobile) return 'both';
+    return mobile ? 'mobile' : 'web';
+}
+
+/**
+ * Whether a style is allowed on a page that targets `pagePlatform`.
+ * A `both` page accepts every style; a single-platform page accepts only
+ * styles that also support that platform. Used by the CMS add-section
+ * picker to filter the catalog by page target.
+ */
+export function isStyleAllowedOnPage(name: string, pagePlatform: TStylePlatform): boolean {
+    if (pagePlatform === 'both') return true;
+    return isStyleSupportedOnPlatform(name, pagePlatform);
+}
+
+/**
+ * Resolve a style's placement rule. Unknown / unregistered styles and styles
+ * that omit `placement` default to `any`.
+ */
+export function getStylePlacement(name: string): TStylePlacement {
+    return getRegistryEntryAny(name)?.placement ?? 'any';
+}
+
+/**
+ * Whether a style may be placed at the given tree location. `isRoot` is true
+ * when adding directly to a page (no parent section). `rootOnly` styles are
+ * hidden inside containers; `containerOnly` styles are hidden at page root.
+ */
+export function isStylePlacementAllowed(name: string, isRoot: boolean): boolean {
+    const placement = getStylePlacement(name);
+    if (placement === 'rootOnly') return isRoot;
+    if (placement === 'containerOnly') return !isRoot;
+    return true;
 }
 

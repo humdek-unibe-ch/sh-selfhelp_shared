@@ -9,6 +9,54 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.10.0
+
+### Changed
+
+- **Style catalog reconciled to the established 90-style backend catalog
+  (mobile rendering plan, milestone one).** The experimental registry/union had
+  drifted to 98 entries: it included 16 speculative styles and omitted 8
+  established ones. Removed the 16 speculative styles (`dialog`, `popover`,
+  `menu`, `menu-item`, `bottom-sheet`, `skeleton`, `skeleton-group`, `spinner`,
+  `toast`, `tag-group`, `tag`, `input-group`, `input-otp`, `search-field`,
+  `fab-button`, `biometric-login-button`) from `BASE_STYLE_REGISTRY`, the
+  `TStyle` union, and the type files (deleted `src/types/styles/catalog.ts`).
+  Added the 8 established styles that were missing from the registry/union:
+  `no-access`, `missing`, `not-found`, `version`, `ref-container`,
+  `data-container`, `show-user-input`, `timeline-item`. The applications may
+  still use dialogs/menus/etc. internally — they are simply not author-selectable
+  CMS styles.
+- **Field naming taxonomy aligned with the backend re-prefix migration.** The
+  11 portable visual-semantic fields are now `shared_*` (was the experimental
+  `web_*`): `shared_align`, `shared_justify`, `shared_gap`, `shared_direction`,
+  `shared_wrap`, `shared_orientation`, `shared_full_width`, `shared_size`,
+  `shared_radius`, `shared_text_align`, and `shared_spacing` (was
+  `web_spacing_margin_padding`). Genuinely web-specific fields keep `web_*`; the
+  margin-only `web_spacing_margin` stays `web_` (not consolidated). This matches
+  backend migration `Version20260618143216`.
+- Documented that the registry `platforms`/`TStylePlatform` value mirrors the
+  backend `renderTarget` (`styleRenderTargets` lookup); page render target is
+  the existing `pageAccessTypes` value, never a duplicate page-platform field.
+- **Semantic mapper reworked to a non-clamping common scale (plan §6.2/§8.2).**
+  `shared_size` is now `sm | md | lg` and `shared_radius` is `none | sm | md |
+  lg | full` — the true cross-platform common denominator (HeroUI Native has no
+  `xs`/`xl`). New `TSharedSize`/`TSharedRadius` types
+  (`src/types/mantine/common.ts`) back the `shared_size`/`shared_radius` catalog
+  fields across `layout`, `composite`, `interactive`, `forms`, and `error`.
+  `src/theme/semantic.ts` no longer clamps unsupported sizes (out-of-domain
+  values are ignored, not silently coerced) and exposes the plan's pure
+  functions `resolveSharedStyleProps`, `toMantineSemanticProps`,
+  `toHeroUiSemanticProps`, and `toReactNativeSemanticStyle(props, theme)`; the
+  earlier `resolveSharedStyleForWeb` / `resolveSharedStyleForMobile` names remain
+  as deprecated aliases. The backend enforces the same narrowed domain (migration
+  `Version20260618195450`).
+
+### Notes / follow-ups
+
+- Consumer dependency-range updates and `release-manifest.json` compatibility
+  floors land with the coordinated cross-repo release (plan section 16 / Phase 6)
+  as the frontend and mobile consumers adopt `@selfhelp/shared@1.10.0`.
+
 ## v1.8.0
 
 ### Changed

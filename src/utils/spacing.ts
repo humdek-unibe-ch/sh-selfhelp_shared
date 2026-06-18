@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: 2026 Humdek, University of Bern
 SPDX-License-Identifier: MPL-2.0
 */
 /**
- * Parse the unified `mantine_spacing_margin_padding` field. The CMS
+ * Parse the unified `shared_spacing` field. The CMS
  * stores this as a JSON string with optional keys for each side:
  *
  *   { "mt": "md", "mb": "lg", "ms": "0", "me": "auto",
