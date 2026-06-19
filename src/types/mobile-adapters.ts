@@ -114,6 +114,12 @@ export interface IMobileCheckboxProps extends IMobileAdapterBaseProps {
     onSelectedChange?: (next: boolean) => void;
     isDisabled?: boolean;
     label?: string;
+    /**
+     * Where the label sits relative to the box. Mirrors the cross-platform
+     * `shared_label_position` field (Mantine `labelPosition` on web). Defaults
+     * to `right`.
+     */
+    labelPosition?: 'left' | 'right';
 }
 
 export interface IMobileSelectOption {

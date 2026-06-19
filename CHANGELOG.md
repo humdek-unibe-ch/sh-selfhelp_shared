@@ -9,6 +9,20 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.10
+
+Style polish wave (mobile) — extend the mobile checkbox adapter contract so the
+`checkbox` style's `shared_label_position` is honoured on mobile too (it already
+worked on web via Mantine `labelPosition`). Patch bump: one additive optional
+adapter prop.
+
+### Added
+
+- **`IMobileCheckboxProps.labelPosition`** (`'left' | 'right'`, optional,
+  defaults to `right`): mirrors the cross-platform `shared_label_position` field
+  so the mobile `MobileCheckbox` adapter can place the label before or after the
+  box, matching the web Mantine `labelPosition`.
+
 ## v1.14.9
 
 Style polish wave (card / card-segment / checkbox / chip / code / title) — align

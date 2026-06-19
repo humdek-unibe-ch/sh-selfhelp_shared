@@ -1,6 +1,6 @@
 {
   "name": "@selfhelp/shared",
-  "version": "1.14.9",
+  "version": "1.14.10",
   "description": "Shared TypeScript package for SelfHelp web frontend and mobile app: style registry, types, API contracts, Mantine theme tokens, condition + interpolation engines, CMS class allow-list.",
   "repository": {
     "type": "git",
