@@ -40,9 +40,10 @@ export type TMantineListCenter = '0' | '1';
 
 export interface IAccordionStyle extends IStyleWithSpacing {
     style_name: 'accordion';
-    // RF-16: variant is a Mantine-specific visual (contained/filled/separated)
-    // with no clean RN peer — stays web-only.
-    web_accordion_variant?: IContentField<TMantineAccordionVariant>;
+    // Cross-platform variant token: web -> Mantine variant
+    // (default/contained/filled/separated), mobile -> HeroUI Native
+    // default ('default') / surface (contained/filled/separated).
+    shared_accordion_variant?: IContentField<TMantineAccordionVariant>;
     // RF-19: selection mode (single vs multiple open) is portable; mobile reads it.
     shared_multiple?: IContentField<TMantineAccordionMultiple>;
     web_accordion_chevron_position?: IContentField<TMantineAccordionChevronPosition>;
@@ -57,6 +58,8 @@ export interface IAccordionItemStyle extends IStyleWithSpacing {
     style_name: 'accordion-item';
     web_accordion_item_value?: IContentField<string>;
     label?: IContentField<string>;
+    // Optional subtitle rendered under the item label (both platforms).
+    description?: IContentField<string>;
     web_accordion_item_icon?: IContentField<string>;
     disabled?: IContentField<string>;}
 

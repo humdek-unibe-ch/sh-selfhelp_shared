@@ -433,6 +433,26 @@ export function mapMantineVariantToHeroUiButtonVariant(
     }
 }
 
+/**
+ * Map the accordion variant token (`shared_accordion_variant`: Mantine
+ * default/contained/filled/separated) onto the HeroUI Native Accordion `variant`
+ * vocabulary. HeroUI Native only has `default` (plain list) and `surface`
+ * (grouped container), so every "boxed" Mantine variant collapses to `surface`.
+ */
+export function mapAccordionVariantToHeroUiVariant(
+    variant: string | undefined,
+): 'default' | 'surface' {
+    switch (variant) {
+        case 'contained':
+        case 'filled':
+        case 'separated':
+            return 'surface';
+        case 'default':
+        default:
+            return 'default';
+    }
+}
+
 // ===== state helpers =====
 
 function hasState(states: readonly TSemanticState[] | undefined, state: TSemanticState): boolean {

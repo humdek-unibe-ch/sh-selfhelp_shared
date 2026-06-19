@@ -10,6 +10,7 @@ import {
     mapIntentToMantine,
     mapMantineColorToHeroUiButtonVariant,
     mapMantineColorToHeroUiColor,
+    mapAccordionVariantToHeroUiVariant,
     mapMantineVariantToHeroUiButtonVariant,
     mapRadiusToMantine,
     mapRadiusToPx,
@@ -170,6 +171,14 @@ describe('semantic style mapper', () => {
             expect(mapMantineVariantToHeroUiButtonVariant('outline')).toBe('outline');
             expect(mapMantineVariantToHeroUiButtonVariant('subtle')).toBe('ghost');
             expect(mapMantineVariantToHeroUiButtonVariant('transparent')).toBe('ghost');
+        });
+
+        it('maps the accordion variant token onto the HeroUI Native accordion variant', () => {
+            expect(mapAccordionVariantToHeroUiVariant('default')).toBe('default');
+            expect(mapAccordionVariantToHeroUiVariant('contained')).toBe('surface');
+            expect(mapAccordionVariantToHeroUiVariant('filled')).toBe('surface');
+            expect(mapAccordionVariantToHeroUiVariant('separated')).toBe('surface');
+            expect(mapAccordionVariantToHeroUiVariant(undefined)).toBe('default');
         });
 
         it('derives a button variant from the colour when no variant is set', () => {

@@ -9,6 +9,31 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.8
+
+Accordion polish wave (accordion / accordion-item) — align the typed contracts
+with the backend `Version20260619183601` migration and the coupled web + mobile
+renderer reads. Patch bump: a renamed optional style field, one additive optional
+content field, and a new additive mobile mapper helper.
+
+### Changed
+
+- **`IAccordionStyle`:** the variant is now the cross-platform
+  `shared_accordion_variant` (`TMantineAccordionVariant`); the web-only
+  `web_accordion_variant` was renamed (the backend migrated the field by id, so
+  authored values + options are preserved). Web maps it to the Mantine variant;
+  mobile maps it through `mapAccordionVariantToHeroUiVariant`.
+
+### Added
+
+- **`IAccordionItemStyle.description`:** optional translatable subtitle
+  (`IContentField<string>`) rendered under the item label on both platforms;
+  empty = hidden.
+- **`mapAccordionVariantToHeroUiVariant(variant)`:** maps the accordion variant
+  token (`default`/`contained`/`filled`/`separated`) onto the HeroUI Native
+  Accordion `variant` (`default` | `surface`) — boxed Mantine variants collapse
+  to `surface`.
+
 ## v1.14.7
 
 Mobile button authored-colour parity. Patch bump: one additive optional prop on
