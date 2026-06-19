@@ -9,6 +9,48 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.0
+
+Style-field cleanup slice 3 — semantic variant promotion (RF-14) plus the
+translatable `web_*` un-prefix sweep (RF-35). Pairs with backend migration
+`Version20260619093723` and the coupled web + mobile renderer reads. These are
+pure field renames; no mapper/registry/runtime code reads them by name, so the
+type surface is the only change here (pre-stable: shipped as a minor).
+
+### Changed
+
+- **`web_button_variant` → `shared_variant` (RF-14).** The error/surface styles
+  (`missing`, `no-access`, `not-found`) carry a button variant that is a semantic
+  token both platforms should honour, so it loses the `web_` prefix and its
+  backend scope flips from `web` to `shared` (scope is derived from the name
+  prefix). Renamed on `IMissingStyle`, `INoAccessStyle`, `INotFoundStyle` in
+  `error`.
+- **Translatable `web_*` content fields lose the `web_` prefix (RF-35).** Every
+  `display = 1` field is already grouped as `content` by the backend regardless
+  of prefix (so it was always shipped to both platforms) — the `web_` prefix was
+  a naming lie. Un-prefixed across `forms`, `typography`, `layout`, and
+  `composite`:
+  - `web_radio_options` → `radio_options`,
+    `web_combobox_options` → `combobox_options`,
+    `web_segmented_control_data` → `segmented_control_data`,
+    `web_slider_marks_values` → `slider_marks_values`,
+    `web_range_slider_marks_values` → `range_slider_marks_values`
+  - `web_switch_on_label` → `switch_on_label`,
+    `web_switch_off_label` → `switch_off_label`
+  - `web_spoiler_show_label` → `spoiler_show_label`,
+    `web_spoiler_hide_label` → `spoiler_hide_label`
+  - `web_color_picker_saturation_label` → `color_picker_saturation_label`,
+    `web_color_picker_hue_label` → `color_picker_hue_label`,
+    `web_color_picker_alpha_label` → `color_picker_alpha_label`
+  - `web_datepicker_placeholder` → `datepicker_placeholder`,
+    `web_rich_text_editor_placeholder` → `rich_text_editor_placeholder`
+  - `web_tooltip_label` → `tooltip_label`,
+    `web_highlight_highlight` → `highlight_highlight`,
+    `web_divider_label` → `divider_label`,
+    `web_list_item_content` → `list_item_content`
+  - The web-only *presentation* twins keep their prefix (e.g.
+    `web_divider_label_position`, `web_radio_card`, `web_color_format`).
+
 ## v1.13.0
 
 Style-field cleanup slice 2 — semantic colour promotion (RF-13) plus two

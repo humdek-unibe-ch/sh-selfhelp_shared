@@ -60,7 +60,7 @@ export interface ICodeStyle extends IStyleWithSpacing {
 export interface IHighlightStyle extends IStyleWithSpacing {
     style_name: 'highlight';
     text?: IContentField<string>;
-    web_highlight_highlight?: IContentField<string>;
+    highlight_highlight?: IContentField<string>;
     shared_color?: IContentField<TMantineColor>;}
 
 export interface IBlockquoteStyle extends IStyleWithSpacing {
@@ -96,5 +96,5 @@ export interface IFieldsetStyle extends IStyleWithSpacing {
 export interface ISpoilerStyle extends IStyleWithSpacing {
     style_name: 'spoiler';
     web_height?: IContentField<TMantineSpoilerMaxHeight>;
-    web_spoiler_show_label?: IContentField<string>;
-    web_spoiler_hide_label?: IContentField<string>;}
+    spoiler_show_label?: IContentField<string>;
+    spoiler_hide_label?: IContentField<string>;}

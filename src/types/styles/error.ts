@@ -15,7 +15,7 @@ export interface INoAccessStyle extends IStyleWithSpacing {
     shared_color?: IContentField<string>;
     shared_radius?: IContentField<TSharedRadius>;
     web_shadow?: IContentField<string>;
-    web_button_variant?: IContentField<string>;
+    shared_variant?: IContentField<string>;
     show_icon?: IContentField<string>;
 }
 
@@ -28,7 +28,7 @@ export interface INotFoundStyle extends IStyleWithSpacing {
     shared_color?: IContentField<string>;
     shared_radius?: IContentField<TSharedRadius>;
     web_shadow?: IContentField<string>;
-    web_button_variant?: IContentField<string>;
+    shared_variant?: IContentField<string>;
     show_icon?: IContentField<string>;
 }
 
@@ -40,7 +40,7 @@ export interface IMissingStyle extends IStyleWithSpacing {
     shared_color?: IContentField<string>;
     shared_radius?: IContentField<TSharedRadius>;
     web_shadow?: IContentField<string>;
-    web_button_variant?: IContentField<string>;
+    shared_variant?: IContentField<string>;
     show_icon?: IContentField<string>;
 }
 

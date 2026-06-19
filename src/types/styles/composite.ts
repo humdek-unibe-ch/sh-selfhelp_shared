@@ -107,7 +107,7 @@ export interface IListStyle extends IStyleWithSpacing {
 
 export interface IListItemStyle extends IStyleWithSpacing {
     style_name: 'list-item';
-    web_list_item_content?: IContentField<string>;
+    list_item_content?: IContentField<string>;
     web_list_item_icon?: IContentField<string>;}
 
 export interface IEntryListStyle extends IBaseStyle {

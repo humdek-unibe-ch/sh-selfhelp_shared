@@ -111,7 +111,7 @@ export interface IDividerStyle extends IBaseStyle {
     style_name: 'divider';
     web_divider_variant?: IContentField<TMantineDividerVariant>;
     shared_size?: IContentField<TSharedSize>;
-    web_divider_label?: IContentField<string>;
+    divider_label?: IContentField<string>;
     web_divider_label_position?: IContentField<string>;
     shared_orientation?: IContentField<TMantineOrientation>;
     shared_color?: IContentField<TMantineColor>;}
