@@ -18,7 +18,7 @@ import type { TMantineIconSize } from './typography';
 
 export interface IButtonStyle extends IStyleWithSpacing {
     style_name: 'button';
-    web_variant?: IContentField<TMantineVariant>;
+    shared_variant?: IContentField<TMantineVariant>;
     shared_color?: IContentField<TMantineColor>;
     shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
@@ -60,31 +60,43 @@ export interface IActionIconStyle extends IStyleWithSpacing {
 
 export interface IAlertStyle extends IStyleWithSpacing {
     style_name: 'alert';
-    alert_title?: IContentField<string>;    web_variant?: IContentField<TMantineVariant>;
+    alert_title?: IContentField<string>;
+    web_variant?: IContentField<TMantineVariant>;
     shared_color?: IContentField<TMantineColor>;
     shared_radius?: IContentField<TSharedRadius>;
     web_left_icon?: IContentField<string>;
-    web_with_close_button?: IContentField<string>;
-    content?: IContentField<string>;}
+    /** Cross-platform dismiss toggle (was the web-only `web_with_close_button`). */
+    closable?: IContentField<string>;
+    content?: IContentField<string>;
+}
 
 export interface IBadgeStyle extends IStyleWithSpacing {
     style_name: 'badge';
     label?: IContentField<string>;
+    /** Cross-platform variant (web Mantine + mobile HeroUI). Primary control. */
+    shared_variant?: IContentField<TMantineBadgeVariant>;
+    /** Web-only variant override (e.g. `dot`); empty falls back to shared_variant. */
     web_variant?: IContentField<TMantineBadgeVariant>;
+    /** Render as a circle (equal width/height) for short counts. */
+    circle?: IContentField<string>;
     shared_size?: IContentField<TSharedSize>;
     web_left_icon?: IContentField<string>;
     shared_radius?: IContentField<TSharedRadius>;
-    shared_color?: IContentField<TMantineColor>;    web_right_icon?: IContentField<string>;
+    shared_color?: IContentField<TMantineColor>;
+    web_right_icon?: IContentField<string>;
     web_auto_contrast?: IContentField<string>;
 }
 
 export interface IAvatarStyle extends IStyleWithSpacing {
     style_name: 'avatar';
     alt?: IContentField<string>;
-    web_avatar_variant?: IContentField<TMantineAvatarVariant>;
+    /** Person name; seeds auto-initials + a stable auto colour when no image. */
+    name?: IContentField<string>;
+    web_variant?: IContentField<TMantineAvatarVariant>;
     shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
-    shared_color?: IContentField<TMantineColor>;    web_left_icon?: IContentField<string>;
+    shared_color?: IContentField<TMantineColor>;
+    web_left_icon?: IContentField<string>;
     web_avatar_initials?: IContentField<string>;
     img_src?: IContentField<string>;
 }

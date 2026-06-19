@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: 2026 Humdek, University of Bern
 SPDX-License-Identifier: MPL-2.0
 */
 import type { IContentField, IStyleWithSpacing } from './base';
-import type { TMantineRadius } from '../mantine/common';
+import type { TMantineColor, TMantineRadius } from '../mantine/common';
 
 export interface ILoginStyle extends IStyleWithSpacing {
     style_name: 'login';
@@ -13,6 +13,10 @@ export interface ILoginStyle extends IStyleWithSpacing {
     label_pw_reset?: IContentField<string>;
     alert_fail?: IContentField<string>;
     login_title?: IContentField<string>;
+    /** Optional subtitle under the title; hidden when empty. */
+    subtitle?: IContentField<string>;
+    /** Submit-button colour (cross-platform, via the shared mapper). */
+    shared_color?: IContentField<TMantineColor>;
     /** Label of the link that opens the registration page. */
     label_register?: IContentField<string>;
 }

@@ -9,6 +9,33 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.6
+
+Style polish wave (alert/badge/avatar/button/login) — align the typed contracts
+with the backend `Version20260619131830` migration. Patch bump: additive/renamed
+optional style fields plus a behaviour-preserving mapper lint fix.
+
+### Changed
+
+- **`IButtonStyle`:** the variant is now the cross-platform `shared_variant`
+  (`TMantineVariant`); the button-only `web_variant` was removed (the backend
+  migrated existing values onto `shared_variant`).
+- **`IBadgeStyle`:** added the cross-platform `shared_variant`
+  (`TMantineBadgeVariant`) as the primary control and a `circle` toggle;
+  `web_variant` stays as an optional web-only override (e.g. `dot`).
+- **`IAvatarStyle`:** renamed the stale `web_avatar_variant` to `web_variant`
+  (matches the DB field) and added the `name` field (auto-initials + auto colour).
+- **`IAlertStyle`:** renamed `web_with_close_button` to the cross-platform
+  `closable` (the DB field is now `common`-scoped so mobile can honour it).
+- **`ILoginStyle`:** added the optional translatable `subtitle` and the
+  `shared_color` submit-button colour (both now in the live catalog).
+- **`semantic.ts`:** removed an unnecessary `as TSemanticColor` assertion
+  (`TMantineColor` already collapses to `string`); resolves a pre-existing
+  `@typescript-eslint/no-unnecessary-type-assertion` lint error. No behaviour
+  change — `resolveSharedStyleProps`/`toHeroUiSemanticProps` already read
+  `shared_variant`/`shared_color`, so the new badge/button variants flow through
+  the existing mapper unchanged.
+
 ## v1.14.5
 
 Semantic mapper completion — reconcile the shared mapper with the live DB

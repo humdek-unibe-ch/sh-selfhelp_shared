@@ -480,7 +480,7 @@ export function resolveSharedStyleProps(fields: Record<string, unknown>): IShare
     // collapse it; an unknown value simply falls through to a renderer default.
     const color = readString(fields.shared_color);
     if (color !== undefined) {
-        resolved.color = color as TSemanticColor;
+        resolved.color = color;
     }
 
     const variant = readString(fields.shared_variant);
