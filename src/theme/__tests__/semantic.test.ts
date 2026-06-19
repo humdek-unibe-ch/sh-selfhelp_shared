@@ -8,6 +8,9 @@ import {
     mapIntentToHeroUiButtonVariant,
     mapIntentToHeroUiColor,
     mapIntentToMantine,
+    mapMantineColorToHeroUiButtonVariant,
+    mapMantineColorToHeroUiColor,
+    mapMantineVariantToHeroUiButtonVariant,
     mapRadiusToMantine,
     mapRadiusToPx,
     mapSizeToHeroUi,
@@ -135,6 +138,73 @@ describe('semantic style mapper', () => {
             expect(resolveSharedStyleProps({ shared_full_width: '0' }).fullWidth).toBe(false);
             expect(resolveSharedStyleProps({ shared_full_width: true }).fullWidth).toBe(true);
             expect(resolveSharedStyleProps({}).fullWidth).toBeUndefined();
+        });
+
+        it('reads shared_color and shared_variant (the REAL cross-platform fields)', () => {
+            const resolved = resolveSharedStyleProps({ shared_color: 'red', shared_variant: 'light' });
+            expect(resolved.color).toBe('red');
+            expect(resolved.variant).toBe('light');
+        });
+
+        it('treats an empty shared_color / shared_variant as absent', () => {
+            const resolved = resolveSharedStyleProps({ shared_color: '', shared_variant: '' });
+            expect(resolved.color).toBeUndefined();
+            expect(resolved.variant).toBeUndefined();
+        });
+    });
+
+    describe('Mantine colour/variant -> HeroUI Native (real shared_color/shared_variant)', () => {
+        it('maps a Mantine palette colour to a HeroUI semantic colour', () => {
+            expect(mapMantineColorToHeroUiColor('red')).toBe('danger');
+            expect(mapMantineColorToHeroUiColor('green')).toBe('success');
+            expect(mapMantineColorToHeroUiColor('yellow')).toBe('warning');
+            expect(mapMantineColorToHeroUiColor('gray')).toBe('default');
+            expect(mapMantineColorToHeroUiColor('blue')).toBe('accent');
+            expect(mapMantineColorToHeroUiColor('grape')).toBe('accent');
+            expect(mapMantineColorToHeroUiColor(undefined)).toBeUndefined();
+        });
+
+        it('maps a Mantine variant to a HeroUI button variant', () => {
+            expect(mapMantineVariantToHeroUiButtonVariant('filled')).toBe('primary');
+            expect(mapMantineVariantToHeroUiButtonVariant('light')).toBe('secondary');
+            expect(mapMantineVariantToHeroUiButtonVariant('outline')).toBe('outline');
+            expect(mapMantineVariantToHeroUiButtonVariant('subtle')).toBe('ghost');
+            expect(mapMantineVariantToHeroUiButtonVariant('transparent')).toBe('ghost');
+        });
+
+        it('derives a button variant from the colour when no variant is set', () => {
+            expect(mapMantineColorToHeroUiButtonVariant('red')).toBe('danger');
+            expect(mapMantineColorToHeroUiButtonVariant('gray')).toBe('secondary');
+            expect(mapMantineColorToHeroUiButtonVariant('blue')).toBe('primary');
+        });
+
+        it('toHeroUiSemanticProps prefers shared_variant, then shared_color, then intent', () => {
+            expect(
+                toHeroUiSemanticProps({ variant: 'outline', color: 'red', intent: 'primary' }).buttonVariant,
+            ).toBe('outline');
+            expect(toHeroUiSemanticProps({ color: 'red' })).toMatchObject({
+                buttonVariant: 'danger',
+                color: 'danger',
+            });
+            expect(toHeroUiSemanticProps({ intent: 'success' })).toMatchObject({
+                buttonVariant: 'primary',
+                color: 'success',
+            });
+        });
+
+        it('resolves a real CMS button section (shared_color + shared_variant + shared_size)', () => {
+            const props = resolveSharedStyleProps({
+                shared_color: 'red',
+                shared_variant: 'filled',
+                shared_size: 'lg',
+                shared_radius: 'md',
+            });
+            expect(toHeroUiSemanticProps(props)).toMatchObject({
+                size: 'lg',
+                buttonVariant: 'primary', // filled -> primary
+                color: 'danger', // red -> danger
+                radiusPx: RADIUS_PX.md,
+            });
         });
     });
 
