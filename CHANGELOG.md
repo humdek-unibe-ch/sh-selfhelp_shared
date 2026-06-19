@@ -9,6 +9,43 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.5
+
+Semantic mapper completion — reconcile the shared mapper with the live DB
+catalog (style-field audit, "shared semantics disconnected from the database").
+Minor bump: additive new exports + the `toHeroUiSemanticProps` /
+`resolveSharedStyleProps` resolvers now read the REAL cross-platform appearance
+fields instead of the phantom `shared_intent`. Pairs with the coupled mobile
+renderer reads (mobile `mobileStyleProps` + the layout/typography/interactive
+components switched from phantom `web_*` to the real `shared_*` fields).
+
+### Added
+
+- **`semantic.ts` — Mantine → HeroUI Native maps:** `mapMantineColorToHeroUiColor`,
+  `mapMantineColorToHeroUiButtonVariant`, `mapMantineVariantToHeroUiButtonVariant`,
+  plus the `TSemanticColor` / `TSemanticVariant` types. These turn the catalog's
+  Mantine palette/variant values (stored verbatim in `shared_color` /
+  `shared_variant`) into the HeroUI Native button/colour vocabulary.
+- **`ISharedStyleProps`:** new optional `color` / `variant` fields (the real
+  cross-platform appearance inputs).
+
+### Changed
+
+- **`resolveSharedStyleProps`:** now reads `shared_color` + `shared_variant`
+  (the fields the DB actually has, and the same ones the web renderer reads). The
+  legacy `shared_intent` read is kept as a back-compat fallback only — it is not
+  in the live catalog.
+- **`toHeroUiSemanticProps`:** appearance precedence is now `shared_variant` →
+  `shared_color` → legacy `intent`, mirroring the web renderer. Existing
+  intent-only callers are unaffected (intent stays the final fallback).
+
+### Notes
+
+- The web frontend does not consume this mapper (it reads `shared_*` straight
+  into Mantine), so this change is mobile-facing only; web behaviour is unchanged.
+- Fixes the latent bug where CMS-authored `shared_color` / `shared_variant` were
+  silently dropped on mobile because the mapper only looked for `shared_intent`.
+
 ## v1.14.4
 
 Style-field cleanup slice 9 — spacing consolidation (RF-15). Pairs with backend
