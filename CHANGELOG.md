@@ -9,6 +9,36 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.13.0
+
+Style-field cleanup slice 2 — semantic colour promotion (RF-13) plus two
+field-name fixes (RF-36, RF-37). Pairs with backend migration
+`Version20260619092612` and the coupled web + mobile renderer reads. No
+mapper/registry/runtime code reads these fields by name (the
+`resolveMantineVariant(variant, color)` resolver is value-based), so the type
+surface is the only change here (pre-stable: shipped as a minor).
+
+### Changed
+
+- **`web_color` → `shared_color` (RF-13).** Colour is a semantic token both
+  platforms use — an author setting a login / alert / button colour must have it
+  apply on mobile too — so it loses the `web_` prefix and its backend scope flips
+  from `web` to `shared` (scope is derived from the name prefix). Renamed on
+  every interface that carried it across `forms`, `interactive`, `typography`,
+  `layout`, `composite`, and `error`. The web-only colour-widget config fields
+  (`web_color_format`, `web_color_input_*`, `web_color_picker_*`) are
+  intentionally left `web_` — they configure the colour-picker UI, not a
+  semantic colour.
+- **`web_checkbox_labelPosition` → `web_checkbox_label_position` (RF-37).** The
+  catalog field name now follows the `snake_case` field-naming rule.
+
+### Removed
+
+- **`web_image_src` / `web_image_alt` removed from `IImageStyle` family
+  context (RF-36).** They duplicated the `img_src` / `alt` content fields the
+  renderers already read; the catalog drops the duplicates. (They were already
+  absent from the shared types; this entry records the coupled catalog removal.)
+
 ## v1.12.0
 
 Style-field cleanup slice 1 — the type surface now matches backend migration

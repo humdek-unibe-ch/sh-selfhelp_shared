@@ -114,7 +114,7 @@ export interface IDividerStyle extends IBaseStyle {
     web_divider_label?: IContentField<string>;
     web_divider_label_position?: IContentField<string>;
     shared_orientation?: IContentField<TMantineOrientation>;
-    web_color?: IContentField<TMantineColor>;}
+    shared_color?: IContentField<TMantineColor>;}
 
 export interface IPaperStyle extends IStyleWithSpacing {
     style_name: 'paper';

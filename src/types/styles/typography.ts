@@ -38,7 +38,7 @@ export interface ITextStyle extends IStyleWithSpacing {
     style_name: 'text';
     text?: IContentField<string>;
     shared_size?: IContentField<TMantineSize>;
-    web_color?: IContentField<TMantineColor>;
+    shared_color?: IContentField<TMantineColor>;
     web_text_font_weight?: IContentField<TMantineTextFontWeight>;
     web_text_font_style?: IContentField<TMantineTextFontStyle>;
     web_text_text_decoration?: IContentField<TMantineTextDecoration>;
@@ -54,14 +54,14 @@ export interface ITextStyle extends IStyleWithSpacing {
 export interface ICodeStyle extends IStyleWithSpacing {
     style_name: 'code';
     web_code_block?: IContentField<string>;
-    web_color?: IContentField<TMantineColor>;    content?: IContentField<string>;
+    shared_color?: IContentField<TMantineColor>;    content?: IContentField<string>;
 }
 
 export interface IHighlightStyle extends IStyleWithSpacing {
     style_name: 'highlight';
     text?: IContentField<string>;
     web_highlight_highlight?: IContentField<string>;
-    web_color?: IContentField<TMantineColor>;}
+    shared_color?: IContentField<TMantineColor>;}
 
 export interface IBlockquoteStyle extends IStyleWithSpacing {
     style_name: 'blockquote';
@@ -69,7 +69,7 @@ export interface IBlockquoteStyle extends IStyleWithSpacing {
     cite?: IContentField<string>;
     web_left_icon?: IContentField<string>;
     web_icon_size?: IContentField<TMantineIconSize>;
-    web_color?: IContentField<TMantineColor>;}
+    shared_color?: IContentField<TMantineColor>;}
 
 export interface IHtmlTagStyle extends IBaseStyle {
     style_name: 'html-tag';

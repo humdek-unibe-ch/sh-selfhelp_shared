@@ -138,7 +138,7 @@ export interface IRadioStyle extends IStyleWithSpacing {
     is_inline?: IContentField<string>;
     shared_orientation?: IContentField<string>;
     shared_size?: IContentField<TSharedSize>;
-    web_color?: IContentField<TMantineColor>;
+    shared_color?: IContentField<TMantineColor>;
     web_radio_options?: IContentField<string>;
     web_radio_label_position?: IContentField<string>;
     web_radio_variant?: IContentField<string>;
@@ -156,12 +156,12 @@ export interface ICheckboxStyle extends IStyleWithSpacing {
     is_required?: IContentField<string>;
     checkbox_value?: IContentField<string>;
     web_checkbox_icon?: IContentField<string>;
-    web_checkbox_labelPosition?: IContentField<TMantineCheckboxLabelPosition>;
+    web_checkbox_label_position?: IContentField<TMantineCheckboxLabelPosition>;
     description?: IContentField<string>;
     disabled?: IContentField<string>;
     shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
-    web_color?: IContentField<TMantineColor>;    web_use_input_wrapper?: IContentField<TMantineUseInputWrapper>;
+    shared_color?: IContentField<TMantineColor>;    web_use_input_wrapper?: IContentField<TMantineUseInputWrapper>;
 }
 
 export interface ISliderStyle extends IStyleWithSpacing {
@@ -174,7 +174,7 @@ export interface ISliderStyle extends IStyleWithSpacing {
     web_numeric_max?: IContentField<string>;
     web_numeric_step?: IContentField<string>;
     shared_size?: IContentField<TSharedSize>;
-    web_color?: IContentField<TMantineColor>;
+    shared_color?: IContentField<TMantineColor>;
     shared_radius?: IContentField<TSharedRadius>;
     disabled?: IContentField<string>;    web_slider_marks_values?: IContentField<string>;
     web_slider_show_label?: IContentField<string>;
@@ -198,7 +198,7 @@ export interface IRangeSliderStyle extends IStyleWithSpacing {
     web_range_slider_labels_always_on?: IContentField<string>;
     web_range_slider_inverted?: IContentField<string>;
     shared_size?: IContentField<TSharedSize>;
-    web_color?: IContentField<TMantineColor>;
+    shared_color?: IContentField<TMantineColor>;
     shared_radius?: IContentField<TSharedRadius>;
     disabled?: IContentField<string>;}
 
@@ -240,7 +240,7 @@ export interface ISwitchStyle extends IStyleWithSpacing {
     web_switch_on_label?: IContentField<string>;
     web_switch_off_label?: IContentField<string>;
     shared_size?: IContentField<TSharedSize>;
-    web_color?: IContentField<TMantineColor>;
+    shared_color?: IContentField<TMantineColor>;
     shared_radius?: IContentField<TSharedRadius>;
     disabled?: IContentField<string>;    name?: IContentField<string>;
     is_required?: IContentField<string>;
@@ -343,7 +343,7 @@ export interface ISegmentedControlStyle extends IStyleWithSpacing {
     shared_orientation?: IContentField<string>;
     shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
-    web_color?: IContentField<TMantineColor>;
+    shared_color?: IContentField<TMantineColor>;
     fullwidth?: IContentField<string>;
     disabled?: IContentField<string>;
     readonly?: IContentField<string>;    web_segmented_control_item_border?: IContentField<string>;
@@ -369,12 +369,12 @@ export interface IRatingStyle extends IStyleWithSpacing {
     web_rating_full_icon?: IContentField<string>;
     web_rating_highlight_selected_only?: IContentField<string>;
     shared_size?: IContentField<TSharedSize>;
-    web_color?: IContentField<TMantineColor>;}
+    shared_color?: IContentField<TMantineColor>;}
 
 export interface IProgressStyle extends IStyleWithSpacing {
     style_name: 'progress';
     value?: IContentField<string>;
-    web_color?: IContentField<TMantineColor>;
+    shared_color?: IContentField<TMantineColor>;
     shared_radius?: IContentField<TSharedRadius>;
     shared_size?: IContentField<TSharedSize>;
     web_progress_striped?: IContentField<string>;
@@ -389,7 +389,7 @@ export interface IProgressRootStyle extends IBaseStyle {
 export interface IProgressSectionStyle extends IBaseStyle {
     style_name: 'progress-section';
     value?: IContentField<string>;
-    web_color?: IContentField<TMantineColor>;
+    shared_color?: IContentField<TMantineColor>;
     web_progress_striped?: IContentField<string>;
     web_progress_animated?: IContentField<string>;
     label?: IContentField<string>;

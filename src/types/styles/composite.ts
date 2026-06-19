@@ -62,7 +62,7 @@ export interface ITabsStyle extends IStyleWithSpacing {
     web_tabs_variant?: IContentField<TMantineTabsVariant>;
     web_tabs_orientation?: IContentField<TMantineOrientation>;
     web_tabs_radius?: IContentField<TMantineRadius>;
-    web_color?: IContentField<TMantineColor>;
+    shared_color?: IContentField<TMantineColor>;
     web_width?: IContentField<TMantineWidth>;
     web_height?: IContentField<TMantineHeight>;}
 
@@ -82,7 +82,7 @@ export interface ITimelineStyle extends IStyleWithSpacing {
     web_timeline_active?: IContentField<string>;
     web_timeline_align?: IContentField<TMantineTimelineAlign>;
     web_timeline_line_variant?: IContentField<TMantineTimelineLineVariant>;
-    web_color?: IContentField<TMantineColor>;}
+    shared_color?: IContentField<TMantineColor>;}
 
 /**
  * A single entry inside a `timeline`. Child-only style; placement is enforced
@@ -93,7 +93,7 @@ export interface ITimelineItemStyle extends IBaseStyle {
     title?: IContentField<string>;
     web_timeline_item_bullet?: IContentField<string>;
     web_timeline_item_line_variant?: IContentField<TMantineTimelineLineVariant>;
-    web_color?: IContentField<TMantineColor>;}
+    shared_color?: IContentField<TMantineColor>;}
 
 export interface IListStyle extends IStyleWithSpacing {
     style_name: 'list';

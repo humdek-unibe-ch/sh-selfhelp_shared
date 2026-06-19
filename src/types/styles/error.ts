@@ -12,7 +12,7 @@ export interface INoAccessStyle extends IStyleWithSpacing {
     button_label?: IContentField<string>;
     login_label?: IContentField<string>;
     show_login?: IContentField<string>;
-    web_color?: IContentField<string>;
+    shared_color?: IContentField<string>;
     shared_radius?: IContentField<TSharedRadius>;
     web_shadow?: IContentField<string>;
     web_button_variant?: IContentField<string>;
@@ -25,7 +25,7 @@ export interface INotFoundStyle extends IStyleWithSpacing {
     message?: IContentField<string>;
     button_label?: IContentField<string>;
     login_label?: IContentField<string>;
-    web_color?: IContentField<string>;
+    shared_color?: IContentField<string>;
     shared_radius?: IContentField<TSharedRadius>;
     web_shadow?: IContentField<string>;
     web_button_variant?: IContentField<string>;
@@ -37,7 +37,7 @@ export interface IMissingStyle extends IStyleWithSpacing {
     title?: IContentField<string>;
     message?: IContentField<string>;
     button_label?: IContentField<string>;
-    web_color?: IContentField<string>;
+    shared_color?: IContentField<string>;
     shared_radius?: IContentField<TSharedRadius>;
     web_shadow?: IContentField<string>;
     web_button_variant?: IContentField<string>;
