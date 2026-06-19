@@ -40,7 +40,6 @@ export interface IRegisterStyle extends IStyleWithSpacing {
 export interface IValidateStyle extends IStyleWithSpacing {
     style_name: 'validate';
     label_pw?: IContentField<string>;
-    label_login?: IContentField<string>;
     alert_fail?: IContentField<string>;
     label_pw_confirm?: IContentField<string>;
     title?: IContentField<string>;
@@ -51,13 +50,12 @@ export interface IValidateStyle extends IStyleWithSpacing {
     name_description?: IContentField<string>;
     label_activate?: IContentField<string>;
     pw_placeholder?: IContentField<string>;
-    success?: IContentField<string>;
     name?: IContentField<string>;
-    page_keyword?: IContentField<string>;
-    value_name?: IContentField<string>;
     anonymous_user_name_description?: IContentField<string>;
     redirect_at_end?: IContentField<string>;
-    cancel_url?: IContentField<string>;
+    // Cancel-button target page. Canonical name shared with form-log/form-record
+    // and the mobile FormUserInput (slice 5 / RF-12: was the web-only `cancel_url`).
+    btn_cancel_url?: IContentField<string>;
     label_save?: IContentField<string>;
     label_update?: IContentField<string>;
     label_cancel?: IContentField<string>;
@@ -192,9 +190,4 @@ export interface IProfileStyle extends IStyleWithSpacing {
     profile_shadow?: IContentField<string>;
 
     profile_columns?: IContentField<string>;
-
-    alert_fail?: IContentField<string>;
-    alert_del_fail?: IContentField<string>;
-    alert_del_success?: IContentField<string>;
-    alert_success?: IContentField<string>;
 }

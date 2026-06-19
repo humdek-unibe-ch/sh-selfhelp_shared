@@ -9,6 +9,46 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.1
+
+Style-field cleanup slice 5 — DB↔type reconciliation tail (RF-12, RF-22, RF-23).
+Pairs with backend migration `Version20260619095112` and the coupled web + mobile
+renderer reads. Patch bump: type-only changes (stale-field drops + one canonical
+rename); no runtime/registry code reads these by name.
+
+### Changed
+
+- **`IValidateStyle.cancel_url` → `btn_cancel_url` (RF-12).** The cancel-button
+  target page is one concept across the form family: the DB, `form-log`/
+  `form-record`, `FormStyle` (web), and the mobile `FormUserInput` all use
+  `btn_cancel_url`. Only `validate` (type + web renderer) used the divergent
+  `cancel_url`, so the cancel button never resolved a URL. Renamed to the
+  canonical name; the web `ValidateStyle` now reads `btn_cancel_url` (the DB
+  already has the field, so no migration is needed for this).
+
+### Removed
+
+- **`IProfileStyle`: dropped `alert_fail`, `alert_del_fail`, `alert_del_success`,
+  `alert_success` (RF-22).** Runtime evidence: no web or mobile renderer reads
+  these on `profile` (it uses the per-section `profile_*_success` /
+  `profile_*_error_general` copy instead). They were stale type fields and never
+  existed in the catalog.
+- **`IValidateStyle`: dropped `label_login`, `success`, `page_keyword`,
+  `value_name` (RF-12).** Not present in the catalog and read by no renderer
+  (`validate` is a web-only activation surface; the web renderer reads
+  `success_title`, not `success`). `page_keyword` / `value_name` were never
+  catalog fields here.
+
+### Notes
+
+- `two-factor-auth` heading is unified on `title` (DB seeded it in slice 4; the
+  mobile `TwoFactorAuth` now reads `title` instead of the divergent
+  `label_title`). The unused DB `label` link on `two-factor-auth` is dropped by
+  the backend migration.
+- `validate.label_timezone` exists in the catalog but no renderer reads it yet
+  (first-login timezone selection is a documented gap); it is intentionally NOT
+  added to the type until a renderer consumes it.
+
 ## v1.14.0
 
 Style-field cleanup slice 3 — semantic variant promotion (RF-14) plus the
