@@ -86,9 +86,11 @@ export interface ITextareaStyle extends IStyleWithSpacing {
     disabled?: IContentField<string>;
     web_left_icon?: IContentField<string>;
     web_right_icon?: IContentField<string>;
-    web_textarea_autosize?: IContentField<TMantineTextareaAutosize>;
-    web_textarea_min_rows?: IContentField<string>;
-    web_textarea_max_rows?: IContentField<string>;
+    // RF-18: row sizing is portable (mobile maps to numberOfLines / auto-grow).
+    shared_autosize?: IContentField<TMantineTextareaAutosize>;
+    shared_min_rows?: IContentField<string>;
+    shared_max_rows?: IContentField<string>;
+    // RF-16: resize/variant have no clean React Native peer — stay web-only.
     web_textarea_resize?: IContentField<TMantineTextareaResize>;
     shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
@@ -121,10 +123,13 @@ export interface ISelectStyle extends IBaseStyle {
     options?: IContentField<string>;
     is_multiple?: IContentField<string>;
     max?: IContentField<string>;
-    live_search?: IContentField<string>;
+    // RF-17: searchable/clearable are portable behaviour (was the stale
+    // web-only `live_search` / `allow_clear`; mobile maps to search-field /
+    // clear affordance where the adapter supports it).
+    shared_searchable?: IContentField<string>;
     disabled?: IContentField<string>;
     image_selector?: IContentField<string>;
-    allow_clear?: IContentField<string>;
+    shared_clearable?: IContentField<string>;
 }
 
 export interface IRadioStyle extends IStyleWithSpacing {

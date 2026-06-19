@@ -9,6 +9,38 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.2
+
+Style-field cleanup slice 6 — mobile configurability (RF-17, RF-18, RF-19).
+Pairs with backend migration `Version20260619095732` and the coupled web + mobile
+renderer reads. Patch bump: behaviour/sizing knobs promoted from the web-only
+`web_*` prefix to the semantic `shared_*` prefix so the mobile renderer can read
+the same authored value.
+
+### Changed
+
+- **`ISelectStyle` (RF-17):** the stale, DB-absent `live_search` / `allow_clear`
+  are replaced by the portable `shared_searchable` / `shared_clearable`. The web
+  `SelectStyle` now reads them (previously hard-coded: searchable on, clearable
+  when not required — preserved as defaults). Mobile maps them to its
+  search-field / clear affordance where the select adapter supports it.
+- **`ITextareaStyle` (RF-18):** `web_textarea_autosize` → `shared_autosize`,
+  `web_textarea_min_rows` → `shared_min_rows`, `web_textarea_max_rows` →
+  `shared_max_rows`. Row sizing is portable (mobile maps to `numberOfLines` /
+  auto-grow). `web_textarea_resize` / `web_textarea_variant` stay web-only (RF-16
+  — no clean RN peer). The redundant `web_textarea_rows` is also renamed to
+  `shared_rows` in the catalog (read by no renderer; Mantine uses min/max rows).
+- **`IAccordionStyle` (RF-19):** `web_accordion_multiple` → `shared_multiple`
+  (selection mode — single vs multiple open). Both the web `AccordionStyle` and
+  the mobile `Accordion` already read it; only the name changes.
+  `web_accordion_variant` stays web-only (Mantine-specific visual, RF-16).
+
+### Notes
+
+- **RF-20** (`button` / `link` `open_in_new_tab`) needed no change — the field is
+  already unprefixed/common and both renderers already read it (web opens a new
+  tab; mobile `Link`/`Button` open via `Linking`/in-app navigation).
+
 ## v1.14.1
 
 Style-field cleanup slice 5 — DB↔type reconciliation tail (RF-12, RF-22, RF-23).

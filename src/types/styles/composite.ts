@@ -40,8 +40,11 @@ export type TMantineListCenter = '0' | '1';
 
 export interface IAccordionStyle extends IStyleWithSpacing {
     style_name: 'accordion';
+    // RF-16: variant is a Mantine-specific visual (contained/filled/separated)
+    // with no clean RN peer — stays web-only.
     web_accordion_variant?: IContentField<TMantineAccordionVariant>;
-    web_accordion_multiple?: IContentField<TMantineAccordionMultiple>;
+    // RF-19: selection mode (single vs multiple open) is portable; mobile reads it.
+    shared_multiple?: IContentField<TMantineAccordionMultiple>;
     web_accordion_chevron_position?: IContentField<TMantineAccordionChevronPosition>;
     web_accordion_chevron_size?: IContentField<string>;
     web_accordion_disable_chevron_rotation?: IContentField<TMantineAccordionDisableChevronRotation>;
