@@ -157,7 +157,9 @@ export interface ICardStyle extends IStyleWithSpacing {
     img_src?: IContentField<string>;
     // Cross-platform border (Mantine withBorder / themed border on mobile).
     shared_border?: IContentField<TSharedBorder>;
-    web_card_padding?: IContentField<TMantineCardPadding>;
+    // NOTE: no web-only card padding — padding is the portable `shared_spacing`
+    // (pt/pb/ps/pe), which renders on web AND mobile. The renderer keeps a fixed
+    // Mantine inner padding ("md") as the default + Card.Section bleed reference.
     web_card_shadow?: IContentField<TMantineCardShadow>;
     shared_radius?: IContentField<TSharedRadius>;}
 

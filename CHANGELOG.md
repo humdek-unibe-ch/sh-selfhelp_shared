@@ -9,6 +9,22 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.11
+
+Style polish wave (card) — remove the redundant web-only card padding control.
+`ICardStyle` already extends `IStyleWithSpacing` (`shared_spacing`), whose padding
+side renders on web AND mobile, so the separate `web_card_padding` (Mantine
+`padding` prop) was a duplicate that confused authors. Patch bump: one optional
+field removed from a style contract (pre-1.0, not backward compatible). Pairs with
+backend migration `Version20260619205908` (unlinks the field from `card`; it stays
+on `validate`) and the web `CardStyle` renderer (fixed `padding="md"` default).
+
+### Removed
+
+- **`ICardStyle.web_card_padding`**: padding is now the portable `shared_spacing`
+  (`pt`/`pb`/`ps`/`pe`) field exclusively. The web renderer keeps a fixed Mantine
+  inner padding (`"md"`) as the default + Card.Section image-bleed reference.
+
 ## v1.14.10
 
 Style polish wave (mobile) — extend the mobile checkbox adapter contract so the
