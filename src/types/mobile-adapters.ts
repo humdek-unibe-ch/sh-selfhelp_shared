@@ -45,6 +45,16 @@ export interface IMobileButtonProps extends IMobileAdapterBaseProps {
     isLoading?: boolean;
     isIconOnly?: boolean;
     fullWidth?: boolean;
+    /**
+     * Optional concrete background colour (resolved hex) that overrides the
+     * variant's themed fill, used for cross-platform parity when a CMS style
+     * exposes an authored colour (e.g. `login`'s `shared_color`, which Mantine
+     * applies to the web button via `color`). The adapter keeps the variant's
+     * readable foreground (white on a filled button). Leave undefined to use the
+     * variant's default themed colour. Resolve it through the shared mapper
+     * (`resolveMantineVariant(...).accent`), never a hard-coded hex in a renderer.
+     */
+    accentColor?: string;
     children?: ReactNode;
 }
 

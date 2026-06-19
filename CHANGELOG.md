@@ -9,6 +9,20 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.7
+
+Mobile button authored-colour parity. Patch bump: one additive optional prop on
+the mobile button adapter contract.
+
+### Added
+
+- **`IMobileButtonProps.accentColor`:** optional resolved hex that overrides the
+  HeroUI variant fill so a CMS style can colour the mobile button for
+  cross-platform parity with the web Mantine `color` prop (e.g. `login`'s
+  `shared_color`). The adapter keeps the variant's readable foreground (white
+  label on a filled button); leave undefined to use the variant's themed colour.
+  Resolve it through `resolveMantineVariant(...).accent`, never a hard-coded hex.
+
 ## v1.14.6
 
 Style polish wave (alert/badge/avatar/button/login) — align the typed contracts
