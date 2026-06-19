@@ -32,9 +32,7 @@ export interface ITitleStyle extends IStyleWithSpacing {
     web_title_order?: IContentField<TMantineTitleOrder>;
     shared_size?: IContentField<TMantineSize>;
     web_title_text_wrap?: IContentField<TMantineTitleTextWrap>;
-    web_title_line_clamp?: IContentField<TMantineTitleLineClamp>;
-    use_web_style?: IContentField<string>;
-}
+    web_title_line_clamp?: IContentField<TMantineTitleLineClamp>;}
 
 export interface ITextStyle extends IStyleWithSpacing {
     style_name: 'text';
@@ -51,25 +49,19 @@ export interface ITextStyle extends IStyleWithSpacing {
     web_text_truncate?: IContentField<TMantineTextTruncate>;
     web_text_line_clamp?: IContentField<TMantineLineClamp>;
     web_text_inherit?: IContentField<TMantineTextInherit>;
-    web_text_span?: IContentField<TMantineTextSpan>;
-    use_web_style?: IContentField<string>;
-}
+    web_text_span?: IContentField<TMantineTextSpan>;}
 
 export interface ICodeStyle extends IStyleWithSpacing {
     style_name: 'code';
     web_code_block?: IContentField<string>;
-    web_color?: IContentField<TMantineColor>;
-    use_web_style?: IContentField<string>;
-    content?: IContentField<string>;
+    web_color?: IContentField<TMantineColor>;    content?: IContentField<string>;
 }
 
 export interface IHighlightStyle extends IStyleWithSpacing {
     style_name: 'highlight';
     text?: IContentField<string>;
     web_highlight_highlight?: IContentField<string>;
-    web_color?: IContentField<TMantineColor>;
-    use_web_style?: IContentField<string>;
-}
+    web_color?: IContentField<TMantineColor>;}
 
 export interface IBlockquoteStyle extends IStyleWithSpacing {
     style_name: 'blockquote';
@@ -77,9 +69,7 @@ export interface IBlockquoteStyle extends IStyleWithSpacing {
     cite?: IContentField<string>;
     web_left_icon?: IContentField<string>;
     web_icon_size?: IContentField<TMantineIconSize>;
-    web_color?: IContentField<TMantineColor>;
-    use_web_style?: IContentField<string>;
-}
+    web_color?: IContentField<TMantineColor>;}
 
 export interface IHtmlTagStyle extends IBaseStyle {
     style_name: 'html-tag';
@@ -90,29 +80,21 @@ export interface IHtmlTagStyle extends IBaseStyle {
 export interface IKbdStyle extends IStyleWithSpacing {
     style_name: 'kbd';
     label?: IContentField<string>;
-    shared_size?: IContentField<TMantineSize>;
-    use_web_style?: IContentField<string>;
-}
+    shared_size?: IContentField<TMantineSize>;}
 
 export interface ITypographyStyle extends IStyleWithSpacing {
-    style_name: 'typography';
-    use_web_style?: IContentField<string>;
-}
+    style_name: 'typography';}
 
 export interface IFieldsetStyle extends IStyleWithSpacing {
     style_name: 'fieldset';
     label?: IContentField<string>;
     legend?: IContentField<string>;
     web_fieldset_variant?: IContentField<TMantineFieldsetVariant>;
-    shared_radius?: IContentField<TMantineRadius>;
-    use_web_style?: IContentField<string>;
-    disabled?: IContentField<string>;
+    shared_radius?: IContentField<TMantineRadius>;    disabled?: IContentField<string>;
 }
 
 export interface ISpoilerStyle extends IStyleWithSpacing {
     style_name: 'spoiler';
     web_height?: IContentField<TMantineSpoilerMaxHeight>;
     web_spoiler_show_label?: IContentField<string>;
-    web_spoiler_hide_label?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-}
+    web_spoiler_hide_label?: IContentField<string>;}

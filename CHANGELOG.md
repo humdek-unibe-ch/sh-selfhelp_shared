@@ -9,6 +9,33 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.12.0
+
+Style-field cleanup slice 1 — the type surface now matches backend migration
+`Version20260619090609`. No mapper/registry/runtime code consumed any of these
+fields, so this is a type-only change (pre-stable: shipped as a minor).
+
+### Removed
+
+- **`use_web_style` removed from every style interface (RF-01).** The
+  Mantine/raw toggle is retired — the web renderer always renders Mantine. The
+  optional `use_web_style` field is dropped from all 59 style interfaces across
+  `forms`, `interactive`, `composite`, `layout`, `typography`, `media`, and
+  `unknown`.
+- **`is_log` removed from `IFormStyle` (RF-04/05).** Record vs log is decided by
+  the style (`form-record` / `form-log`), never a content field — separate form
+  styles already encode it.
+- **Stale auth fields removed:** `type` from `ILoginStyle` and
+  `IResetPasswordStyle` (RF-02; never existed in the DB) and the legacy
+  email-send leftovers `subject_user` + `is_html` from `IResetPasswordStyle`
+  (RF-06; reset email now goes through the mail templates).
+- **`close_button_label` removed from `IAlertStyle`** (stale; not in the DB).
+
+### Changed
+
+- **`IAlertStyle.web_alert_title` → `alert_title` (RF-10).** The alert heading is
+  translatable content shared by web and mobile, so it loses the `web_` prefix.
+
 ## v1.11.0
 
 ### Added

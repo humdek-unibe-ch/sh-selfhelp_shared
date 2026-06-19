@@ -35,15 +35,11 @@ export interface IContainerStyle extends IStyleWithSpacing {
     shared_size?: IContentField<TSharedSize>;
     web_fluid?: IContentField<string>;
     web_px?: IContentField<TMantineSpacing>;
-    web_py?: IContentField<TMantineSpacing>;
-    use_web_style?: IContentField<string>;
-}
+    web_py?: IContentField<TMantineSpacing>;}
 
 export interface IBoxStyle extends IStyleWithSpacing {
     style_name: 'box';
-    content?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-}
+    content?: IContentField<string>;}
 
 export interface IFlexStyle extends IStyleWithSpacing {
     style_name: 'flex';
@@ -94,9 +90,7 @@ export interface IGridStyle extends IStyleWithSpacing {
     shared_align?: IContentField<TMantineAlign>;
     web_grid_overflow?: IContentField<string>;
     web_width?: IContentField<TMantineWidth>;
-    web_height?: IContentField<TMantineHeight>;
-    use_web_style?: IContentField<string>;
-}
+    web_height?: IContentField<TMantineHeight>;}
 
 export interface IGridColumnStyle extends IStyleWithSpacing {
     style_name: 'grid-column';
@@ -105,9 +99,7 @@ export interface IGridColumnStyle extends IStyleWithSpacing {
     web_grid_order?: IContentField<TMantineGridOrder>;
     web_grid_grow?: IContentField<string>;
     web_width?: IContentField<TMantineWidth>;
-    web_height?: IContentField<TMantineHeight>;
-    use_web_style?: IContentField<string>;
-}
+    web_height?: IContentField<TMantineHeight>;}
 
 export interface ISpaceStyle extends IStyleWithSpacing {
     style_name: 'space';
@@ -122,9 +114,7 @@ export interface IDividerStyle extends IBaseStyle {
     web_divider_label?: IContentField<string>;
     web_divider_label_position?: IContentField<string>;
     shared_orientation?: IContentField<TMantineOrientation>;
-    web_color?: IContentField<TMantineColor>;
-    use_web_style?: IContentField<string>;
-}
+    web_color?: IContentField<TMantineColor>;}
 
 export interface IPaperStyle extends IStyleWithSpacing {
     style_name: 'paper';
@@ -132,9 +122,7 @@ export interface IPaperStyle extends IStyleWithSpacing {
     shared_radius?: IContentField<TSharedRadius>;
     web_px?: IContentField<TMantineSpacing>;
     web_py?: IContentField<TMantineSpacing>;
-    web_border?: IContentField<TMantineBorder>;
-    use_web_style?: IContentField<string>;
-}
+    web_border?: IContentField<TMantineBorder>;}
 
 export interface ICenterStyle extends IBaseStyle {
     style_name: 'center';
@@ -161,27 +149,19 @@ export interface ICardStyle extends IStyleWithSpacing {
     style_name: 'card';
     web_card_shadow?: IContentField<TMantineCardShadow>;
     web_border?: IContentField<TMantineBorder>;
-    shared_radius?: IContentField<TSharedRadius>;
-    use_web_style?: IContentField<string>;
-}
+    shared_radius?: IContentField<TSharedRadius>;}
 
 export interface ICardSegmentStyle extends IStyleWithSpacing {
-    style_name: 'card-segment';
-    use_web_style?: IContentField<string>;
-}
+    style_name: 'card-segment';}
 
 export interface IAspectRatioStyle extends IBaseStyle {
     style_name: 'aspect-ratio';
-    web_aspect_ratio?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-}
+    web_aspect_ratio?: IContentField<string>;}
 
 export interface IBackgroundImageStyle extends IStyleWithSpacing {
     style_name: 'background-image';
     img_src?: IContentField<string>;
-    shared_radius?: IContentField<TSharedRadius>;
-    use_web_style?: IContentField<string>;
-}
+    shared_radius?: IContentField<TSharedRadius>;}
 
 /**
  * Renders content referenced from another section. Has no own fields; the

@@ -27,9 +27,7 @@ export interface IButtonStyle extends IStyleWithSpacing {
     shared_full_width?: IContentField<string>;
     web_compact?: IContentField<string>;
     web_auto_contrast?: IContentField<string>;
-    is_link?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-    disabled?: IContentField<string>;
+    is_link?: IContentField<string>;    disabled?: IContentField<string>;
     open_in_new_tab?: IContentField<string>;
     page_keyword?: IContentField<string>;
     url?: IContentField<string>;
@@ -58,22 +56,16 @@ export interface IActionIconStyle extends IStyleWithSpacing {
     is_link?: IContentField<string>;
     page_keyword?: IContentField<string>;
     open_in_new_tab?: IContentField<string>;
-    disabled?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-}
+    disabled?: IContentField<string>;}
 
 export interface IAlertStyle extends IStyleWithSpacing {
     style_name: 'alert';
-    web_alert_title?: IContentField<string>;
-    close_button_label?: IContentField<string>;
-    web_variant?: IContentField<TMantineVariant>;
+    alert_title?: IContentField<string>;    web_variant?: IContentField<TMantineVariant>;
     web_color?: IContentField<TMantineColor>;
     shared_radius?: IContentField<TSharedRadius>;
     web_left_icon?: IContentField<string>;
     web_with_close_button?: IContentField<string>;
-    content?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-}
+    content?: IContentField<string>;}
 
 export interface IBadgeStyle extends IStyleWithSpacing {
     style_name: 'badge';
@@ -82,9 +74,7 @@ export interface IBadgeStyle extends IStyleWithSpacing {
     shared_size?: IContentField<TSharedSize>;
     web_left_icon?: IContentField<string>;
     shared_radius?: IContentField<TSharedRadius>;
-    web_color?: IContentField<TMantineColor>;
-    use_web_style?: IContentField<string>;
-    web_right_icon?: IContentField<string>;
+    web_color?: IContentField<TMantineColor>;    web_right_icon?: IContentField<string>;
     web_auto_contrast?: IContentField<string>;
 }
 
@@ -94,9 +84,7 @@ export interface IAvatarStyle extends IStyleWithSpacing {
     web_avatar_variant?: IContentField<TMantineAvatarVariant>;
     shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
-    web_color?: IContentField<TMantineColor>;
-    use_web_style?: IContentField<string>;
-    web_left_icon?: IContentField<string>;
+    web_color?: IContentField<TMantineColor>;    web_left_icon?: IContentField<string>;
     web_avatar_initials?: IContentField<string>;
     img_src?: IContentField<string>;
 }
@@ -110,9 +98,7 @@ export interface IChipStyle extends IStyleWithSpacing {
     web_color?: IContentField<TMantineColor>;
     web_chip_checked?: IContentField<string>;
     web_chip_multiple?: IContentField<string>;
-    disabled?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-    web_left_icon?: IContentField<string>;
+    disabled?: IContentField<string>;    web_left_icon?: IContentField<string>;
     web_icon_size?: IContentField<TMantineIconSize>;
     name?: IContentField<string>;
     value?: IContentField<string>;
@@ -137,18 +123,14 @@ export interface IIndicatorStyle extends IBaseStyle {
     web_indicator_offset?: IContentField<string>;
     web_border?: IContentField<string>;
     shared_radius?: IContentField<TSharedRadius>;
-    web_color?: IContentField<TMantineColor>;
-    use_web_style?: IContentField<string>;
-}
+    web_color?: IContentField<TMantineColor>;}
 
 export interface IThemeIconStyle extends IStyleWithSpacing {
     style_name: 'theme-icon';
     web_variant?: IContentField<TMantineThemeIconVariant>;
     shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
-    web_color?: IContentField<TMantineColor>;
-    use_web_style?: IContentField<string>;
-    web_left_icon?: IContentField<string>;
+    web_color?: IContentField<TMantineColor>;    web_left_icon?: IContentField<string>;
 }
 
 export interface INotificationStyle extends IStyleWithSpacing {
@@ -160,9 +142,7 @@ export interface INotificationStyle extends IStyleWithSpacing {
     web_notification_loading?: IContentField<string>;
     web_notification_with_close_button?: IContentField<string>;
     web_border?: IContentField<string>;
-    shared_radius?: IContentField<TSharedRadius>;
-    use_web_style?: IContentField<string>;
-}
+    shared_radius?: IContentField<TSharedRadius>;}
 
 // NOTE: `fab-button` and `biometric-login-button` are deferred (mobile rendering
 // plan, milestone-one scope). They are NOT part of the established 90-style

@@ -19,9 +19,7 @@ export interface IImageStyle extends IStyleWithSpacing {
     web_image_fit?: IContentField<TMantineImageFit>;
     web_width?: IContentField<TMantineWidth>;
     web_height?: IContentField<TMantineHeight>;
-    shared_radius?: IContentField<TMantineRadius>;
-    use_web_style?: IContentField<string>;
-}
+    shared_radius?: IContentField<TMantineRadius>;}
 
 export interface IVideoStyle extends IBaseStyle {
     style_name: 'video';
@@ -63,6 +61,4 @@ export interface ICarouselStyle extends IStyleWithSpacing {
     skip_snaps?: IContentField<string>;
     web_carousel_in_view_threshold?: IContentField<string>;
     web_carousel_duration?: IContentField<string>;
-    web_carousel_embla_options?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-}
+    web_carousel_embla_options?: IContentField<string>;}

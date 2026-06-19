@@ -13,7 +13,6 @@ export interface ILoginStyle extends IStyleWithSpacing {
     label_pw_reset?: IContentField<string>;
     alert_fail?: IContentField<string>;
     login_title?: IContentField<string>;
-    type?: IContentField<string>;
     /** Label of the link that opens the registration page. */
     label_register?: IContentField<string>;
 }
@@ -87,12 +86,8 @@ export interface IValidateStyle extends IStyleWithSpacing {
 export interface IResetPasswordStyle extends IStyleWithSpacing {
     style_name: 'reset-password';
     label_pw_reset?: IContentField<string>;
-    type?: IContentField<string>;
     alert_success?: IContentField<string>;
-    placeholder?: IContentField<string>;
-    subject_user?: IContentField<string>;
-    is_html?: IContentField<string>;
-    reset_title?: IContentField<string>;
+    placeholder?: IContentField<string>;    reset_title?: IContentField<string>;
     reset_label_pw?: IContentField<string>;
     reset_pw_placeholder?: IContentField<string>;
     reset_label_pw_confirm?: IContentField<string>;

@@ -22,9 +22,7 @@ export interface IFormStyle extends IStyleWithSpacing {
     style_name: 'form-log' | 'form-record';
     btn_save_label?: IContentField<string>;
     alert_success?: IContentField<string>;
-    name?: IContentField<string>;
-    is_log?: IContentField<string>;
-    redirect_at_end?: IContentField<string>;
+    name?: IContentField<string>;    redirect_at_end?: IContentField<string>;
     btn_cancel_url?: IContentField<string>;
     btn_cancel_label?: IContentField<string>;
     alert_error?: IContentField<string>;
@@ -33,9 +31,7 @@ export interface IFormStyle extends IStyleWithSpacing {
     btn_save_color?: IContentField<string>;
     btn_cancel_color?: IContentField<string>;
     buttons_variant?: IContentField<string>;
-    buttons_position?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-}
+    buttons_position?: IContentField<string>;}
 
 export interface IFormLogStyle extends IFormStyle {
     style_name: 'form-log';
@@ -70,9 +66,7 @@ export interface ITextInputStyle extends IStyleWithSpacing {
     is_required?: IContentField<string>;
     disabled?: IContentField<string>;
     web_left_icon?: IContentField<string>;
-    web_right_icon?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-    shared_size?: IContentField<TSharedSize>;
+    web_right_icon?: IContentField<string>;    shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
     web_text_input_variant?: IContentField<TMantineTextInputVariant>;
     translatable?: IContentField<TMantineTranslatable>;
@@ -98,9 +92,7 @@ export interface ITextareaStyle extends IStyleWithSpacing {
     web_textarea_resize?: IContentField<TMantineTextareaResize>;
     shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
-    web_textarea_variant?: IContentField<TMantineTextareaVariant>;
-    use_web_style?: IContentField<string>;
-    translatable?: IContentField<TMantineTranslatable>;
+    web_textarea_variant?: IContentField<TMantineTextareaVariant>;    translatable?: IContentField<TMantineTranslatable>;
 }
 
 export interface IRichTextEditorStyle extends IStyleWithSpacing {
@@ -116,9 +108,7 @@ export interface IRichTextEditorStyle extends IStyleWithSpacing {
     web_rich_text_editor_placeholder?: IContentField<string>;
     web_rich_text_editor_bubble_menu?: IContentField<string>;
     web_rich_text_editor_text_color?: IContentField<string>;
-    web_rich_text_editor_task_list?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-    translatable?: IContentField<TMantineTranslatable>;
+    web_rich_text_editor_task_list?: IContentField<string>;    translatable?: IContentField<TMantineTranslatable>;
 }
 
 export interface ISelectStyle extends IBaseStyle {
@@ -155,9 +145,7 @@ export interface IRadioStyle extends IStyleWithSpacing {
     web_radio_card?: IContentField<string>;
     web_tooltip_label?: IContentField<string>;
     web_tooltip_position?: IContentField<string>;
-    disabled?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-    web_use_input_wrapper?: IContentField<string>;
+    disabled?: IContentField<string>;    web_use_input_wrapper?: IContentField<string>;
 }
 
 export interface ICheckboxStyle extends IStyleWithSpacing {
@@ -173,9 +161,7 @@ export interface ICheckboxStyle extends IStyleWithSpacing {
     disabled?: IContentField<string>;
     shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
-    web_color?: IContentField<TMantineColor>;
-    use_web_style?: IContentField<string>;
-    web_use_input_wrapper?: IContentField<TMantineUseInputWrapper>;
+    web_color?: IContentField<TMantineColor>;    web_use_input_wrapper?: IContentField<TMantineUseInputWrapper>;
 }
 
 export interface ISliderStyle extends IStyleWithSpacing {
@@ -190,9 +176,7 @@ export interface ISliderStyle extends IStyleWithSpacing {
     shared_size?: IContentField<TSharedSize>;
     web_color?: IContentField<TMantineColor>;
     shared_radius?: IContentField<TSharedRadius>;
-    disabled?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-    web_slider_marks_values?: IContentField<string>;
+    disabled?: IContentField<string>;    web_slider_marks_values?: IContentField<string>;
     web_slider_show_label?: IContentField<string>;
     web_slider_labels_always_on?: IContentField<string>;
     web_slider_inverted?: IContentField<string>;
@@ -216,9 +200,7 @@ export interface IRangeSliderStyle extends IStyleWithSpacing {
     shared_size?: IContentField<TSharedSize>;
     web_color?: IContentField<TMantineColor>;
     shared_radius?: IContentField<TSharedRadius>;
-    disabled?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-}
+    disabled?: IContentField<string>;}
 
 export interface IDatePickerStyle extends IStyleWithSpacing {
     style_name: 'datepicker';
@@ -249,9 +231,7 @@ export interface IDatePickerStyle extends IStyleWithSpacing {
     web_datepicker_time_grid_config?: IContentField<string>;
     web_datepicker_with_seconds?: IContentField<string>;
     shared_size?: IContentField<TSharedSize>;
-    shared_radius?: IContentField<TSharedRadius>;
-    use_web_style?: IContentField<string>;
-}
+    shared_radius?: IContentField<TSharedRadius>;}
 
 export interface ISwitchStyle extends IStyleWithSpacing {
     style_name: 'switch';
@@ -262,9 +242,7 @@ export interface ISwitchStyle extends IStyleWithSpacing {
     shared_size?: IContentField<TSharedSize>;
     web_color?: IContentField<TMantineColor>;
     shared_radius?: IContentField<TSharedRadius>;
-    disabled?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-    name?: IContentField<string>;
+    disabled?: IContentField<string>;    name?: IContentField<string>;
     is_required?: IContentField<string>;
     web_label_position?: IContentField<string>;
     value?: IContentField<string>;
@@ -277,9 +255,7 @@ export interface IComboboxStyle extends IStyleWithSpacing {
     style_name: 'combobox';
     placeholder?: IContentField<string>;
     web_combobox_options?: IContentField<string>;
-    disabled?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-    label?: IContentField<string>;
+    disabled?: IContentField<string>;    label?: IContentField<string>;
     description?: IContentField<string>;
     name?: IContentField<string>;
     value?: IContentField<string>;
@@ -304,9 +280,7 @@ export interface IColorInputStyle extends IStyleWithSpacing {
     value?: IContentField<string>;
     description?: IContentField<string>;
     is_required?: IContentField<string>;
-    disabled?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-}
+    disabled?: IContentField<string>;}
 
 export interface IColorPickerStyle extends IStyleWithSpacing {
     style_name: 'color-picker';
@@ -325,9 +299,7 @@ export interface IColorPickerStyle extends IStyleWithSpacing {
     name?: IContentField<string>;
     value?: IContentField<string>;
     description?: IContentField<string>;
-    is_required?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-}
+    is_required?: IContentField<string>;}
 
 export interface IFileInputStyle extends IStyleWithSpacing {
     style_name: 'file-input';
@@ -342,9 +314,7 @@ export interface IFileInputStyle extends IStyleWithSpacing {
     web_left_icon?: IContentField<string>;
     web_right_icon?: IContentField<string>;
     placeholder?: IContentField<string>;
-    disabled?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-    is_required?: IContentField<string>;
+    disabled?: IContentField<string>;    is_required?: IContentField<string>;
     name?: IContentField<string>;
     label?: IContentField<string>;
     description?: IContentField<string>;
@@ -365,9 +335,7 @@ export interface INumberInputStyle extends IStyleWithSpacing {
     name?: IContentField<string>;
     value?: IContentField<string>;
     is_required?: IContentField<string>;
-    disabled?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-}
+    disabled?: IContentField<string>;}
 
 export interface ISegmentedControlStyle extends IStyleWithSpacing {
     style_name: 'segmented-control';
@@ -378,9 +346,7 @@ export interface ISegmentedControlStyle extends IStyleWithSpacing {
     web_color?: IContentField<TMantineColor>;
     fullwidth?: IContentField<string>;
     disabled?: IContentField<string>;
-    readonly?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-    web_segmented_control_item_border?: IContentField<string>;
+    readonly?: IContentField<string>;    web_segmented_control_item_border?: IContentField<string>;
     label?: IContentField<string>;
     description?: IContentField<string>;
     value?: IContentField<string>;
@@ -403,9 +369,7 @@ export interface IRatingStyle extends IStyleWithSpacing {
     web_rating_full_icon?: IContentField<string>;
     web_rating_highlight_selected_only?: IContentField<string>;
     shared_size?: IContentField<TSharedSize>;
-    web_color?: IContentField<TMantineColor>;
-    use_web_style?: IContentField<string>;
-}
+    web_color?: IContentField<TMantineColor>;}
 
 export interface IProgressStyle extends IStyleWithSpacing {
     style_name: 'progress';
@@ -415,16 +379,12 @@ export interface IProgressStyle extends IStyleWithSpacing {
     shared_size?: IContentField<TSharedSize>;
     web_progress_striped?: IContentField<string>;
     web_progress_animated?: IContentField<string>;
-    web_progress_transition_duration?: IContentField<TMantineProgressTransition>;
-    use_web_style?: IContentField<string>;
-}
+    web_progress_transition_duration?: IContentField<TMantineProgressTransition>;}
 
 export interface IProgressRootStyle extends IBaseStyle {
     style_name: 'progress-root';
     shared_size?: IContentField<TSharedSize>;
-    web_progress_auto_contrast?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-}
+    web_progress_auto_contrast?: IContentField<string>;}
 
 export interface IProgressSectionStyle extends IBaseStyle {
     style_name: 'progress-section';
@@ -434,9 +394,7 @@ export interface IProgressSectionStyle extends IBaseStyle {
     web_progress_animated?: IContentField<string>;
     label?: IContentField<string>;
     web_tooltip_label?: IContentField<string>;
-    web_tooltip_position?: IContentField<string>;
-    use_web_style?: IContentField<string>;
-}
+    web_tooltip_position?: IContentField<string>;}
 
 export interface IShowUserInputEntry {
     record_id: number;

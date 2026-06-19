@@ -233,6 +233,4 @@ export interface IUnknownStyle {
     children?: TStyle[];
     fields: Record<string, IContentField<unknown>>;
     css?: string;
-    css_mobile?: string;
-    use_web_style?: IContentField<string>;
-}
+    css_mobile?: string;}
