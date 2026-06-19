@@ -59,13 +59,14 @@ export interface IValidateStyle extends IStyleWithSpacing {
     label_save?: IContentField<string>;
     label_update?: IContentField<string>;
     label_cancel?: IContentField<string>;
-    web_buttons_size?: IContentField<string>;
-    web_buttons_radius?: IContentField<string>;
-    web_buttons_variant?: IContentField<string>;
-    web_buttons_position?: IContentField<string>;
-    web_buttons_order?: IContentField<string>;
-    web_btn_save_color?: IContentField<string>;
-    web_btn_cancel_color?: IContentField<string>;
+    // RF-21: shared with form-log/form-record so the mobile custom form matches.
+    shared_buttons_size?: IContentField<string>;
+    shared_buttons_radius?: IContentField<string>;
+    shared_buttons_variant?: IContentField<string>;
+    shared_buttons_position?: IContentField<string>;
+    shared_buttons_order?: IContentField<string>;
+    shared_btn_save_color?: IContentField<string>;
+    shared_btn_cancel_color?: IContentField<string>;
     web_card_shadow?: IContentField<string>;
     web_card_padding?: IContentField<string>;
     shared_radius?: IContentField<TMantineRadius>;

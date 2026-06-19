@@ -26,12 +26,16 @@ export interface IFormStyle extends IStyleWithSpacing {
     btn_cancel_url?: IContentField<string>;
     btn_cancel_label?: IContentField<string>;
     alert_error?: IContentField<string>;
-    buttons_size?: IContentField<string>;
-    buttons_radius?: IContentField<string>;
-    btn_save_color?: IContentField<string>;
-    btn_cancel_color?: IContentField<string>;
-    buttons_variant?: IContentField<string>;
-    buttons_position?: IContentField<string>;}
+    // RF-21: button knobs are portable to the mobile custom form (not a 1:1
+    // component map). Promoted web_* -> shared_* so both renderers read them.
+    shared_buttons_size?: IContentField<string>;
+    shared_buttons_radius?: IContentField<string>;
+    shared_buttons_variant?: IContentField<string>;
+    shared_buttons_position?: IContentField<string>;
+    shared_buttons_order?: IContentField<string>;
+    shared_btn_save_color?: IContentField<string>;
+    shared_btn_cancel_color?: IContentField<string>;
+}
 
 export interface IFormLogStyle extends IFormStyle {
     style_name: 'form-log';
@@ -40,7 +44,7 @@ export interface IFormLogStyle extends IFormStyle {
 export interface IFormRecordStyle extends IFormStyle {
     style_name: 'form-record';
     btn_update_label?: IContentField<string>;
-    btn_update_color?: IContentField<string>;
+    shared_btn_update_color?: IContentField<string>;
 }
 
 export interface IInputStyle extends IBaseStyle {

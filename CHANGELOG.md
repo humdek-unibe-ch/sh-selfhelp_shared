@@ -9,6 +9,38 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.3
+
+Style-field cleanup slice 7 — form/validate button knobs (RF-21).
+Pairs with backend migration `Version20260619100044` and the coupled web + mobile
+renderer reads. Patch bump: `web_*` → `shared_*` rename of the portable button
+knobs on the custom composite form styles, so the mobile custom form renders the
+same authored config as the web Mantine form.
+
+### Changed
+
+- **`IFormStyle` (`form-log` / `form-record`):** `buttons_size` /
+  `buttons_radius` / `buttons_variant` / `buttons_position` / `btn_save_color` /
+  `btn_cancel_color` → the `shared_*` equivalents, and the previously-missing
+  `shared_buttons_order` is added. (The catalog field is `web_buttons_*`; the web
+  `FormStyle` had been reading the un-prefixed names, which matched neither the
+  catalog nor the type — so its button styling silently fell back to defaults.
+  This rename fixes that latent bug and unblocks mobile.)
+- **`IFormRecordStyle`:** `btn_update_color` → `shared_btn_update_color`.
+- **`IValidateStyle`:** `web_buttons_size` / `web_buttons_radius` /
+  `web_buttons_variant` / `web_buttons_position` / `web_buttons_order` /
+  `web_btn_save_color` / `web_btn_cancel_color` → the `shared_*` equivalents
+  (the web `ValidateStyle` already read the `web_` names correctly; both
+  renderers now agree on `shared_*`).
+
+### Notes
+
+- Pure web cosmetics stay `web_`: `web_card_padding`, `web_card_shadow`,
+  `web_border` on `validate` (RF-16 — no clean React Native peer).
+- The mobile `FormUserInput` now builds its action row from these knobs
+  (`shared_btn_save_color` / `shared_btn_cancel_color`, `shared_buttons_order` /
+  `_position` / `_size` / `_radius` / `_variant`), themed inline.
+
 ## v1.14.2
 
 Style-field cleanup slice 6 — mobile configurability (RF-17, RF-18, RF-19).
