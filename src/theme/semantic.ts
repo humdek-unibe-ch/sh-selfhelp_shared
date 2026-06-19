@@ -453,6 +453,28 @@ export function mapAccordionVariantToHeroUiVariant(
     }
 }
 
+/**
+ * Map the chip variant token (`shared_chip_variant`: Mantine
+ * filled/outline/light) onto the HeroUI Native Chip `variant` vocabulary
+ * (`primary`/`secondary`/`tertiary`/`soft`):
+ *   - filled  -> primary  (solid accent fill)
+ *   - light   -> soft     (tinted accent background)
+ *   - outline -> tertiary (transparent; the renderer adds the accent border)
+ */
+export function mapChipVariantToHeroUiVariant(
+    variant: string | undefined,
+): 'primary' | 'secondary' | 'tertiary' | 'soft' {
+    switch (variant) {
+        case 'light':
+            return 'soft';
+        case 'outline':
+            return 'tertiary';
+        case 'filled':
+        default:
+            return 'primary';
+    }
+}
+
 // ===== state helpers =====
 
 function hasState(states: readonly TSemanticState[] | undefined, state: TSemanticState): boolean {

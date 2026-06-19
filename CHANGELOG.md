@@ -9,6 +9,42 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.9
+
+Style polish wave (card / card-segment / checkbox / chip / code / title) — align
+the typed contracts with the backend `Version20260619191224` migration and the
+coupled web + mobile renderer reads. Patch bump: renamed optional style fields,
+additive optional content/visual fields, and a new additive mobile mapper helper.
+
+### Changed
+
+- **`ICardStyle`:** border is now the cross-platform `shared_border`
+  (`TSharedBorder`); the web-only `web_border` was replaced (the global
+  `web_border` field stays on indicator/notification/paper/validate). Added the
+  optional auto-styled `title` and `img_src` content fields (rendered only when
+  non-empty) and the explicit `web_card_padding` (`TMantineCardPadding`).
+- **`ICardSegmentStyle`:** added `shared_border` (Mantine `Card.Section`
+  `withBorder` / themed divider on mobile) and the web-only
+  `web_segment_inherit_padding` (Mantine `inheritPadding`).
+- **`ICheckboxStyle`:** `web_checkbox_label_position` →
+  `shared_label_position` (`TSharedLabelPosition`; honoured on both platforms).
+- **`IChipStyle`:** `web_chip_variant` → `shared_chip_variant`
+  (`TMantineChipVariant`; cross-platform).
+- **`ICodeStyle`:** `web_code_block` → `code_block` (cross-platform
+  block-vs-inline) and added `shared_radius` (`TSharedRadius`).
+- **`ITitleStyle`:** added `shared_color` (`TMantineColor`); `web_title_order` →
+  `title_order` (`TMantineTitleOrder`) and `web_title_line_clamp` →
+  `shared_line_clamp` (`TMantineTitleLineClamp`). `web_title_text_wrap` stays
+  web-only.
+
+### Added
+
+- **`mapChipVariantToHeroUiVariant(variant)`:** maps the chip variant token
+  (`filled`/`outline`/`light`) onto the HeroUI Native Chip `variant`
+  (`primary` | `secondary` | `tertiary` | `soft`): filled → primary, light →
+  soft, outline → tertiary.
+- **`TSharedBorder`, `TMantineCardPadding`, `TSharedLabelPosition`** helper types.
+
 ## v1.14.8
 
 Accordion polish wave (accordion / accordion-item) — align the typed contracts

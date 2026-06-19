@@ -16,7 +16,7 @@ export type TMantineTextareaVariant = 'default' | 'filled' | 'unstyled';
 export type TMantineUseInputWrapper = '0' | '1';
 export type TMantineTranslatable = '0' | '1';
 export type TMantineProgressTransition = '150' | '200' | '300' | '400' | '0' | string;
-export type TMantineCheckboxLabelPosition = 'left' | 'right';
+export type TSharedLabelPosition = 'left' | 'right';
 
 export interface IFormStyle extends IStyleWithSpacing {
     style_name: 'form-log' | 'form-record';
@@ -165,7 +165,8 @@ export interface ICheckboxStyle extends IStyleWithSpacing {
     is_required?: IContentField<string>;
     checkbox_value?: IContentField<string>;
     web_checkbox_icon?: IContentField<string>;
-    web_checkbox_label_position?: IContentField<TMantineCheckboxLabelPosition>;
+    // Label side (left/right) honoured on both platforms.
+    shared_label_position?: IContentField<TSharedLabelPosition>;
     description?: IContentField<string>;
     disabled?: IContentField<string>;
     shared_size?: IContentField<TSharedSize>;

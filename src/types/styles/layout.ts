@@ -18,11 +18,15 @@ import type {
 
 // Style-specific helper types only used in layout interfaces
 export type TMantineBorder = '0' | '1';
+// Cross-platform border toggle (card family): Mantine `withBorder` on web,
+// a themed border/divider on mobile.
+export type TSharedBorder = '0' | '1';
 export type TMantineWidth = string;
 export type TMantineHeight = string;
 export type TMantineDividerVariant = 'solid' | 'dashed' | 'dotted';
 export type TMantinePaperShadow = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type TMantineCardShadow = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type TMantineCardPadding = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type TMantineGap = '0' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type TMantineCols = string;
 export type TMantineGridOffset = string;
@@ -147,12 +151,22 @@ export interface IScrollAreaStyle extends IStyleWithSpacing {
 
 export interface ICardStyle extends IStyleWithSpacing {
     style_name: 'card';
+    // Optional auto-styled convenience content: rendered only when non-empty,
+    // never auto-creating a child section.
+    title?: IContentField<string>;
+    img_src?: IContentField<string>;
+    // Cross-platform border (Mantine withBorder / themed border on mobile).
+    shared_border?: IContentField<TSharedBorder>;
+    web_card_padding?: IContentField<TMantineCardPadding>;
     web_card_shadow?: IContentField<TMantineCardShadow>;
-    web_border?: IContentField<TMantineBorder>;
     shared_radius?: IContentField<TSharedRadius>;}
 
 export interface ICardSegmentStyle extends IStyleWithSpacing {
-    style_name: 'card-segment';}
+    style_name: 'card-segment';
+    // Mantine Card.Section withBorder (themed divider on mobile).
+    shared_border?: IContentField<TSharedBorder>;
+    // Mantine Card.Section inheritPadding (web only).
+    web_segment_inherit_padding?: IContentField<'0' | '1'>;}
 
 export interface IAspectRatioStyle extends IBaseStyle {
     style_name: 'aspect-ratio';

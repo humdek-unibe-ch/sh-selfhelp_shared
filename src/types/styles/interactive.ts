@@ -104,7 +104,8 @@ export interface IAvatarStyle extends IStyleWithSpacing {
 export interface IChipStyle extends IStyleWithSpacing {
     style_name: 'chip';
     label?: IContentField<string>;
-    web_chip_variant?: IContentField<TMantineChipVariant>;
+    // Cross-platform variant (Mantine filled/outline/light; HeroUI Native chip variant).
+    shared_chip_variant?: IContentField<TMantineChipVariant>;
     shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
     shared_color?: IContentField<TMantineColor>;

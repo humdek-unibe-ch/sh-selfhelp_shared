@@ -11,6 +11,7 @@ import {
     mapMantineColorToHeroUiButtonVariant,
     mapMantineColorToHeroUiColor,
     mapAccordionVariantToHeroUiVariant,
+    mapChipVariantToHeroUiVariant,
     mapMantineVariantToHeroUiButtonVariant,
     mapRadiusToMantine,
     mapRadiusToPx,
@@ -179,6 +180,13 @@ describe('semantic style mapper', () => {
             expect(mapAccordionVariantToHeroUiVariant('filled')).toBe('surface');
             expect(mapAccordionVariantToHeroUiVariant('separated')).toBe('surface');
             expect(mapAccordionVariantToHeroUiVariant(undefined)).toBe('default');
+        });
+
+        it('maps the chip variant token onto the HeroUI Native chip variant', () => {
+            expect(mapChipVariantToHeroUiVariant('filled')).toBe('primary');
+            expect(mapChipVariantToHeroUiVariant('light')).toBe('soft');
+            expect(mapChipVariantToHeroUiVariant('outline')).toBe('tertiary');
+            expect(mapChipVariantToHeroUiVariant(undefined)).toBe('primary');
         });
 
         it('derives a button variant from the colour when no variant is set', () => {

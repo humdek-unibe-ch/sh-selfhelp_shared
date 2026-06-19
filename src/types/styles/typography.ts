@@ -10,6 +10,7 @@ import type {
     TMantineTitleOrder,
     TMantineFieldsetVariant,
     TMantineSpoilerMaxHeight,
+    TSharedRadius,
 } from '../mantine/common';
 
 export type TMantineTitleTextWrap = 'wrap' | 'balance' | 'nowrap';
@@ -29,10 +30,13 @@ export type TMantineIconSize = string;
 export interface ITitleStyle extends IStyleWithSpacing {
     style_name: 'title';
     content?: IContentField<string>;
-    web_title_order?: IContentField<TMantineTitleOrder>;
+    // Semantic heading level (H1-H6) read on both platforms.
+    title_order?: IContentField<TMantineTitleOrder>;
     shared_size?: IContentField<TMantineSize>;
+    shared_color?: IContentField<TMantineColor>;
     web_title_text_wrap?: IContentField<TMantineTitleTextWrap>;
-    web_title_line_clamp?: IContentField<TMantineTitleLineClamp>;}
+    // Web lineClamp / mobile numberOfLines.
+    shared_line_clamp?: IContentField<TMantineTitleLineClamp>;}
 
 export interface ITextStyle extends IStyleWithSpacing {
     style_name: 'text';
@@ -53,8 +57,11 @@ export interface ITextStyle extends IStyleWithSpacing {
 
 export interface ICodeStyle extends IStyleWithSpacing {
     style_name: 'code';
-    web_code_block?: IContentField<string>;
-    shared_color?: IContentField<TMantineColor>;    content?: IContentField<string>;
+    // Cross-platform block-vs-inline behaviour.
+    code_block?: IContentField<string>;
+    shared_color?: IContentField<TMantineColor>;
+    shared_radius?: IContentField<TSharedRadius>;
+    content?: IContentField<string>;
 }
 
 export interface IHighlightStyle extends IStyleWithSpacing {
