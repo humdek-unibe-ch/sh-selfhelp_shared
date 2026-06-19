@@ -9,6 +9,32 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.4
+
+Style-field cleanup slice 9 — spacing consolidation (RF-15). Pairs with backend
+migration `Version20260619100642` and the coupled web + mobile renderer reads.
+Patch bump: the legacy margin-only `web_spacing_margin` is merged into the
+portable box-model `shared_spacing`, so spacing is one cross-platform field.
+
+### Changed
+
+- **`IStyleWithSpacing`:** dropped `web_spacing_margin`. Every spacing-capable
+  style now uses the single portable `shared_spacing` box-model field (margin +
+  padding), mapped to both platforms. The backend migration repoints the 39
+  margin-only style links + their authored section values onto `shared_spacing`
+  and drops the `web_spacing_margin` field and its `spacing-margin` field type.
+
+### Notes
+
+- Both fields stored the **same** box-model JSON (`{"mt":"md",…}`) and were
+  mutually exclusive at the style level, so this is a value-preserving merge, not
+  a format conversion.
+- Web `BasicStyle` drops its `?? web_spacing_margin` fallback (now always
+  `shared_spacing`). Mobile `buildSectionClasses` now reads `shared_spacing`
+  first (it previously read a non-existent field name and the margin-only one,
+  giving the 37 `shared_spacing` styles no mobile spacing — now fixed); the
+  legacy `web_spacing_margin` is kept only as a transitional read-fallback.
+
 ## v1.14.3
 
 Style-field cleanup slice 7 — form/validate button knobs (RF-21).

@@ -65,8 +65,6 @@ export interface IBaseStyle {
 
 /** Styles that support the unified spacing field. */
 export interface IStyleWithSpacing extends IBaseStyle {
-    /** Legacy / margin-only field still used by many web styles in the DB (web-only; not consolidated into shared_spacing). */
-    web_spacing_margin?: IContentField<string>;
-    /** Portable box-model spacing (margin + padding). Backend field `shared_spacing` (was `mantine_spacing_margin_padding`). */
+    /** Portable box-model spacing (margin + padding). Backend field `shared_spacing`; RF-15 merged the legacy margin-only `web_spacing_margin` into this, so every spacing-capable style now uses it. */
     shared_spacing?: IContentField<string>;
 }
