@@ -45,7 +45,7 @@ export type TMantineScrollAreaType = 'hover' | 'always' | 'auto' | 'never' | 'sc
 
 export interface IContainerStyle extends IStyleWithSpacing {
     style_name: 'container';
-    shared_size?: IContentField<TSharedSize>;
+    size?: IContentField<TSharedSize>;
     web_fluid?: IContentField<string>;
 }
 
@@ -55,20 +55,20 @@ export interface IBoxStyle extends IStyleWithSpacing {
 
 export interface IFlexStyle extends IStyleWithSpacing {
     style_name: 'flex';
-    shared_gap?: IContentField<TMantineGap>;
-    shared_justify?: IContentField<TMantineJustify>;
-    shared_align?: IContentField<TMantineAlign>;
-    shared_direction?: IContentField<TMantineDirection>;
-    shared_wrap?: IContentField<TMantineWrap>;
+    gap?: IContentField<TMantineGap>;
+    justify?: IContentField<TMantineJustify>;
+    align?: IContentField<TMantineAlign>;
+    direction?: IContentField<TMantineDirection>;
+    wrap?: IContentField<TMantineWrap>;
     shared_width?: IContentField<TSharedDimension>;
     shared_height?: IContentField<TSharedDimension>;
 }
 
 export interface IGroupStyle extends IStyleWithSpacing {
     style_name: 'group';
-    shared_gap?: IContentField<TMantineGap>;
-    shared_justify?: IContentField<TMantineJustify>;
-    shared_align?: IContentField<TMantineAlign>;
+    gap?: IContentField<TMantineGap>;
+    justify?: IContentField<TMantineJustify>;
+    align?: IContentField<TMantineAlign>;
     shared_width?: IContentField<TSharedDimension>;
     shared_height?: IContentField<TSharedDimension>;
     web_group_wrap?: IContentField<'0' | '1'>;
@@ -77,21 +77,21 @@ export interface IGroupStyle extends IStyleWithSpacing {
 
 export interface IStackStyle extends IStyleWithSpacing {
     style_name: 'stack';
-    shared_gap?: IContentField<TMantineGap>;
-    shared_justify?: IContentField<TMantineJustify>;
-    shared_align?: IContentField<TMantineAlign>;
+    gap?: IContentField<TMantineGap>;
+    justify?: IContentField<TMantineJustify>;
+    align?: IContentField<TMantineAlign>;
     shared_width?: IContentField<TSharedDimension>;
     shared_height?: IContentField<TSharedDimension>;
 }
 
 export interface ISimpleGridStyle extends IStyleWithSpacing {
     style_name: 'simple-grid';
-    shared_cols?: IContentField<TSharedCols>;
-    shared_gap?: IContentField<TMantineGap>;
-    shared_vertical_spacing?: IContentField<TMantineGap>;
+    cols?: IContentField<TSharedCols>;
+    gap?: IContentField<TMantineGap>;
+    vertical_spacing?: IContentField<TMantineGap>;
     shared_width?: IContentField<TSharedDimension>;
     shared_height?: IContentField<TSharedDimension>;
-    // Web-only responsive column overrides; clear to inherit shared_cols.
+    // Web-only responsive column overrides; clear to inherit cols.
     web_cols_sm?: IContentField<TSharedCols>;
     web_cols_md?: IContentField<TSharedCols>;
     web_cols_lg?: IContentField<TSharedCols>;
@@ -99,10 +99,10 @@ export interface ISimpleGridStyle extends IStyleWithSpacing {
 
 export interface IGridStyle extends IStyleWithSpacing {
     style_name: 'grid';
-    shared_cols?: IContentField<TSharedCols>;
-    shared_gap?: IContentField<TMantineGap>;
-    shared_justify?: IContentField<TMantineJustify>;
-    shared_align?: IContentField<TMantineAlign>;
+    cols?: IContentField<TSharedCols>;
+    gap?: IContentField<TMantineGap>;
+    justify?: IContentField<TMantineJustify>;
+    align?: IContentField<TMantineAlign>;
     shared_width?: IContentField<TSharedDimension>;
     shared_height?: IContentField<TSharedDimension>;
     web_grid_overflow?: IContentField<TMantineGridOverflow>;
@@ -110,28 +110,28 @@ export interface IGridStyle extends IStyleWithSpacing {
 
 export interface IGridColumnStyle extends IStyleWithSpacing {
     style_name: 'grid-column';
-    shared_grid_span?: IContentField<TMantineGridSpan>;
-    shared_grid_offset?: IContentField<TMantineGridOffset>;
-    shared_grid_order?: IContentField<TMantineGridOrder>;
-    shared_grid_grow?: IContentField<TMantineGridGrow>;
+    grid_span?: IContentField<TMantineGridSpan>;
+    grid_offset?: IContentField<TMantineGridOffset>;
+    grid_order?: IContentField<TMantineGridOrder>;
+    grid_grow?: IContentField<TMantineGridGrow>;
     shared_width?: IContentField<TSharedDimension>;
     shared_height?: IContentField<TSharedDimension>;
 }
 
 export interface ISpaceStyle extends IStyleWithSpacing {
     style_name: 'space';
-    shared_size?: IContentField<TSharedSize>;
-    shared_orientation?: IContentField<TMantineOrientation>;
+    size?: IContentField<TSharedSize>;
+    orientation?: IContentField<TMantineOrientation>;
 }
 
 export interface IDividerStyle extends IStyleWithSpacing {
     style_name: 'divider';
-    shared_divider_variant?: IContentField<TSharedDividerVariant>;
-    shared_size?: IContentField<TSharedSize>;
+    divider_variant?: IContentField<TSharedDividerVariant>;
+    size?: IContentField<TSharedSize>;
     divider_label?: IContentField<string>;
-    shared_divider_label_position?: IContentField<TSharedDividerLabelPosition>;
-    shared_orientation?: IContentField<TMantineOrientation>;
-    shared_color?: IContentField<TMantineColor>;}
+    divider_label_position?: IContentField<TSharedDividerLabelPosition>;
+    orientation?: IContentField<TMantineOrientation>;
+    color?: IContentField<TMantineColor>;}
 
 export interface IPaperStyle extends IStyleWithSpacing {
     style_name: 'paper';
@@ -139,18 +139,18 @@ export interface IPaperStyle extends IStyleWithSpacing {
     // never auto-creates a child section.
     title?: IContentField<string>;
     web_paper_shadow?: IContentField<TMantinePaperShadow>;
-    shared_radius?: IContentField<TSharedRadius>;
-    shared_border?: IContentField<TSharedBorder>;}
+    radius?: IContentField<TSharedRadius>;
+    border?: IContentField<TSharedBorder>;}
 
 export interface ICenterStyle extends IStyleWithSpacing {
     style_name: 'center';
     web_center_inline?: IContentField<string>;
     shared_width?: IContentField<TSharedDimension>;
     shared_height?: IContentField<TSharedDimension>;
-    shared_miw?: IContentField<TSharedDimension>;
-    shared_mih?: IContentField<TSharedDimension>;
-    shared_maw?: IContentField<TSharedDimension>;
-    shared_mah?: IContentField<TSharedDimension>;
+    miw?: IContentField<TSharedDimension>;
+    mih?: IContentField<TSharedDimension>;
+    maw?: IContentField<TSharedDimension>;
+    mah?: IContentField<TSharedDimension>;
 }
 
 export interface IScrollAreaStyle extends IStyleWithSpacing {
@@ -169,17 +169,17 @@ export interface ICardStyle extends IStyleWithSpacing {
     title?: IContentField<string>;
     img_src?: IContentField<string>;
     // Cross-platform border (Mantine withBorder / themed border on mobile).
-    shared_border?: IContentField<TSharedBorder>;
-    // NOTE: no web-only card padding — padding is the portable `shared_spacing`
+    border?: IContentField<TSharedBorder>;
+    // NOTE: no web-only card padding — padding is the portable `spacing`
     // (pt/pb/ps/pe), which renders on web AND mobile. The renderer keeps a fixed
     // Mantine inner padding ("md") as the default + Card.Section bleed reference.
     web_card_shadow?: IContentField<TMantineCardShadow>;
-    shared_radius?: IContentField<TSharedRadius>;}
+    radius?: IContentField<TSharedRadius>;}
 
 export interface ICardSegmentStyle extends IStyleWithSpacing {
     style_name: 'card-segment';
     // Mantine Card.Section withBorder (themed divider on mobile).
-    shared_border?: IContentField<TSharedBorder>;
+    border?: IContentField<TSharedBorder>;
     // Mantine Card.Section inheritPadding (web only).
     web_segment_inherit_padding?: IContentField<'0' | '1'>;}
 
@@ -190,7 +190,7 @@ export interface IAspectRatioStyle extends IBaseStyle {
 export interface IBackgroundImageStyle extends IStyleWithSpacing {
     style_name: 'background-image';
     img_src?: IContentField<string>;
-    shared_radius?: IContentField<TSharedRadius>;}
+    radius?: IContentField<TSharedRadius>;}
 
 /**
  * Renders content referenced from another section. Has no own fields; the

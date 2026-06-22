@@ -55,7 +55,7 @@ export interface IMobileButtonProps extends IMobileAdapterBaseProps {
     /**
      * Optional concrete background colour (resolved hex) that overrides the
      * variant's themed fill, used for cross-platform parity when a CMS style
-     * exposes an authored colour (e.g. `login`'s `shared_color`, which Mantine
+     * exposes an authored colour (e.g. `login`'s `color`, which Mantine
      * applies to the web button via `color`). The adapter keeps the variant's
      * readable foreground (white on a filled button). Leave undefined to use the
      * variant's default themed colour. Resolve it through the shared mapper
@@ -95,7 +95,7 @@ export interface IMobileInputProps extends IMobileAdapterBaseProps {
     isRequired?: boolean;
     secureTextEntry?: boolean;
     keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'url';
-    /** Max characters (maps to RN `maxLength`; from `shared_max_length`). */
+    /** Max characters (maps to RN `maxLength`; from `max_length`). */
     maxLength?: number;
     /** Native auto-capitalize behaviour (from `mobile_auto_capitalize`). */
     autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
@@ -113,7 +113,7 @@ export interface IMobileTextareaProps extends IMobileAdapterBaseProps {
     isRequired?: boolean;
     /** Minimum visible rows (maps to RN `numberOfLines`). */
     numberOfLines?: number;
-    /** Max characters (maps to RN `maxLength`; from `shared_max_length`). */
+    /** Max characters (maps to RN `maxLength`; from `max_length`). */
     maxLength?: number;
     /** Native auto-capitalize behaviour (from `mobile_auto_capitalize`). */
     autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
@@ -135,7 +135,7 @@ export interface IMobileCheckboxProps extends IMobileAdapterBaseProps {
     label?: string;
     /**
      * Where the label sits relative to the box. Mirrors the cross-platform
-     * `shared_label_position` field (Mantine `labelPosition` on web). Defaults
+     * `label_position` field (Mantine `labelPosition` on web). Defaults
      * to `right`.
      */
     labelPosition?: 'left' | 'right';

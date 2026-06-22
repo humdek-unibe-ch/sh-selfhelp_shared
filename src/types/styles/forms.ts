@@ -24,21 +24,33 @@ export type TMobileFieldVariant = 'primary' | 'secondary';
 
 export interface IFormStyle extends IStyleWithSpacing {
     style_name: 'form-log' | 'form-record';
+    /** Optional auto-styled heading rendered above the form when set. */
+    title?: IContentField<string>;
+    /** Optional sub-heading rendered below the title when set. */
+    description?: IContentField<string>;
     btn_save_label?: IContentField<string>;
     alert_success?: IContentField<string>;
+    /** Translatable heading of the success alert (default "Success"). */
+    alert_success_title?: IContentField<string>;
     name?: IContentField<string>;    redirect_at_end?: IContentField<string>;
     btn_cancel_url?: IContentField<string>;
     btn_cancel_label?: IContentField<string>;
     alert_error?: IContentField<string>;
+    /** Translatable heading of the error alert (default "Error"). */
+    alert_error_title?: IContentField<string>;
+    /** When '1', a confirmation dialog is shown before submit. */
+    confirm_submit?: IContentField<string>;
+    /** Message shown in the confirmation dialog before submit. */
+    confirm_message?: IContentField<string>;
     // RF-21: button knobs are portable to the mobile custom form (not a 1:1
     // component map). Promoted web_* -> shared_* so both renderers read them.
-    shared_buttons_size?: IContentField<string>;
-    shared_buttons_radius?: IContentField<string>;
-    shared_buttons_variant?: IContentField<string>;
-    shared_buttons_position?: IContentField<string>;
-    shared_buttons_order?: IContentField<string>;
-    shared_btn_save_color?: IContentField<string>;
-    shared_btn_cancel_color?: IContentField<string>;
+    buttons_size?: IContentField<string>;
+    buttons_radius?: IContentField<string>;
+    buttons_variant?: IContentField<string>;
+    buttons_position?: IContentField<string>;
+    buttons_order?: IContentField<string>;
+    btn_save_color?: IContentField<string>;
+    btn_cancel_color?: IContentField<string>;
 }
 
 export interface IFormLogStyle extends IFormStyle {
@@ -48,7 +60,7 @@ export interface IFormLogStyle extends IFormStyle {
 export interface IFormRecordStyle extends IFormStyle {
     style_name: 'form-record';
     btn_update_label?: IContentField<string>;
-    shared_btn_update_color?: IContentField<string>;
+    btn_update_color?: IContentField<string>;
 }
 
 export interface IInputStyle extends IBaseStyle {
@@ -74,11 +86,11 @@ export interface ITextInputStyle extends IStyleWithSpacing {
     is_required?: IContentField<string>;
     disabled?: IContentField<string>;
     web_left_icon?: IContentField<string>;
-    web_right_icon?: IContentField<string>;    shared_size?: IContentField<TSharedSize>;
-    shared_radius?: IContentField<TSharedRadius>;
+    web_right_icon?: IContentField<string>;    size?: IContentField<TSharedSize>;
+    radius?: IContentField<TSharedRadius>;
     web_text_input_variant?: IContentField<TMantineTextInputVariant>;
     // Capability pass (2026-06-22): max length (web + mobile) + mobile keyboard knobs.
-    shared_max_length?: IContentField<string>;
+    max_length?: IContentField<string>;
     mobile_keyboard_type?: IContentField<string>;
     mobile_auto_capitalize?: IContentField<string>;
     mobile_secure_entry?: IContentField<string>;
@@ -102,16 +114,16 @@ export interface ITextareaStyle extends IStyleWithSpacing {
     web_left_icon?: IContentField<string>;
     web_right_icon?: IContentField<string>;
     // RF-18: row sizing is portable (mobile maps to numberOfLines / auto-grow).
-    shared_autosize?: IContentField<TMantineTextareaAutosize>;
-    shared_min_rows?: IContentField<string>;
-    shared_max_rows?: IContentField<string>;
+    autosize?: IContentField<TMantineTextareaAutosize>;
+    min_rows?: IContentField<string>;
+    max_rows?: IContentField<string>;
     // RF-16: resize/variant have no clean React Native peer — stay web-only.
     web_textarea_resize?: IContentField<TMantineTextareaResize>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_radius?: IContentField<TSharedRadius>;
+    size?: IContentField<TSharedSize>;
+    radius?: IContentField<TSharedRadius>;
     web_textarea_variant?: IContentField<TMantineTextareaVariant>;
     // Capability pass (2026-06-22): max length (web + mobile) + mobile auto-capitalize.
-    shared_max_length?: IContentField<string>;
+    max_length?: IContentField<string>;
     mobile_auto_capitalize?: IContentField<string>;
     // Mobile-only HeroUI Native field variant (primary = bordered, secondary = filled).
     mobile_textarea_variant?: IContentField<TMobileFieldVariant>;
@@ -147,10 +159,10 @@ export interface ISelectStyle extends IBaseStyle {
     // RF-17: searchable/clearable are portable behaviour (was the stale
     // web-only `live_search` / `allow_clear`; mobile maps to search-field /
     // clear affordance where the adapter supports it).
-    shared_searchable?: IContentField<string>;
+    searchable?: IContentField<string>;
     disabled?: IContentField<string>;
     image_selector?: IContentField<string>;
-    shared_clearable?: IContentField<string>;
+    clearable?: IContentField<string>;
     // Mobile-only: how the option list opens (HeroUI Native Select.Content
     // presentation). Empty = renderer default (bottom-sheet).
     mobile_select_presentation?: IContentField<TMobileSelectPresentation>;
@@ -165,9 +177,9 @@ export interface IRadioStyle extends IStyleWithSpacing {
     is_required?: IContentField<string>;
     items?: IContentField<unknown[]>;
     is_inline?: IContentField<string>;
-    shared_orientation?: IContentField<string>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_color?: IContentField<TMantineColor>;
+    orientation?: IContentField<string>;
+    size?: IContentField<TSharedSize>;
+    color?: IContentField<TMantineColor>;
     radio_options?: IContentField<string>;
     web_radio_label_position?: IContentField<string>;
     web_radio_variant?: IContentField<string>;
@@ -186,12 +198,12 @@ export interface ICheckboxStyle extends IStyleWithSpacing {
     checkbox_value?: IContentField<string>;
     web_checkbox_icon?: IContentField<string>;
     // Label side (left/right) honoured on both platforms.
-    shared_label_position?: IContentField<TSharedLabelPosition>;
+    label_position?: IContentField<TSharedLabelPosition>;
     description?: IContentField<string>;
     disabled?: IContentField<string>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_radius?: IContentField<TSharedRadius>;
-    shared_color?: IContentField<TMantineColor>;    web_use_input_wrapper?: IContentField<TMantineUseInputWrapper>;
+    size?: IContentField<TSharedSize>;
+    radius?: IContentField<TSharedRadius>;
+    color?: IContentField<TMantineColor>;    web_use_input_wrapper?: IContentField<TMantineUseInputWrapper>;
     // Mobile-only HeroUI Native checkbox variant (primary / secondary).
     mobile_checkbox_variant?: IContentField<TMobileFieldVariant>;
 }
@@ -205,9 +217,9 @@ export interface ISliderStyle extends IStyleWithSpacing {
     web_numeric_min?: IContentField<string>;
     web_numeric_max?: IContentField<string>;
     web_numeric_step?: IContentField<string>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_color?: IContentField<TMantineColor>;
-    shared_radius?: IContentField<TSharedRadius>;
+    size?: IContentField<TSharedSize>;
+    color?: IContentField<TMantineColor>;
+    radius?: IContentField<TSharedRadius>;
     disabled?: IContentField<string>;    slider_marks_values?: IContentField<string>;
     web_slider_show_label?: IContentField<string>;
     web_slider_labels_always_on?: IContentField<string>;
@@ -231,9 +243,9 @@ export interface IRangeSliderStyle extends IStyleWithSpacing {
     web_range_slider_show_label?: IContentField<string>;
     web_range_slider_labels_always_on?: IContentField<string>;
     web_range_slider_inverted?: IContentField<string>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_color?: IContentField<TMantineColor>;
-    shared_radius?: IContentField<TSharedRadius>;
+    size?: IContentField<TSharedSize>;
+    color?: IContentField<TMantineColor>;
+    radius?: IContentField<TSharedRadius>;
     disabled?: IContentField<string>;
     // Mobile-only: toggle the HeroUI Native Slider.Output value bubble.
     mobile_range_slider_show_value?: IContentField<string>;
@@ -267,8 +279,8 @@ export interface IDatePickerStyle extends IStyleWithSpacing {
     web_datepicker_date_format?: IContentField<string>;
     web_datepicker_time_grid_config?: IContentField<string>;
     web_datepicker_with_seconds?: IContentField<string>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_radius?: IContentField<TSharedRadius>;}
+    size?: IContentField<TSharedSize>;
+    radius?: IContentField<TSharedRadius>;}
 
 export interface ISwitchStyle extends IStyleWithSpacing {
     style_name: 'switch';
@@ -276,9 +288,9 @@ export interface ISwitchStyle extends IStyleWithSpacing {
     description?: IContentField<string>;
     switch_on_label?: IContentField<string>;
     switch_off_label?: IContentField<string>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_color?: IContentField<TMantineColor>;
-    shared_radius?: IContentField<TSharedRadius>;
+    size?: IContentField<TSharedSize>;
+    color?: IContentField<TMantineColor>;
+    radius?: IContentField<TSharedRadius>;
     disabled?: IContentField<string>;    name?: IContentField<string>;
     is_required?: IContentField<string>;
     web_label_position?: IContentField<string>;
@@ -320,8 +332,8 @@ export interface IColorInputStyle extends IStyleWithSpacing {
     web_color_input_with_eye_dropper?: IContentField<string>;
     web_color_input_disallow_input?: IContentField<string>;
     web_color_input_with_preview?: IContentField<string>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_radius?: IContentField<TSharedRadius>;
+    size?: IContentField<TSharedSize>;
+    radius?: IContentField<TSharedRadius>;
     placeholder?: IContentField<string>;
     name?: IContentField<string>;
     value?: IContentField<string>;
@@ -341,8 +353,8 @@ export interface IColorPickerStyle extends IStyleWithSpacing {
     color_picker_alpha_label?: IContentField<string>;
     web_color_picker_as_button?: IContentField<string>;
     web_color_picker_button_label?: IContentField<string>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_full_width?: IContentField<string>;
+    size?: IContentField<TSharedSize>;
+    full_width?: IContentField<string>;
     name?: IContentField<string>;
     value?: IContentField<string>;
     description?: IContentField<string>;
@@ -356,8 +368,8 @@ export interface IFileInputStyle extends IStyleWithSpacing {
     web_file_input_max_size?: IContentField<string>;
     web_file_input_max_files?: IContentField<string>;
     web_file_input_drag_drop?: IContentField<string>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_radius?: IContentField<TSharedRadius>;
+    size?: IContentField<TSharedSize>;
+    radius?: IContentField<TSharedRadius>;
     web_left_icon?: IContentField<string>;
     web_right_icon?: IContentField<string>;
     placeholder?: IContentField<string>;
@@ -380,8 +392,8 @@ export interface INumberInputStyle extends IStyleWithSpacing {
     web_number_input_thousand_separator?: IContentField<string>;
     web_number_input_allow_negative?: IContentField<string>;
     web_number_input_hide_controls?: IContentField<string>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_radius?: IContentField<TSharedRadius>;
+    size?: IContentField<TSharedSize>;
+    radius?: IContentField<TSharedRadius>;
     placeholder?: IContentField<string>;
     label?: IContentField<string>;
     description?: IContentField<string>;
@@ -393,10 +405,10 @@ export interface INumberInputStyle extends IStyleWithSpacing {
 export interface ISegmentedControlStyle extends IStyleWithSpacing {
     style_name: 'segmented-control';
     segmented_control_data?: IContentField<string>;
-    shared_orientation?: IContentField<string>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_radius?: IContentField<TSharedRadius>;
-    shared_color?: IContentField<TMantineColor>;
+    orientation?: IContentField<string>;
+    size?: IContentField<TSharedSize>;
+    radius?: IContentField<TSharedRadius>;
+    color?: IContentField<TMantineColor>;
     fullwidth?: IContentField<string>;
     disabled?: IContentField<string>;
     readonly?: IContentField<string>;    web_segmented_control_item_border?: IContentField<string>;
@@ -421,29 +433,29 @@ export interface IRatingStyle extends IStyleWithSpacing {
     web_rating_empty_icon?: IContentField<string>;
     web_rating_full_icon?: IContentField<string>;
     web_rating_highlight_selected_only?: IContentField<string>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_color?: IContentField<TMantineColor>;}
+    size?: IContentField<TSharedSize>;
+    color?: IContentField<TMantineColor>;}
 
 export interface IProgressStyle extends IStyleWithSpacing {
     style_name: 'progress';
     value?: IContentField<string>;
-    shared_color?: IContentField<TMantineColor>;
-    shared_radius?: IContentField<TSharedRadius>;
-    shared_size?: IContentField<TSharedSize>;
+    color?: IContentField<TMantineColor>;
+    radius?: IContentField<TSharedRadius>;
+    size?: IContentField<TSharedSize>;
     web_progress_striped?: IContentField<string>;
     web_progress_animated?: IContentField<string>;
     web_progress_transition_duration?: IContentField<TMantineProgressTransition>;}
 
 export interface IProgressRootStyle extends IBaseStyle {
     style_name: 'progress-root';
-    shared_size?: IContentField<TSharedSize>;
-    shared_radius?: IContentField<TSharedRadius>;
+    size?: IContentField<TSharedSize>;
+    radius?: IContentField<TSharedRadius>;
     web_progress_auto_contrast?: IContentField<string>;}
 
 export interface IProgressSectionStyle extends IBaseStyle {
     style_name: 'progress-section';
     value?: IContentField<string>;
-    shared_color?: IContentField<TMantineColor>;
+    color?: IContentField<TMantineColor>;
     web_progress_striped?: IContentField<string>;
     web_progress_animated?: IContentField<string>;
     label?: IContentField<string>;
@@ -459,6 +471,10 @@ export interface IShowUserInputEntry {
 
 export interface IShowUserInputStyle extends IBaseStyle {
     style_name: 'show-user-input';
+    /** Optional auto-styled heading rendered above the entries when set. */
+    title?: IContentField<string>;
+    /** Message shown when there are no entries to display (default "No entries found."). */
+    empty_text?: IContentField<string>;
     /** Source data table the form entries are read from (backend data binding). */
     data_table?: IContentField<string>;
     own_entries_only?: IContentField<string>;
@@ -474,7 +490,7 @@ export interface IShowUserInputStyle extends IBaseStyle {
     fields_map?: IContentField<string>;
     delete_modal_title?: IContentField<string>;
     delete_modal_body?: IContentField<string>;
-    shared_spacing?: IContentField<string>;
+    spacing?: IContentField<string>;
     web_table_striped?: IContentField<string>;
     web_table_highlight_on_hover?: IContentField<string>;
     web_table_with_table_border?: IContentField<string>;

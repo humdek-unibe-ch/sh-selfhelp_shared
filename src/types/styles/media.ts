@@ -19,7 +19,7 @@ export interface IImageStyle extends IStyleWithSpacing {
     web_image_fit?: IContentField<TMantineImageFit>;
     web_width?: IContentField<TMantineWidth>;
     web_height?: IContentField<TMantineHeight>;
-    shared_radius?: IContentField<TMantineRadius>;
+    radius?: IContentField<TMantineRadius>;
     /** Image shown when the main source fails to load (Mantine Image fallbackSrc). */
     fallback_src?: IContentField<string>;}
 
@@ -66,7 +66,7 @@ export interface ICarouselStyle extends IStyleWithSpacing {
     web_height?: IContentField<string>;
     web_carousel_slide_size?: IContentField<string>;
     web_carousel_slide_gap?: IContentField<string>;
-    shared_orientation?: IContentField<string>;
+    orientation?: IContentField<string>;
     web_control_size?: IContentField<string>;
     web_carousel_controls_offset?: IContentField<string>;
     web_carousel_next_control_icon?: IContentField<string>;

@@ -59,7 +59,7 @@ void _exhaustiveBackward;
 /**
  * Compile-time lock for the authored-colour button passthrough: `MobileButton`
  * accepts an optional `accentColor` (resolved hex) so a CMS style can colour the
- * button for cross-platform parity (e.g. `login`'s `shared_color`). If the prop
+ * button for cross-platform parity (e.g. `login`'s `color`). If the prop
  * is removed or retyped, this assignment fails to type-check.
  */
 const _buttonAcceptsAccentColor: IMobileButtonProps = { accentColor: '#fab005' };

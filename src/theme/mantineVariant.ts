@@ -16,7 +16,7 @@ SPDX-License-Identifier: MPL-2.0
  *   - `semantic.ts`        maps renderer-agnostic shared fields
  *                          (`intent` / `size` / `radius` / `spacing`) per platform.
  *   - `mantineVariant.ts`  resolves a Mantine palette `color` + `variant` value
- *                          pair (e.g. the semantic `shared_color` + `web_variant`)
+ *                          pair (e.g. the semantic `color` + `web_variant`)
  *                          into concrete RGB. Its only runtime
  *                          consumer today is the mobile **Expo Web preview**
  *                          fallback (where `heroui-native` cannot render and the

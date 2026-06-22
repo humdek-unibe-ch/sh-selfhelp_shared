@@ -16,7 +16,7 @@ export interface ILoginStyle extends IStyleWithSpacing {
     /** Optional subtitle under the title; hidden when empty. */
     subtitle?: IContentField<string>;
     /** Submit-button colour (cross-platform, via the shared mapper). */
-    shared_color?: IContentField<TMantineColor>;
+    color?: IContentField<TMantineColor>;
     /** Label of the link that opens the registration page. */
     label_register?: IContentField<string>;
 }
@@ -66,16 +66,16 @@ export interface IValidateStyle extends IStyleWithSpacing {
     label_update?: IContentField<string>;
     label_cancel?: IContentField<string>;
     // RF-21: shared with form-log/form-record so the mobile custom form matches.
-    shared_buttons_size?: IContentField<string>;
-    shared_buttons_radius?: IContentField<string>;
-    shared_buttons_variant?: IContentField<string>;
-    shared_buttons_position?: IContentField<string>;
-    shared_buttons_order?: IContentField<string>;
-    shared_btn_save_color?: IContentField<string>;
-    shared_btn_cancel_color?: IContentField<string>;
+    buttons_size?: IContentField<string>;
+    buttons_radius?: IContentField<string>;
+    buttons_variant?: IContentField<string>;
+    buttons_position?: IContentField<string>;
+    buttons_order?: IContentField<string>;
+    btn_save_color?: IContentField<string>;
+    btn_cancel_color?: IContentField<string>;
     web_card_shadow?: IContentField<string>;
     web_card_padding?: IContentField<string>;
-    shared_radius?: IContentField<TMantineRadius>;
+    radius?: IContentField<TMantineRadius>;
     web_border?: IContentField<string>;
     /** Activation lifecycle status text (shown after the registration email). */
     loading_title?: IContentField<string>;
@@ -91,7 +91,7 @@ export interface IValidateStyle extends IStyleWithSpacing {
 export interface IResetPasswordStyle extends IStyleWithSpacing {
     style_name: 'reset-password';
     /** Submit/link-button colour (cross-platform, via the shared mapper). */
-    shared_color?: IContentField<TMantineColor>;
+    color?: IContentField<TMantineColor>;
     label_pw_reset?: IContentField<string>;
     alert_success?: IContentField<string>;
     placeholder?: IContentField<string>;    reset_title?: IContentField<string>;

@@ -27,13 +27,13 @@ export type TMobileButtonFeedback = 'scale-highlight' | 'scale-ripple' | 'scale'
 
 export interface IButtonStyle extends IStyleWithSpacing {
     style_name: 'button';
-    shared_variant?: IContentField<TMantineVariant>;
-    shared_color?: IContentField<TMantineColor>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_radius?: IContentField<TSharedRadius>;
+    variant?: IContentField<TMantineVariant>;
+    color?: IContentField<TMantineColor>;
+    size?: IContentField<TSharedSize>;
+    radius?: IContentField<TSharedRadius>;
     web_left_icon?: IContentField<string>;
     web_right_icon?: IContentField<string>;
-    shared_full_width?: IContentField<string>;
+    full_width?: IContentField<string>;
     web_compact?: IContentField<string>;
     web_auto_contrast?: IContentField<string>;
     is_link?: IContentField<string>;    disabled?: IContentField<string>;
@@ -54,7 +54,7 @@ export interface ILinkStyle extends IStyleWithSpacing {
     label?: IContentField<string>;
     url?: IContentField<string>;
     open_in_new_tab?: IContentField<string>;
-    shared_color?: IContentField<TMantineColor>;
+    color?: IContentField<TMantineColor>;
     web_link_underline?: IContentField<TMantineAnchorUnderline>;
     web_left_icon?: IContentField<string>;
     web_right_icon?: IContentField<string>;
@@ -64,9 +64,9 @@ export interface IActionIconStyle extends IStyleWithSpacing {
     style_name: 'action-icon';
     web_variant?: IContentField<TMantineVariant>;
     web_action_icon_loading?: IContentField<string>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_radius?: IContentField<TSharedRadius>;
-    shared_color?: IContentField<TMantineColor>;
+    size?: IContentField<TSharedSize>;
+    radius?: IContentField<TSharedRadius>;
+    color?: IContentField<TMantineColor>;
     web_left_icon?: IContentField<string>;
     is_link?: IContentField<string>;
     page_keyword?: IContentField<string>;
@@ -79,8 +79,8 @@ export interface IAlertStyle extends IStyleWithSpacing {
     style_name: 'alert';
     alert_title?: IContentField<string>;
     web_variant?: IContentField<TMantineVariant>;
-    shared_color?: IContentField<TMantineColor>;
-    shared_radius?: IContentField<TSharedRadius>;
+    color?: IContentField<TMantineColor>;
+    radius?: IContentField<TSharedRadius>;
     web_left_icon?: IContentField<string>;
     /** Cross-platform dismiss toggle (was the web-only `web_with_close_button`). */
     closable?: IContentField<string>;
@@ -91,15 +91,15 @@ export interface IBadgeStyle extends IStyleWithSpacing {
     style_name: 'badge';
     label?: IContentField<string>;
     /** Cross-platform variant (web Mantine + mobile HeroUI). Primary control. */
-    shared_variant?: IContentField<TMantineBadgeVariant>;
-    /** Web-only variant override (e.g. `dot`); empty falls back to shared_variant. */
+    variant?: IContentField<TMantineBadgeVariant>;
+    /** Web-only variant override (e.g. `dot`); empty falls back to variant. */
     web_variant?: IContentField<TMantineBadgeVariant>;
     /** Render as a circle (equal width/height) for short counts. */
     circle?: IContentField<string>;
-    shared_size?: IContentField<TSharedSize>;
+    size?: IContentField<TSharedSize>;
     web_left_icon?: IContentField<string>;
-    shared_radius?: IContentField<TSharedRadius>;
-    shared_color?: IContentField<TMantineColor>;
+    radius?: IContentField<TSharedRadius>;
+    color?: IContentField<TMantineColor>;
     web_right_icon?: IContentField<string>;
     web_auto_contrast?: IContentField<string>;
 }
@@ -110,9 +110,9 @@ export interface IAvatarStyle extends IStyleWithSpacing {
     /** Person name; seeds auto-initials + a stable auto colour when no image. */
     name?: IContentField<string>;
     web_variant?: IContentField<TMantineAvatarVariant>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_radius?: IContentField<TSharedRadius>;
-    shared_color?: IContentField<TMantineColor>;
+    size?: IContentField<TSharedSize>;
+    radius?: IContentField<TSharedRadius>;
+    color?: IContentField<TMantineColor>;
     web_left_icon?: IContentField<string>;
     web_avatar_initials?: IContentField<string>;
     img_src?: IContentField<string>;
@@ -122,10 +122,10 @@ export interface IChipStyle extends IStyleWithSpacing {
     style_name: 'chip';
     label?: IContentField<string>;
     // Cross-platform variant (Mantine filled/outline/light; HeroUI Native chip variant).
-    shared_chip_variant?: IContentField<TMantineChipVariant>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_radius?: IContentField<TSharedRadius>;
-    shared_color?: IContentField<TMantineColor>;
+    chip_variant?: IContentField<TMantineChipVariant>;
+    size?: IContentField<TSharedSize>;
+    radius?: IContentField<TSharedRadius>;
+    color?: IContentField<TMantineColor>;
     web_chip_checked?: IContentField<string>;
     web_chip_multiple?: IContentField<string>;
     disabled?: IContentField<string>;    web_left_icon?: IContentField<string>;
@@ -152,27 +152,29 @@ export interface IIndicatorStyle extends IBaseStyle {
     web_indicator_inline?: IContentField<string>;
     web_indicator_offset?: IContentField<string>;
     web_border?: IContentField<string>;
-    shared_radius?: IContentField<TSharedRadius>;
-    shared_color?: IContentField<TMantineColor>;}
+    radius?: IContentField<TSharedRadius>;
+    color?: IContentField<TMantineColor>;}
 
 export interface IThemeIconStyle extends IStyleWithSpacing {
     style_name: 'theme-icon';
     web_variant?: IContentField<TMantineThemeIconVariant>;
-    shared_size?: IContentField<TSharedSize>;
-    shared_radius?: IContentField<TSharedRadius>;
-    shared_color?: IContentField<TMantineColor>;    web_left_icon?: IContentField<string>;
+    size?: IContentField<TSharedSize>;
+    radius?: IContentField<TSharedRadius>;
+    color?: IContentField<TMantineColor>;    web_left_icon?: IContentField<string>;
 }
 
 export interface INotificationStyle extends IStyleWithSpacing {
     style_name: 'notification';
     title?: IContentField<string>;
     content?: IContentField<string>;
-    web_left_icon?: IContentField<string>;
-    shared_color?: IContentField<TMantineColor>;
+    /** Portable icon: honoured by both web (Mantine) and mobile renderers. */
+    shared_icon?: IContentField<string>;
+    color?: IContentField<TMantineColor>;
     web_notification_loading?: IContentField<string>;
-    web_notification_with_close_button?: IContentField<string>;
+    /** Portable dismiss toggle: both platforms show a close button when '1'. */
+    with_close_button?: IContentField<string>;
     web_border?: IContentField<string>;
-    shared_radius?: IContentField<TSharedRadius>;}
+    radius?: IContentField<TSharedRadius>;}
 
 // NOTE: `fab-button` and `biometric-login-button` are deferred (mobile rendering
 // plan, milestone-one scope). They are NOT part of the established 90-style

@@ -12,10 +12,10 @@ export interface INoAccessStyle extends IStyleWithSpacing {
     button_label?: IContentField<string>;
     login_label?: IContentField<string>;
     show_login?: IContentField<string>;
-    shared_color?: IContentField<string>;
-    shared_radius?: IContentField<TSharedRadius>;
+    color?: IContentField<string>;
+    radius?: IContentField<TSharedRadius>;
     web_shadow?: IContentField<string>;
-    shared_variant?: IContentField<string>;
+    variant?: IContentField<string>;
     show_icon?: IContentField<string>;
 }
 
@@ -25,10 +25,10 @@ export interface INotFoundStyle extends IStyleWithSpacing {
     message?: IContentField<string>;
     button_label?: IContentField<string>;
     login_label?: IContentField<string>;
-    shared_color?: IContentField<string>;
-    shared_radius?: IContentField<TSharedRadius>;
+    color?: IContentField<string>;
+    radius?: IContentField<TSharedRadius>;
     web_shadow?: IContentField<string>;
-    shared_variant?: IContentField<string>;
+    variant?: IContentField<string>;
     show_icon?: IContentField<string>;
 }
 
@@ -37,10 +37,10 @@ export interface IMissingStyle extends IStyleWithSpacing {
     title?: IContentField<string>;
     message?: IContentField<string>;
     button_label?: IContentField<string>;
-    shared_color?: IContentField<string>;
-    shared_radius?: IContentField<TSharedRadius>;
+    color?: IContentField<string>;
+    radius?: IContentField<TSharedRadius>;
     web_shadow?: IContentField<string>;
-    shared_variant?: IContentField<string>;
+    variant?: IContentField<string>;
     show_icon?: IContentField<string>;
 }
 

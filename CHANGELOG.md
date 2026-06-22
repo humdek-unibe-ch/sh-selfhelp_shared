@@ -9,6 +9,58 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.22
+
+Field-naming unification (Option B): the `shared_*` field-name prefix is dropped
+so that **no prefix = applies to both platforms**. `shared_*` (cross-platform
+presentation) and the unprefixed `common` fields (cross-platform behaviour) were
+the same scope, so the prefix was redundant. Backend migration
+`Version20260622165615` renames the catalog in lockstep; consumers read the new
+unprefixed field names. Pre-1.0 coordinated breaking change.
+
+### Changed
+
+- **47 `shared_*` style props renamed to unprefixed** across the style
+  interfaces (`size`, `spacing`, `radius`, `color`, `variant`, `gap`, `cols`,
+  `justify`, `align`, `direction`, `wrap`, `full_width`, `orientation`,
+  `multiple`, `clearable`, `searchable`, `max_length`, `min_rows`/`max_rows`,
+  `mih`/`miw`/`mah`/`maw`, `grid_*`, `buttons_*`, `btn_*_color`, `text_align`,
+  `vertical_spacing`, `line_clamp`, `label_position`, `with_close_button`,
+  `*_variant`, …). The rule is now: no prefix = both platforms (translatable
+  when `display=1`), `web_`/`mobile_` = platform-specific.
+
+### Kept (reserved-name exceptions)
+
+- **`shared_height`, `shared_width`, `shared_icon`** keep their prefix. The bare
+  names `height`/`width`/`icon` already exist as **page-type** fields in the
+  globally-unique backend `fields` table (page `icon` is live on real pages), so
+  these three style fields cannot drop the prefix without a collision.
+
+## v1.14.21
+
+Style authoring upgrade contracts for the form / notification / show-user-input
+styles (approved `/style` run, 2026-06-22). All additions are optional and the
+two notification renames are pre-1.0 portability promotions; consumers read the
+new field names.
+
+### Added
+
+- **`IFormStyle.title` + `description`** — optional auto-styled heading/subtitle
+  rendered above `form-record` / `form-log` when set (empty = unchanged).
+- **`IFormStyle.alert_success_title` + `alert_error_title`** — translatable
+  headings for the success/error alerts (were hardcoded `Success`/`Error`).
+- **`IFormStyle.confirm_submit` + `confirm_message`** — optional
+  confirm-before-save dialog (off by default).
+- **`IShowUserInputStyle.title` + `empty_text`** — optional heading and a
+  configurable empty-state message (was hardcoded `No entries found.`).
+
+### Changed
+
+- **`INotificationStyle`** — `web_left_icon` → **`shared_icon`** and
+  `web_notification_with_close_button` → **`shared_with_close_button`**: the icon
+  and dismiss toggle are now portable so the mobile renderer honours them too.
+  (`web_left_icon` stays a web-only field on the other 15 styles that use it.)
+
 ## v1.14.20
 
 Type-contract drift fixes for three styles, reconciling the `@selfhelp/shared`

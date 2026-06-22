@@ -4,7 +4,7 @@ SPDX-License-Identifier: MPL-2.0
 */
 /**
  * Mantine semantic token tables. Both the web Mantine theme and the
- * mobile HeroUI Native theme extend these so a `shared_size: 'md'` on a
+ * mobile HeroUI Native theme extend these so a `size: 'md'` on a
  * section renders identical sizing regardless of platform.
  *
  * Pixel values come straight from Mantine v9 defaults:

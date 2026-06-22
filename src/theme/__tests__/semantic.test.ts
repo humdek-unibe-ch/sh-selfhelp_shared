@@ -119,10 +119,10 @@ describe('semantic style mapper', () => {
         it('reads valid shared_* values', () => {
             expect(
                 resolveSharedStyleProps({
-                    shared_size: 'lg',
-                    shared_radius: 'full',
+                    size: 'lg',
+                    radius: 'full',
                     shared_intent: 'danger',
-                    shared_full_width: '1',
+                    full_width: '1',
                 }),
             ).toEqual({ size: 'lg', radius: 'full', intent: 'danger', fullWidth: true });
         });
@@ -131,8 +131,8 @@ describe('semantic style mapper', () => {
             // Stale Mantine values (xs/xl) are NOT mapped; the renderer falls
             // through to its component default rather than silently clamping.
             const resolved = resolveSharedStyleProps({
-                shared_size: 'xl',
-                shared_radius: 'xs',
+                size: 'xl',
+                radius: 'xs',
                 shared_intent: 'bogus',
             });
             expect(resolved.size).toBeUndefined();
@@ -140,26 +140,26 @@ describe('semantic style mapper', () => {
             expect(resolved.intent).toBeUndefined();
         });
 
-        it('coerces shared_full_width booleans', () => {
-            expect(resolveSharedStyleProps({ shared_full_width: '0' }).fullWidth).toBe(false);
-            expect(resolveSharedStyleProps({ shared_full_width: true }).fullWidth).toBe(true);
+        it('coerces full_width booleans', () => {
+            expect(resolveSharedStyleProps({ full_width: '0' }).fullWidth).toBe(false);
+            expect(resolveSharedStyleProps({ full_width: true }).fullWidth).toBe(true);
             expect(resolveSharedStyleProps({}).fullWidth).toBeUndefined();
         });
 
-        it('reads shared_color and shared_variant (the REAL cross-platform fields)', () => {
-            const resolved = resolveSharedStyleProps({ shared_color: 'red', shared_variant: 'light' });
+        it('reads color and variant (the REAL cross-platform fields)', () => {
+            const resolved = resolveSharedStyleProps({ color: 'red', variant: 'light' });
             expect(resolved.color).toBe('red');
             expect(resolved.variant).toBe('light');
         });
 
-        it('treats an empty shared_color / shared_variant as absent', () => {
-            const resolved = resolveSharedStyleProps({ shared_color: '', shared_variant: '' });
+        it('treats an empty color / variant as absent', () => {
+            const resolved = resolveSharedStyleProps({ color: '', variant: '' });
             expect(resolved.color).toBeUndefined();
             expect(resolved.variant).toBeUndefined();
         });
     });
 
-    describe('Mantine colour/variant -> HeroUI Native (real shared_color/shared_variant)', () => {
+    describe('Mantine colour/variant -> HeroUI Native (real color/variant)', () => {
         it('maps a Mantine palette colour to a HeroUI semantic colour', () => {
             expect(mapMantineColorToHeroUiColor('red')).toBe('danger');
             expect(mapMantineColorToHeroUiColor('green')).toBe('success');
@@ -199,7 +199,7 @@ describe('semantic style mapper', () => {
             expect(mapMantineColorToHeroUiButtonVariant('blue')).toBe('primary');
         });
 
-        it('toHeroUiSemanticProps prefers shared_variant, then shared_color, then intent', () => {
+        it('toHeroUiSemanticProps prefers variant, then color, then intent', () => {
             expect(
                 toHeroUiSemanticProps({ variant: 'outline', color: 'red', intent: 'primary' }).buttonVariant,
             ).toBe('outline');
@@ -213,12 +213,12 @@ describe('semantic style mapper', () => {
             });
         });
 
-        it('resolves a real CMS button section (shared_color + shared_variant + shared_size)', () => {
+        it('resolves a real CMS button section (color + variant + size)', () => {
             const props = resolveSharedStyleProps({
-                shared_color: 'red',
-                shared_variant: 'filled',
-                shared_size: 'lg',
-                shared_radius: 'md',
+                color: 'red',
+                variant: 'filled',
+                size: 'lg',
+                radius: 'md',
             });
             expect(toHeroUiSemanticProps(props)).toMatchObject({
                 size: 'lg',

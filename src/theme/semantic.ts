@@ -13,7 +13,7 @@ SPDX-License-Identifier: MPL-2.0
  *
  * Design rules (mobile rendering plan, section 8.2):
  *   - NO value clamping. The shared scales are the true common denominator
- *     (`shared_size` = sm|md|lg, `shared_radius` = none|sm|md|lg|full), so every
+ *     (`size` = sm|md|lg, `radius` = none|sm|md|lg|full), so every
  *     value maps 1:1 to each platform. The backend enforces the same domain
  *     (migration `Version20260618195450`).
  *   - NO implicit cross-platform fallback. These functions take already-resolved
@@ -47,8 +47,8 @@ export type TSemanticIntent =
 export type TSemanticState = 'disabled' | 'loading' | 'invalid' | 'required';
 
 /**
- * Cross-platform colour + variant authored in the CMS (`shared_color` /
- * `shared_variant`). These are stored as Mantine palette / variant *values* —
+ * Cross-platform colour + variant authored in the CMS (`color` /
+ * `variant`). These are stored as Mantine palette / variant *values* —
  * the catalog keeps them verbatim (migration `Version20260618143216` renamed the
  * legacy `mantine_*` fields to `shared_*` without touching the values). They are
  * the REAL cross-platform appearance fields (there is no `shared_intent` in the
@@ -81,9 +81,9 @@ export interface ISharedStyleProps {
     size?: TSemanticSize;
     spacing?: TSemanticSpacing;
     radius?: TSemanticRadius;
-    /** Mantine palette colour authored via `shared_color` (cross-platform). */
+    /** Mantine palette colour authored via `color` (cross-platform). */
     color?: TSemanticColor;
-    /** Mantine variant authored via `shared_variant` (cross-platform). */
+    /** Mantine variant authored via `variant` (cross-platform). */
     variant?: TSemanticVariant;
     /**
      * Legacy semantic intent. Kept for back-compat; `shared_intent` is NOT in the
@@ -349,7 +349,7 @@ export function mapIntentToHeroUiColor(
 // ===== color / variant (the REAL cross-platform appearance fields) =====
 
 /**
- * Map a Mantine palette colour (`shared_color`) onto a HeroUI Native semantic
+ * Map a Mantine palette colour (`color`) onto a HeroUI Native semantic
  * colour (Chip / Tag / status surfaces). The Mantine palette is broad; it
  * collapses onto HeroUI's five semantic colours by hue family:
  *   red/pink             -> danger
@@ -382,8 +382,8 @@ export function mapMantineColorToHeroUiColor(
 }
 
 /**
- * Map a Mantine palette colour (`shared_color`) onto a HeroUI Native **Button**
- * variant when no explicit `shared_variant` is authored. HeroUI buttons encode
+ * Map a Mantine palette colour (`color`) onto a HeroUI Native **Button**
+ * variant when no explicit `variant` is authored. HeroUI buttons encode
  * colour in the variant, so the destructive hue becomes `danger`, neutral hues
  * become `secondary`, and everything else stays the prominent `primary`.
  */
@@ -404,7 +404,7 @@ export function mapMantineColorToHeroUiButtonVariant(
 }
 
 /**
- * Map a Mantine variant (`shared_variant`) onto the HeroUI Native Button
+ * Map a Mantine variant (`variant`) onto the HeroUI Native Button
  * vocabulary:
  *   filled / gradient        -> primary
  *   light / white / default  -> secondary
@@ -434,7 +434,7 @@ export function mapMantineVariantToHeroUiButtonVariant(
 }
 
 /**
- * Map the accordion variant token (`shared_accordion_variant`: Mantine
+ * Map the accordion variant token (`accordion_variant`: Mantine
  * default/contained/filled/separated) onto the HeroUI Native Accordion `variant`
  * vocabulary. HeroUI Native only has `default` (plain list) and `surface`
  * (grouped container), so every "boxed" Mantine variant collapses to `surface`.
@@ -454,7 +454,7 @@ export function mapAccordionVariantToHeroUiVariant(
 }
 
 /**
- * Map the chip variant token (`shared_chip_variant`: Mantine
+ * Map the chip variant token (`chip_variant`: Mantine
  * filled/outline/light) onto the HeroUI Native Chip `variant` vocabulary
  * (`primary`/`secondary`/`tertiary`/`soft`):
  *   - filled  -> primary  (solid accent fill)
@@ -475,14 +475,14 @@ export function mapChipVariantToHeroUiVariant(
     }
 }
 
-// ===== layout dimensions (shared_width / shared_height / grid span / divider) =====
+// ===== layout dimensions (shared_width / shared_height / mih/miw/mah/maw / grid span / divider) =====
 
 /** A React Native-safe dimension: a px number, a percentage string, or "auto". */
 export type TReactNativeDimension = number | `${number}%` | 'auto';
 
 /**
- * Parse a CMS dimension string (`shared_width`/`shared_height`/`shared_mi*`/
- * `shared_ma*`) into a React Native-safe value. Web (Mantine) accepts the raw
+ * Parse a CMS dimension string (`shared_width`/`shared_height`/`mih`/`miw`/
+ * `mah`/`maw`) into a React Native-safe value. Web (Mantine) accepts the raw
  * string verbatim ("320px", "100%", "auto"); React Native does NOT accept a
  * unit suffix, so a px value must become a unitless number:
  *   "320px" | "320" | 320  -> 320          (number)
@@ -552,7 +552,7 @@ export function gridSpanToReactNativeColumn(
 }
 
 /**
- * Map a `shared_divider_variant` (solid/dashed/dotted) onto a React Native
+ * Map a `divider_variant` (solid/dashed/dotted) onto a React Native
  * `borderStyle`. The vocabularies are identical, so this validates the domain
  * and falls back to 'solid'.
  */
@@ -601,26 +601,26 @@ function readBool(value: unknown): boolean | undefined {
 export function resolveSharedStyleProps(fields: Record<string, unknown>): ISharedStyleProps {
     const resolved: ISharedStyleProps = {};
 
-    const size = readString(fields.shared_size);
+    const size = readString(fields.size);
     if (size !== undefined && (SEMANTIC_SIZES as readonly string[]).includes(size)) {
         resolved.size = size as TSemanticSize;
     }
 
-    const radius = readString(fields.shared_radius);
+    const radius = readString(fields.radius);
     if (radius !== undefined && (SEMANTIC_RADII as readonly string[]).includes(radius)) {
         resolved.radius = radius as TSemanticRadius;
     }
 
-    // `shared_color` / `shared_variant` are the REAL cross-platform appearance
+    // `color` / `variant` are the REAL cross-platform appearance
     // fields (Mantine palette/variant values stored verbatim). Read them
     // open-domain — the palette is intentionally broad and platform mappers
     // collapse it; an unknown value simply falls through to a renderer default.
-    const color = readString(fields.shared_color);
+    const color = readString(fields.color);
     if (color !== undefined) {
         resolved.color = color;
     }
 
-    const variant = readString(fields.shared_variant);
+    const variant = readString(fields.variant);
     if (variant !== undefined) {
         resolved.variant = variant as TSemanticVariant;
     }
@@ -632,7 +632,7 @@ export function resolveSharedStyleProps(fields: Record<string, unknown>): IShare
         resolved.intent = intent as TSemanticIntent;
     }
 
-    const fullWidth = readBool(fields.shared_full_width);
+    const fullWidth = readBool(fields.full_width);
     if (fullWidth !== undefined) {
         resolved.fullWidth = fullWidth;
     }
@@ -665,10 +665,10 @@ export function toMantineSemanticProps(props: ISharedStyleProps): IMantineResolv
  *
  * Appearance precedence (mirrors the web renderer, which reads the same CMS
  * fields straight into Mantine):
- *   1. `shared_variant` (Mantine variant) mapped onto the HeroUI button vocab;
- *   2. else `shared_color` (Mantine palette) mapped onto a button variant;
+ *   1. `variant` (Mantine variant) mapped onto the HeroUI button vocab;
+ *   2. else `color` (Mantine palette) mapped onto a button variant;
  *   3. else the legacy `intent` mapping (back-compat fallback).
- * The semantic `color` is resolved from `shared_color` first, then `intent`.
+ * The semantic `color` is resolved from `color` first, then `intent`.
  */
 export function toHeroUiSemanticProps(props: ISharedStyleProps): IHeroUiResolvedStyle {
     const buttonVariant =

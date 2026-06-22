@@ -43,16 +43,16 @@ export interface IAccordionStyle extends IStyleWithSpacing {
     // Cross-platform variant token: web -> Mantine variant
     // (default/contained/filled/separated), mobile -> HeroUI Native
     // default ('default') / surface (contained/filled/separated).
-    shared_accordion_variant?: IContentField<TMantineAccordionVariant>;
+    accordion_variant?: IContentField<TMantineAccordionVariant>;
     // RF-19: selection mode (single vs multiple open) is portable; mobile reads it.
-    shared_multiple?: IContentField<TMantineAccordionMultiple>;
+    multiple?: IContentField<TMantineAccordionMultiple>;
     web_accordion_chevron_position?: IContentField<TMantineAccordionChevronPosition>;
     web_accordion_chevron_size?: IContentField<string>;
     web_accordion_disable_chevron_rotation?: IContentField<TMantineAccordionDisableChevronRotation>;
     web_accordion_loop?: IContentField<TMantineAccordionLoop>;
     web_accordion_transition_duration?: IContentField<string>;
     web_accordion_default_value?: IContentField<string>;
-    shared_radius?: IContentField<TSharedRadius>;}
+    radius?: IContentField<TSharedRadius>;}
 
 export interface IAccordionItemStyle extends IStyleWithSpacing {
     style_name: 'accordion-item';
@@ -68,7 +68,7 @@ export interface ITabsStyle extends IStyleWithSpacing {
     web_tabs_variant?: IContentField<TMantineTabsVariant>;
     web_tabs_orientation?: IContentField<TMantineOrientation>;
     web_tabs_radius?: IContentField<TMantineRadius>;
-    shared_color?: IContentField<TMantineColor>;
+    color?: IContentField<TMantineColor>;
     // Capability pass (2026-06-22): list layout + panel mount behaviour.
     web_tabs_grow?: IContentField<string>;
     web_tabs_justify?: IContentField<string>;
@@ -93,7 +93,7 @@ export interface ITimelineStyle extends IStyleWithSpacing {
     web_timeline_active?: IContentField<string>;
     web_timeline_align?: IContentField<TMantineTimelineAlign>;
     web_timeline_line_variant?: IContentField<TMantineTimelineLineVariant>;
-    shared_color?: IContentField<TMantineColor>;}
+    color?: IContentField<TMantineColor>;}
 
 /**
  * A single entry inside a `timeline`. Child-only style; placement is enforced
@@ -104,13 +104,13 @@ export interface ITimelineItemStyle extends IBaseStyle {
     title?: IContentField<string>;
     web_timeline_item_bullet?: IContentField<string>;
     web_timeline_item_line_variant?: IContentField<TMantineTimelineLineVariant>;
-    shared_color?: IContentField<TMantineColor>;}
+    color?: IContentField<TMantineColor>;}
 
 export interface IListStyle extends IStyleWithSpacing {
     style_name: 'list';
     web_list_type?: IContentField<TMantineListType>;
     web_spacing?: IContentField<TMantineSpacing>;
-    shared_size?: IContentField<TSharedSize>;    web_list_list_style_type?: IContentField<TMantineListStyleType>;
+    size?: IContentField<TSharedSize>;    web_list_list_style_type?: IContentField<TMantineListStyleType>;
     web_list_with_padding?: IContentField<TMantineListWithPadding>;
     web_list_center?: IContentField<TMantineListCenter>;
     web_list_icon?: IContentField<string>;
