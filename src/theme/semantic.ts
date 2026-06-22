@@ -475,6 +475,101 @@ export function mapChipVariantToHeroUiVariant(
     }
 }
 
+// ===== layout dimensions (shared_width / shared_height / grid span / divider) =====
+
+/** A React Native-safe dimension: a px number, a percentage string, or "auto". */
+export type TReactNativeDimension = number | `${number}%` | 'auto';
+
+/**
+ * Parse a CMS dimension string (`shared_width`/`shared_height`/`shared_mi*`/
+ * `shared_ma*`) into a React Native-safe value. Web (Mantine) accepts the raw
+ * string verbatim ("320px", "100%", "auto"); React Native does NOT accept a
+ * unit suffix, so a px value must become a unitless number:
+ *   "320px" | "320" | 320  -> 320          (number)
+ *   "50%"                   -> "50%"        (percentage string)
+ *   "auto"                  -> "auto"
+ *   ""/undefined/unknown    -> undefined    (renderer keeps its default)
+ */
+export function parseDimensionToReactNative(
+    value: string | number | undefined | null,
+): TReactNativeDimension | undefined {
+    if (value === undefined || value === null) return undefined;
+    if (typeof value === 'number') return Number.isFinite(value) ? value : undefined;
+    const trimmed = value.trim();
+    if (trimmed === '') return undefined;
+    if (trimmed === 'auto') return 'auto';
+    const pct = /^(\d+(?:\.\d+)?)%$/.exec(trimmed);
+    if (pct) {
+        const n = Number(pct[1]);
+        return `${n}%`;
+    }
+    const px = /^(\d+(?:\.\d+)?)(?:px)?$/.exec(trimmed);
+    if (px) return Number(px[1]);
+    return undefined;
+}
+
+/**
+ * Web pass-through for a CMS dimension: Mantine accepts "320px"/"100%"/"auto"
+ * verbatim. Returns undefined for empty so the renderer omits the prop.
+ */
+export function parseDimensionToWeb(
+    value: string | number | undefined | null,
+): string | number | undefined {
+    if (value === undefined || value === null) return undefined;
+    if (typeof value === 'number') return value;
+    const trimmed = value.trim();
+    return trimmed === '' ? undefined : trimmed;
+}
+
+/** React Native flex layout for one emulated grid column. */
+export interface IReactNativeGridColumn {
+    flexBasis: TReactNativeDimension;
+    flexGrow: number;
+    flexShrink: number;
+}
+
+/**
+ * Convert a Mantine `Grid.Col` span into a React Native flex layout for the
+ * emulated mobile grid. `cols` is the parent grid's column count (Mantine
+ * default 12).
+ *   number    -> a flex-basis percentage of (span / cols)
+ *   "auto"    -> grow to share remaining space (flexGrow 1, basis 0)
+ *   "content" -> size to content (no grow/shrink, basis auto)
+ *   invalid   -> full row ("100%")
+ */
+export function gridSpanToReactNativeColumn(
+    span: string | number | undefined | null,
+    cols: number = 12,
+): IReactNativeGridColumn {
+    const totalCols = cols > 0 ? cols : 12;
+    if (span === 'auto') return { flexBasis: 0, flexGrow: 1, flexShrink: 1 };
+    if (span === 'content') return { flexBasis: 'auto', flexGrow: 0, flexShrink: 0 };
+    const n = typeof span === 'number' ? span : Number.parseInt(String(span ?? ''), 10);
+    if (!Number.isFinite(n) || n <= 0) return { flexBasis: '100%', flexGrow: 0, flexShrink: 1 };
+    const clamped = Math.min(n, totalCols);
+    const pct = Math.round((clamped / totalCols) * 10000) / 100;
+    return { flexBasis: `${pct}%`, flexGrow: 0, flexShrink: 1 };
+}
+
+/**
+ * Map a `shared_divider_variant` (solid/dashed/dotted) onto a React Native
+ * `borderStyle`. The vocabularies are identical, so this validates the domain
+ * and falls back to 'solid'.
+ */
+export function mapDividerVariantToReactNative(
+    variant: string | undefined | null,
+): 'solid' | 'dashed' | 'dotted' {
+    switch (variant) {
+        case 'dashed':
+            return 'dashed';
+        case 'dotted':
+            return 'dotted';
+        case 'solid':
+        default:
+            return 'solid';
+    }
+}
+
 // ===== state helpers =====
 
 function hasState(states: readonly TSemanticState[] | undefined, state: TSemanticState): boolean {

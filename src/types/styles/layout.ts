@@ -4,7 +4,6 @@ SPDX-License-Identifier: MPL-2.0
 */
 import type { IBaseStyle, IContentField, IStyleWithSpacing } from './base';
 import type {
-    TMantineSpacing,
     TMantineColor,
     TMantineOrientation,
     TMantineDirection,
@@ -12,34 +11,43 @@ import type {
     TMantineJustify,
     TMantineAlign,
     TMantineGridSpan,
+    TMantineGridGrow,
+    TMantineGridOverflow,
     TSharedSize,
     TSharedRadius,
 } from '../mantine/common';
 
 // Style-specific helper types only used in layout interfaces
 export type TMantineBorder = '0' | '1';
-// Cross-platform border toggle (card family): Mantine `withBorder` on web,
-// a themed border/divider on mobile.
+// Cross-platform border toggle (card family + paper): Mantine `withBorder` on
+// web, a themed border on mobile.
 export type TSharedBorder = '0' | '1';
+// Cross-platform width/height/min/max dimension (e.g. "100%", "320px", "auto").
+// Drives the web (Mantine) and the mobile (RN flexbox) renderer via the mapper.
+export type TSharedDimension = string;
 export type TMantineWidth = string;
 export type TMantineHeight = string;
+// Cross-platform divider line style (Mantine `variant` / RN `borderStyle`).
+export type TSharedDividerVariant = 'solid' | 'dashed' | 'dotted';
+export type TSharedDividerLabelPosition = 'left' | 'center' | 'right';
 export type TMantineDividerVariant = 'solid' | 'dashed' | 'dotted';
 export type TMantinePaperShadow = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type TMantineCardShadow = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type TMantineCardPadding = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type TMantineGap = '0' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+// Cross-platform grid column count (string-encoded integer).
+export type TSharedCols = string;
 export type TMantineCols = string;
 export type TMantineGridOffset = string;
 export type TMantineGridOrder = string;
 export type TMantineScrollAreaSize = string;
-export type TMantineScrollAreaType = 'hover' | 'always' | 'never' | 'scroll';
+export type TMantineScrollAreaType = 'hover' | 'always' | 'auto' | 'never' | 'scroll';
 
 export interface IContainerStyle extends IStyleWithSpacing {
     style_name: 'container';
     shared_size?: IContentField<TSharedSize>;
     web_fluid?: IContentField<string>;
-    web_px?: IContentField<TMantineSpacing>;
-    web_py?: IContentField<TMantineSpacing>;}
+}
 
 export interface IBoxStyle extends IStyleWithSpacing {
     style_name: 'box';
@@ -52,8 +60,8 @@ export interface IFlexStyle extends IStyleWithSpacing {
     shared_align?: IContentField<TMantineAlign>;
     shared_direction?: IContentField<TMantineDirection>;
     shared_wrap?: IContentField<TMantineWrap>;
-    web_width?: IContentField<TMantineWidth>;
-    web_height?: IContentField<TMantineHeight>;
+    shared_width?: IContentField<TSharedDimension>;
+    shared_height?: IContentField<TSharedDimension>;
 }
 
 export interface IGroupStyle extends IStyleWithSpacing {
@@ -61,10 +69,10 @@ export interface IGroupStyle extends IStyleWithSpacing {
     shared_gap?: IContentField<TMantineGap>;
     shared_justify?: IContentField<TMantineJustify>;
     shared_align?: IContentField<TMantineAlign>;
+    shared_width?: IContentField<TSharedDimension>;
+    shared_height?: IContentField<TSharedDimension>;
     web_group_wrap?: IContentField<'0' | '1'>;
     web_group_grow?: IContentField<'0' | '1'>;
-    web_width?: IContentField<TMantineWidth>;
-    web_height?: IContentField<TMantineHeight>;
 }
 
 export interface IStackStyle extends IStyleWithSpacing {
@@ -72,71 +80,77 @@ export interface IStackStyle extends IStyleWithSpacing {
     shared_gap?: IContentField<TMantineGap>;
     shared_justify?: IContentField<TMantineJustify>;
     shared_align?: IContentField<TMantineAlign>;
-    web_width?: IContentField<TMantineWidth>;
-    web_height?: IContentField<TMantineHeight>;
+    shared_width?: IContentField<TSharedDimension>;
+    shared_height?: IContentField<TSharedDimension>;
 }
 
 export interface ISimpleGridStyle extends IStyleWithSpacing {
     style_name: 'simple-grid';
-    web_cols?: IContentField<TMantineCols>;
-    web_spacing?: IContentField<TMantineSpacing>;
-    web_breakpoints?: IContentField<string>;
-    web_vertical_spacing?: IContentField<TMantineSpacing>;
-    web_width?: IContentField<TMantineWidth>;
-    web_height?: IContentField<TMantineHeight>;
+    shared_cols?: IContentField<TSharedCols>;
+    shared_gap?: IContentField<TMantineGap>;
+    shared_vertical_spacing?: IContentField<TMantineGap>;
+    shared_width?: IContentField<TSharedDimension>;
+    shared_height?: IContentField<TSharedDimension>;
+    // Web-only responsive column overrides; clear to inherit shared_cols.
+    web_cols_sm?: IContentField<TSharedCols>;
+    web_cols_md?: IContentField<TSharedCols>;
+    web_cols_lg?: IContentField<TSharedCols>;
 }
 
 export interface IGridStyle extends IStyleWithSpacing {
     style_name: 'grid';
-    web_cols?: IContentField<TMantineCols>;
+    shared_cols?: IContentField<TSharedCols>;
     shared_gap?: IContentField<TMantineGap>;
     shared_justify?: IContentField<TMantineJustify>;
     shared_align?: IContentField<TMantineAlign>;
-    web_grid_overflow?: IContentField<string>;
-    web_width?: IContentField<TMantineWidth>;
-    web_height?: IContentField<TMantineHeight>;}
+    shared_width?: IContentField<TSharedDimension>;
+    shared_height?: IContentField<TSharedDimension>;
+    web_grid_overflow?: IContentField<TMantineGridOverflow>;
+}
 
 export interface IGridColumnStyle extends IStyleWithSpacing {
     style_name: 'grid-column';
-    web_grid_span?: IContentField<TMantineGridSpan>;
-    web_grid_offset?: IContentField<TMantineGridOffset>;
-    web_grid_order?: IContentField<TMantineGridOrder>;
-    web_grid_grow?: IContentField<string>;
-    web_width?: IContentField<TMantineWidth>;
-    web_height?: IContentField<TMantineHeight>;}
+    shared_grid_span?: IContentField<TMantineGridSpan>;
+    shared_grid_offset?: IContentField<TMantineGridOffset>;
+    shared_grid_order?: IContentField<TMantineGridOrder>;
+    shared_grid_grow?: IContentField<TMantineGridGrow>;
+    shared_width?: IContentField<TSharedDimension>;
+    shared_height?: IContentField<TSharedDimension>;
+}
 
 export interface ISpaceStyle extends IStyleWithSpacing {
     style_name: 'space';
     shared_size?: IContentField<TSharedSize>;
-    web_space_direction?: IContentField<string>;
+    shared_orientation?: IContentField<TMantineOrientation>;
 }
 
-export interface IDividerStyle extends IBaseStyle {
+export interface IDividerStyle extends IStyleWithSpacing {
     style_name: 'divider';
-    web_divider_variant?: IContentField<TMantineDividerVariant>;
+    shared_divider_variant?: IContentField<TSharedDividerVariant>;
     shared_size?: IContentField<TSharedSize>;
     divider_label?: IContentField<string>;
-    web_divider_label_position?: IContentField<string>;
+    shared_divider_label_position?: IContentField<TSharedDividerLabelPosition>;
     shared_orientation?: IContentField<TMantineOrientation>;
     shared_color?: IContentField<TMantineColor>;}
 
 export interface IPaperStyle extends IStyleWithSpacing {
     style_name: 'paper';
+    // Optional auto-styled heading rendered above the content when non-empty;
+    // never auto-creates a child section.
+    title?: IContentField<string>;
     web_paper_shadow?: IContentField<TMantinePaperShadow>;
     shared_radius?: IContentField<TSharedRadius>;
-    web_px?: IContentField<TMantineSpacing>;
-    web_py?: IContentField<TMantineSpacing>;
-    web_border?: IContentField<TMantineBorder>;}
+    shared_border?: IContentField<TSharedBorder>;}
 
-export interface ICenterStyle extends IBaseStyle {
+export interface ICenterStyle extends IStyleWithSpacing {
     style_name: 'center';
     web_center_inline?: IContentField<string>;
-    web_width?: IContentField<TMantineWidth>;
-    web_height?: IContentField<TMantineHeight>;
-    web_miw?: IContentField<TMantineWidth>;
-    web_mih?: IContentField<TMantineHeight>;
-    web_maw?: IContentField<TMantineWidth>;
-    web_mah?: IContentField<TMantineHeight>;
+    shared_width?: IContentField<TSharedDimension>;
+    shared_height?: IContentField<TSharedDimension>;
+    shared_miw?: IContentField<TSharedDimension>;
+    shared_mih?: IContentField<TSharedDimension>;
+    shared_maw?: IContentField<TSharedDimension>;
+    shared_mah?: IContentField<TSharedDimension>;
 }
 
 export interface IScrollAreaStyle extends IStyleWithSpacing {
@@ -145,8 +159,7 @@ export interface IScrollAreaStyle extends IStyleWithSpacing {
     web_scroll_area_type?: IContentField<TMantineScrollAreaType>;
     web_scroll_area_offset_scrollbars?: IContentField<string>;
     web_scroll_area_scroll_hide_delay?: IContentField<string>;
-    web_height?: IContentField<TMantineHeight>;
-    web_width?: IContentField<TMantineWidth>;
+    shared_height?: IContentField<TSharedDimension>;
 }
 
 export interface ICardStyle extends IStyleWithSpacing {

@@ -5,6 +5,8 @@ SPDX-License-Identifier: MPL-2.0
 import { describe, expect, it } from 'vitest';
 import {
     FULL_RADIUS_PX,
+    gridSpanToReactNativeColumn,
+    mapDividerVariantToReactNative,
     mapIntentToHeroUiButtonVariant,
     mapIntentToHeroUiColor,
     mapIntentToMantine,
@@ -18,6 +20,8 @@ import {
     mapSizeToHeroUi,
     mapSizeToMantine,
     mapSpacingToPx,
+    parseDimensionToReactNative,
+    parseDimensionToWeb,
     resolveSharedStyle,
     resolveSharedStyleProps,
     toHeroUiSemanticProps,
@@ -313,6 +317,79 @@ describe('semantic style mapper', () => {
 
         it('returns an empty object for empty props', () => {
             expect(toReactNativeSemanticStyle({})).toEqual({});
+        });
+    });
+
+    describe('layout dimensions (shared_width/height)', () => {
+        it('strips the px suffix to a unitless number for React Native', () => {
+            expect(parseDimensionToReactNative('320px')).toBe(320);
+            expect(parseDimensionToReactNative('320')).toBe(320);
+            expect(parseDimensionToReactNative(320)).toBe(320);
+        });
+
+        it('keeps percentages and auto for React Native', () => {
+            expect(parseDimensionToReactNative('50%')).toBe('50%');
+            expect(parseDimensionToReactNative('auto')).toBe('auto');
+        });
+
+        it('returns undefined for empty/invalid dimensions (renderer keeps its default)', () => {
+            expect(parseDimensionToReactNative('')).toBeUndefined();
+            expect(parseDimensionToReactNative('   ')).toBeUndefined();
+            expect(parseDimensionToReactNative(undefined)).toBeUndefined();
+            expect(parseDimensionToReactNative(null)).toBeUndefined();
+            expect(parseDimensionToReactNative('10rem')).toBeUndefined();
+        });
+
+        it('passes a dimension through verbatim for web (Mantine)', () => {
+            expect(parseDimensionToWeb('320px')).toBe('320px');
+            expect(parseDimensionToWeb('100%')).toBe('100%');
+            expect(parseDimensionToWeb('auto')).toBe('auto');
+            expect(parseDimensionToWeb('')).toBeUndefined();
+            expect(parseDimensionToWeb(undefined)).toBeUndefined();
+        });
+    });
+
+    describe('grid span -> React Native column', () => {
+        it('converts a numeric span to a flex-basis percentage of cols', () => {
+            expect(gridSpanToReactNativeColumn(6, 12)).toEqual({
+                flexBasis: '50%',
+                flexGrow: 0,
+                flexShrink: 1,
+            });
+            expect(gridSpanToReactNativeColumn(1, 4)).toEqual({
+                flexBasis: '25%',
+                flexGrow: 0,
+                flexShrink: 1,
+            });
+        });
+
+        it('grows to share space for "auto" and sizes to content for "content"', () => {
+            expect(gridSpanToReactNativeColumn('auto')).toEqual({
+                flexBasis: 0,
+                flexGrow: 1,
+                flexShrink: 1,
+            });
+            expect(gridSpanToReactNativeColumn('content')).toEqual({
+                flexBasis: 'auto',
+                flexGrow: 0,
+                flexShrink: 0,
+            });
+        });
+
+        it('clamps an oversized span and falls back to a full row for invalid input', () => {
+            expect(gridSpanToReactNativeColumn(99, 12).flexBasis).toBe('100%');
+            expect(gridSpanToReactNativeColumn('nope', 12).flexBasis).toBe('100%');
+            expect(gridSpanToReactNativeColumn(0, 12).flexBasis).toBe('100%');
+        });
+    });
+
+    describe('divider variant -> React Native borderStyle', () => {
+        it('maps the identical vocabulary and defaults to solid', () => {
+            expect(mapDividerVariantToReactNative('solid')).toBe('solid');
+            expect(mapDividerVariantToReactNative('dashed')).toBe('dashed');
+            expect(mapDividerVariantToReactNative('dotted')).toBe('dotted');
+            expect(mapDividerVariantToReactNative(undefined)).toBe('solid');
+            expect(mapDividerVariantToReactNative('bogus')).toBe('solid');
         });
     });
 });

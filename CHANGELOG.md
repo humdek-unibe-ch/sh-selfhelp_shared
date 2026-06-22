@@ -9,6 +9,49 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.12
+
+Layout cross-platform pass — the 13 layout styles (`container`, `box`, `flex`,
+`group`, `stack`, `simple-grid`, `grid`, `grid-column`, `space`, `divider`,
+`paper`, `center`, `scroll-area`) are now configurable on mobile, not just web.
+The portable sizing/behaviour props that were trapped under `web_*` were promoted
+to `shared_*` so the same field drives the Mantine (web) and the React-Native
+(mobile) renderer through the semantic mapper. Pairs with backend migration
+`Version20260622063129`. Patch bump (pre-1.0; style contracts are renamed/additive
+but not guaranteed backward compatible).
+
+### Changed (style contracts in `types/styles/layout.ts`)
+
+- **width/height are cross-platform**: `web_width`/`web_height` → `shared_width`/
+  `shared_height` on `flex`, `group`, `stack`, `grid`, `grid-column`, `simple-grid`,
+  `center`, and (height only) `scroll-area`, typed `TSharedDimension`.
+- **`grid`/`simple-grid` columns**: `web_cols` → `shared_cols` (`TSharedCols`);
+  `simple-grid` gains `shared_gap`, `shared_vertical_spacing`, and the web-only
+  responsive overrides `web_cols_sm`/`web_cols_md`/`web_cols_lg`.
+- **`grid-column`**: `web_grid_span|offset|order|grow` → `shared_grid_*`; now
+  extends `IStyleWithSpacing`.
+- **`center`**: `web_miw|mih|maw|mah` → `shared_miw|mih|maw|mah`; now extends
+  `IStyleWithSpacing`.
+- **`divider`**: `web_divider_variant` → `shared_divider_variant`
+  (`TSharedDividerVariant`), `web_divider_label_position` →
+  `shared_divider_label_position` (`TSharedDividerLabelPosition`); now extends
+  `IStyleWithSpacing`.
+- **`space`**: `web_space_direction` → `shared_orientation`.
+- **`paper`**: `web_border` → `shared_border` (`TSharedBorder`, matches `card`)
+  plus a new optional auto-styled `title` content field; `web_px`/`web_py` removed
+  (padding is the portable `shared_spacing`).
+- **`container`**: `web_px`/`web_py` removed (padding via `shared_spacing`).
+
+### Added (semantic mapper `theme/semantic.ts`)
+
+- **`parseDimensionToReactNative`** / **`parseDimensionToWeb`**: turn a CMS
+  dimension (`"320px"`/`"100%"`/`"auto"`) into an RN-safe value (a `px` suffix
+  becomes a unitless number; web keeps the string verbatim).
+- **`gridSpanToReactNativeColumn`**: convert a Mantine `Grid.Col` span into the RN
+  flex layout (`flexBasis`/`flexGrow`/`flexShrink`) for the emulated mobile grid.
+- **`mapDividerVariantToReactNative`**: map `shared_divider_variant` onto an RN
+  `borderStyle` (identical vocabulary, validated; defaults to `solid`).
+
 ## v1.14.11
 
 Style polish wave (card) — remove the redundant web-only card padding control.
