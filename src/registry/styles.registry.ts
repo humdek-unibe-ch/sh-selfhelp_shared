@@ -191,7 +191,7 @@ export const BASE_STYLE_REGISTRY = {
     input: { description: 'Plain HTML input', category: 'forms', frontendOnly: true, canHaveChildren: false },
     'text-input': { description: 'Mantine TextInput', category: 'forms', frontendOnly: true, canHaveChildren: false },
     textarea: { description: 'Mantine Textarea', category: 'forms', frontendOnly: true, canHaveChildren: false },
-    'rich-text-editor': { description: 'Tiptap editor on web; READ-ONLY viewer on mobile v1', category: 'forms', frontendOnly: true, canHaveChildren: false },
+    'rich-text-editor': { description: 'Tiptap editor on web; native inline-format toolbar editor on mobile', category: 'forms', frontendOnly: true, canHaveChildren: false },
     select: { description: 'HTML select / Mantine Select', category: 'forms', frontendOnly: true, canHaveChildren: false },
     radio: { description: 'Mantine Radio / RadioGroup', category: 'forms', frontendOnly: true, canHaveChildren: false },
     checkbox: { description: 'Mantine Checkbox', category: 'forms', frontendOnly: true, canHaveChildren: false },

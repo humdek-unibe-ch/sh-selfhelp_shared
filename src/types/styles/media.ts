@@ -14,14 +14,13 @@ export interface IImageStyle extends IStyleWithSpacing {
     is_fluid?: IContentField<string>;
     alt?: IContentField<string>;
     img_src?: IContentField<string>;
-    height?: IContentField<string>;
-    width?: IContentField<string>;
     web_image_fit?: IContentField<TMantineImageFit>;
     web_width?: IContentField<TMantineWidth>;
     web_height?: IContentField<TMantineHeight>;
     radius?: IContentField<TMantineRadius>;
     /** Image shown when the main source fails to load (Mantine Image fallbackSrc). */
-    fallback_src?: IContentField<string>;}
+    fallback_src?: IContentField<string>;
+}
 
 export interface IVideoStyle extends IStyleWithSpacing {
     style_name: 'video';
@@ -78,4 +77,5 @@ export interface ICarouselStyle extends IStyleWithSpacing {
     skip_snaps?: IContentField<string>;
     web_carousel_in_view_threshold?: IContentField<string>;
     web_carousel_duration?: IContentField<string>;
-    web_carousel_embla_options?: IContentField<string>;}
+    web_carousel_embla_options?: IContentField<string>;
+}

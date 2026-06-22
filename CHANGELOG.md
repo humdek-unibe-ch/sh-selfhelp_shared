@@ -9,6 +9,26 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.23
+
+Contract tidy on the back of the cross-repo style audit (no runtime behaviour
+change).
+
+### Removed
+
+- **`IImageStyle.height` / `IImageStyle.width`** — orphan optional fields with no
+  backing catalog field (image sizing is web-only via `web_width`/`web_height`).
+  No renderer read them as typed props; the mobile renderer's dead
+  `width`/`height` fallback was dropped in the same wave.
+
+### Changed
+
+- `rich-text-editor` registry description updated — it is a native inline-format
+  toolbar **editor** on mobile, not the old "READ-ONLY viewer on mobile v1".
+- `media.ts` interface closings reformatted (`;}` on one line → `;` + `}` on its
+  own line) so line-based tooling (e.g. the backend style-field audit parser)
+  reads each interface cleanly.
+
 ## v1.14.22
 
 Field-naming unification (Option B): the `shared_*` field-name prefix is dropped
