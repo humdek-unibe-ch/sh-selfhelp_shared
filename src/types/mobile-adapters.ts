@@ -26,6 +26,8 @@ SPDX-License-Identifier: MPL-2.0
  */
 import type { ComponentType, ReactNode } from 'react';
 import type { THeroUiButtonVariant, THeroUiSize } from '../theme/semantic';
+import type { TMobileFieldVariant, TMobileSelectPresentation } from './styles/forms';
+import type { TMobileButtonFeedback } from './styles/interactive';
 
 /** Props shared by every adapter (styling + accessibility passthrough). */
 export interface IMobileAdapterBaseProps {
@@ -45,6 +47,11 @@ export interface IMobileButtonProps extends IMobileAdapterBaseProps {
     isLoading?: boolean;
     isIconOnly?: boolean;
     fullWidth?: boolean;
+    /**
+     * Native press feedback (HeroUI Native `feedbackVariant`). No web
+     * equivalent — driven by the mobile-only `mobile_button_feedback` field.
+     */
+    feedbackVariant?: TMobileButtonFeedback;
     /**
      * Optional concrete background colour (resolved hex) that overrides the
      * variant's themed fill, used for cross-platform parity when a CMS style
@@ -92,6 +99,8 @@ export interface IMobileInputProps extends IMobileAdapterBaseProps {
     maxLength?: number;
     /** Native auto-capitalize behaviour (from `mobile_auto_capitalize`). */
     autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+    /** HeroUI Native field variant (from `mobile_input_variant`). */
+    variant?: TMobileFieldVariant;
 }
 
 export interface IMobileTextareaProps extends IMobileAdapterBaseProps {
@@ -108,6 +117,8 @@ export interface IMobileTextareaProps extends IMobileAdapterBaseProps {
     maxLength?: number;
     /** Native auto-capitalize behaviour (from `mobile_auto_capitalize`). */
     autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+    /** HeroUI Native field variant (from `mobile_textarea_variant`). */
+    variant?: TMobileFieldVariant;
 }
 
 export interface IMobileSwitchProps extends IMobileAdapterBaseProps {
@@ -128,6 +139,8 @@ export interface IMobileCheckboxProps extends IMobileAdapterBaseProps {
      * to `right`.
      */
     labelPosition?: 'left' | 'right';
+    /** HeroUI Native checkbox variant (from `mobile_checkbox_variant`). */
+    variant?: TMobileFieldVariant;
 }
 
 export interface IMobileSelectOption {
@@ -141,6 +154,19 @@ export interface IMobileSelectProps extends IMobileAdapterBaseProps {
     options: readonly IMobileSelectOption[];
     placeholder?: string;
     isDisabled?: boolean;
+    /**
+     * Multi-select mode (CMS `is_multiple`). When true the contract value is a
+     * comma-separated list of option values and `onValueChange` emits the same
+     * comma-separated form; the adapter renders HeroUI Native's
+     * `selectionMode="multiple"`.
+     */
+    multiple?: boolean;
+    /**
+     * How the option list opens (HeroUI Native Select.Content presentation).
+     * From the mobile-only `mobile_select_presentation` field; empty/undefined
+     * falls back to the renderer default (`bottom-sheet`).
+     */
+    presentation?: TMobileSelectPresentation;
 }
 
 export interface IMobileModalProps extends IMobileAdapterBaseProps {

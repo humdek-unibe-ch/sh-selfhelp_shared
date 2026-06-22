@@ -9,6 +9,49 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.19
+
+Fixes for the select renderers (web label + mobile multi-select), both additive
+so the contract stays backward compatible.
+
+### Added
+
+- **`ISelectStyle.label`** — the `select` style has always had a `label`
+  (markdown-inline, content scope) field in the CMS, but the type omitted it, so
+  the web `SelectStyle` renderer never displayed it. Typing it lets the frontend
+  render the label like every other form field.
+- **`IMobileSelectProps.multiple`** — multi-select mode for the mobile select
+  adapter (CMS `is_multiple`). The contract value stays a single string, now a
+  comma-separated list in multiple mode; the adapter maps it to HeroUI Native's
+  `selectionMode="multiple"`.
+
+## v1.14.18
+
+Mobile-only capability pass (backend migration `Version20260622145334`): HeroUI
+Native props that have no web/Mantine equivalent, exposed as `mobile_*` CMS
+fields so authors configure the native look from the CMS. The web renderer
+ignores `mobile_*`. All additions are optional, so the contract stays backward
+compatible.
+
+### Added
+
+- **Type aliases**: `TMobileSelectPresentation` (`'bottom-sheet' | 'dialog' |
+  'popover'`), `TMobileFieldVariant` (`'primary' | 'secondary'`),
+  `TMobileButtonFeedback` (`'scale-highlight' | 'scale-ripple' | 'scale' |
+  'none'`).
+- **`ISelectStyle` / `IComboboxStyle`**: `mobile_select_presentation` — how the
+  HeroUI Native option list opens (combobox reuses the mobile select renderer).
+- **`IButtonStyle`**: `mobile_button_feedback` — HeroUI Native press feedback.
+- **`ISliderStyle` / `IRangeSliderStyle`**: `mobile_slider_show_value` /
+  `mobile_range_slider_show_value` — toggle the HeroUI Native `Slider.Output`
+  value bubble.
+- **`ITextInputStyle` / `ITextareaStyle` / `ICheckboxStyle`**:
+  `mobile_input_variant` / `mobile_textarea_variant` / `mobile_checkbox_variant`
+  — HeroUI Native primary/secondary field variant.
+- **Mobile adapter contract**: `IMobileSelectProps.presentation`,
+  `IMobileButtonProps.feedbackVariant`, `IMobileInputProps.variant`,
+  `IMobileTextareaProps.variant`, `IMobileCheckboxProps.variant`.
+
 ## v1.14.17
 
 Mobile adapter contract additions for the form capability pass (so the mobile

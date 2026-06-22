@@ -19,6 +19,12 @@ import type { TMantineIconSize } from './typography';
 /** Mantine `Anchor` `underline` behaviour. */
 export type TMantineAnchorUnderline = 'always' | 'hover' | 'never';
 
+/**
+ * Mobile-only HeroUI Native Button press feedback (no web equivalent). The web
+ * renderer ignores `mobile_*`; only the mobile button renderer reads it.
+ */
+export type TMobileButtonFeedback = 'scale-highlight' | 'scale-ripple' | 'scale' | 'none';
+
 export interface IButtonStyle extends IStyleWithSpacing {
     style_name: 'button';
     shared_variant?: IContentField<TMantineVariant>;
@@ -39,6 +45,8 @@ export interface IButtonStyle extends IStyleWithSpacing {
     confirmation_title?: IContentField<string>;
     confirmation_continue?: IContentField<string>;
     confirmation_message?: IContentField<string>;
+    // Mobile-only HeroUI Native press feedback (scale-highlight / scale-ripple / scale / none).
+    mobile_button_feedback?: IContentField<TMobileButtonFeedback>;
 }
 
 export interface ILinkStyle extends IStyleWithSpacing {

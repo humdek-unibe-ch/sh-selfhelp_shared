@@ -17,6 +17,10 @@ export type TMantineUseInputWrapper = '0' | '1';
 export type TMantineTranslatable = '0' | '1';
 export type TMantineProgressTransition = '150' | '200' | '300' | '400' | '0' | string;
 export type TSharedLabelPosition = 'left' | 'right';
+// Mobile-only HeroUI Native knobs (no web/Mantine equivalent). The web
+// renderer ignores `mobile_*`; only the mobile renderers read these.
+export type TMobileSelectPresentation = 'bottom-sheet' | 'dialog' | 'popover';
+export type TMobileFieldVariant = 'primary' | 'secondary';
 
 export interface IFormStyle extends IStyleWithSpacing {
     style_name: 'form-log' | 'form-record';
@@ -78,6 +82,8 @@ export interface ITextInputStyle extends IStyleWithSpacing {
     mobile_keyboard_type?: IContentField<string>;
     mobile_auto_capitalize?: IContentField<string>;
     mobile_secure_entry?: IContentField<string>;
+    // Mobile-only HeroUI Native field variant (primary = bordered, secondary = filled).
+    mobile_input_variant?: IContentField<TMobileFieldVariant>;
     translatable?: IContentField<TMantineTranslatable>;
 }
 
@@ -107,6 +113,8 @@ export interface ITextareaStyle extends IStyleWithSpacing {
     // Capability pass (2026-06-22): max length (web + mobile) + mobile auto-capitalize.
     shared_max_length?: IContentField<string>;
     mobile_auto_capitalize?: IContentField<string>;
+    // Mobile-only HeroUI Native field variant (primary = bordered, secondary = filled).
+    mobile_textarea_variant?: IContentField<TMobileFieldVariant>;
     translatable?: IContentField<TMantineTranslatable>;
 }
 
@@ -128,6 +136,7 @@ export interface IRichTextEditorStyle extends IStyleWithSpacing {
 
 export interface ISelectStyle extends IBaseStyle {
     style_name: 'select';
+    label?: IContentField<string>;
     is_required?: IContentField<string>;
     name?: IContentField<string>;
     value?: IContentField<string>;
@@ -142,6 +151,9 @@ export interface ISelectStyle extends IBaseStyle {
     disabled?: IContentField<string>;
     image_selector?: IContentField<string>;
     shared_clearable?: IContentField<string>;
+    // Mobile-only: how the option list opens (HeroUI Native Select.Content
+    // presentation). Empty = renderer default (bottom-sheet).
+    mobile_select_presentation?: IContentField<TMobileSelectPresentation>;
 }
 
 export interface IRadioStyle extends IStyleWithSpacing {
@@ -180,6 +192,8 @@ export interface ICheckboxStyle extends IStyleWithSpacing {
     shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
     shared_color?: IContentField<TMantineColor>;    web_use_input_wrapper?: IContentField<TMantineUseInputWrapper>;
+    // Mobile-only HeroUI Native checkbox variant (primary / secondary).
+    mobile_checkbox_variant?: IContentField<TMobileFieldVariant>;
 }
 
 export interface ISliderStyle extends IStyleWithSpacing {
@@ -200,6 +214,8 @@ export interface ISliderStyle extends IStyleWithSpacing {
     web_slider_inverted?: IContentField<string>;
     web_slider_thumb_size?: IContentField<string>;
     web_slider_required?: IContentField<string>;
+    // Mobile-only: toggle the HeroUI Native Slider.Output value bubble.
+    mobile_slider_show_value?: IContentField<string>;
 }
 
 export interface IRangeSliderStyle extends IStyleWithSpacing {
@@ -218,7 +234,10 @@ export interface IRangeSliderStyle extends IStyleWithSpacing {
     shared_size?: IContentField<TSharedSize>;
     shared_color?: IContentField<TMantineColor>;
     shared_radius?: IContentField<TSharedRadius>;
-    disabled?: IContentField<string>;}
+    disabled?: IContentField<string>;
+    // Mobile-only: toggle the HeroUI Native Slider.Output value bubble.
+    mobile_range_slider_show_value?: IContentField<string>;
+}
 
 export interface IDatePickerStyle extends IStyleWithSpacing {
     style_name: 'datepicker';
@@ -287,6 +306,9 @@ export interface IComboboxStyle extends IStyleWithSpacing {
     web_combobox_clearable?: IContentField<string>;
     web_combobox_separator?: IContentField<string>;
     web_multi_select_max_values?: IContentField<string>;
+    // Mobile-only: reuses the select renderer; how the option list opens
+    // (HeroUI Native Select.Content presentation). Empty = default bottom-sheet.
+    mobile_select_presentation?: IContentField<TMobileSelectPresentation>;
 }
 
 export interface IColorInputStyle extends IStyleWithSpacing {
