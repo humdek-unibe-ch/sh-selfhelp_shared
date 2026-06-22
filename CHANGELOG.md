@@ -9,6 +9,37 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.14
+
+Cross-platform **inline rich-text** keystone. CMS authors can apply lightweight
+inline formatting (Ctrl+B bold, Ctrl+I italic, Ctrl+U underline, links) to
+`markdown-inline` content fields. Web could already render that HTML subset, but
+React Native `<Text>` cannot render HTML, so mobile (and several web leaf slots)
+used to strip it and the formatting was lost. This adds the canonical parser that
+turns the safe subset into a flat list of formatted runs each platform can render
+natively (web → `<strong>/<em>/<u>/<a>`, mobile → nested `<Text>`).
+
+### Added (`content`)
+
+- **`parseInlineRich(value)`** → `IInlineNode[]`: parses the safe inline subset
+  (`<strong>`/`<b>`, `<em>`/`<i>`, `<u>`, `<a href>`) into `{ text, bold?,
+  italic?, underline?, href? }` runs. Block tags (`<p>`, `<div>`, headings,
+  lists, `<blockquote>`) and `<br>` collapse to a single space (an inline text
+  slot cannot lay out blocks); unknown tags are dropped but their text kept;
+  HTML entities are decoded; adjacent same-format runs are merged.
+- **`hasInlineFormatting(value)`** → `boolean`: cheap check for whether a string
+  carries any supported inline tag (lets renderers fast-path plain strings).
+- **`stripHtmlToText(value)`**: the canonical plain-text strip (web `stripHtmlTags`
+  / mobile `sanitizeContent` mirror this) — drop tags, decode entities, collapse
+  whitespace, block tags → spaces.
+- **JSON-aware (hard):** any value that parses as JSON is returned untouched, so
+  structured content payloads are never mangled.
+- New `IInlineNode` type and `./content` re-export from the package root.
+
+Consumers (frontend web + mobile) currently use behaviour-identical local copies
+of the parser/strip (mirroring the existing `stripHtmlToText` pattern); folding
+them onto this shared export is a follow-up.
+
 ## v1.14.13
 
 `css_mobile` Tailwind-class lockstep fix. The web CMS class dropdown
