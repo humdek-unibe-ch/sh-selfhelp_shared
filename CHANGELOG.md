@@ -9,6 +9,39 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.16
+
+Form / interactive capability pass (backend migration
+`Version20260622132034`). All additions are optional, so the contract stays
+backward compatible; the one removal (`ISelectStyle.alt`) drops a field that no
+renderer read.
+
+### Added
+
+- **`INumberInputStyle`**: `web_number_input_prefix`,
+  `web_number_input_suffix`, `web_number_input_thousand_separator`,
+  `web_number_input_allow_negative`, `web_number_input_hide_controls` — Mantine
+  `NumberInput` currency/unit affixes + formatting/spinner toggles.
+- **`IColorInputStyle`**: `web_color_input_with_eye_dropper`,
+  `web_color_input_disallow_input`, `web_color_input_with_preview` — Mantine
+  `ColorInput` picker behaviour toggles.
+- **`ITabsStyle`**: `web_tabs_grow`, `web_tabs_justify`,
+  `web_tabs_keep_mounted`, `web_tabs_placement` — Mantine `Tabs` list layout +
+  panel mount behaviour.
+- **`ISwitchStyle`**: `web_switch_with_thumb_indicator`,
+  `web_switch_thumb_icon` — Mantine `Switch` thumb indicator + optional thumb
+  icon.
+- **`ITextInputStyle` / `ITextareaStyle`**: `shared_max_length` (cross-platform
+  max characters) plus mobile keyboard knobs `mobile_keyboard_type`,
+  `mobile_auto_capitalize`, and (text-input only) `mobile_secure_entry`.
+- **`IProgressRootStyle.shared_radius`** — corner radius for the progress track
+  (links the existing shared radius field).
+
+### Removed
+
+- **`ISelectStyle.alt`** — unused legacy field; no web or mobile renderer read
+  it. Backend migration unlinks it from the `select` style.
+
 ## v1.14.15
 
 Style-catalog field additions for the typography / media / interactive pass

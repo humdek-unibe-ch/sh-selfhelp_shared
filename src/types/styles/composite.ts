@@ -69,6 +69,11 @@ export interface ITabsStyle extends IStyleWithSpacing {
     web_tabs_orientation?: IContentField<TMantineOrientation>;
     web_tabs_radius?: IContentField<TMantineRadius>;
     shared_color?: IContentField<TMantineColor>;
+    // Capability pass (2026-06-22): list layout + panel mount behaviour.
+    web_tabs_grow?: IContentField<string>;
+    web_tabs_justify?: IContentField<string>;
+    web_tabs_keep_mounted?: IContentField<string>;
+    web_tabs_placement?: IContentField<string>;
     web_width?: IContentField<TMantineWidth>;
     web_height?: IContentField<TMantineHeight>;}
 

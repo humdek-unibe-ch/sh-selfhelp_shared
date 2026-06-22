@@ -73,6 +73,11 @@ export interface ITextInputStyle extends IStyleWithSpacing {
     web_right_icon?: IContentField<string>;    shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
     web_text_input_variant?: IContentField<TMantineTextInputVariant>;
+    // Capability pass (2026-06-22): max length (web + mobile) + mobile keyboard knobs.
+    shared_max_length?: IContentField<string>;
+    mobile_keyboard_type?: IContentField<string>;
+    mobile_auto_capitalize?: IContentField<string>;
+    mobile_secure_entry?: IContentField<string>;
     translatable?: IContentField<TMantineTranslatable>;
 }
 
@@ -98,7 +103,11 @@ export interface ITextareaStyle extends IStyleWithSpacing {
     web_textarea_resize?: IContentField<TMantineTextareaResize>;
     shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
-    web_textarea_variant?: IContentField<TMantineTextareaVariant>;    translatable?: IContentField<TMantineTranslatable>;
+    web_textarea_variant?: IContentField<TMantineTextareaVariant>;
+    // Capability pass (2026-06-22): max length (web + mobile) + mobile auto-capitalize.
+    shared_max_length?: IContentField<string>;
+    mobile_auto_capitalize?: IContentField<string>;
+    translatable?: IContentField<TMantineTranslatable>;
 }
 
 export interface IRichTextEditorStyle extends IStyleWithSpacing {
@@ -119,7 +128,6 @@ export interface IRichTextEditorStyle extends IStyleWithSpacing {
 
 export interface ISelectStyle extends IBaseStyle {
     style_name: 'select';
-    alt?: IContentField<string>;
     is_required?: IContentField<string>;
     name?: IContentField<string>;
     value?: IContentField<string>;
@@ -259,6 +267,9 @@ export interface ISwitchStyle extends IStyleWithSpacing {
     web_switch_on_value?: IContentField<string>;
     web_use_input_wrapper?: IContentField<string>;
     web_switch_off_value?: IContentField<string>;
+    // Capability pass (2026-06-22): thumb indicator + optional thumb icon.
+    web_switch_with_thumb_indicator?: IContentField<string>;
+    web_switch_thumb_icon?: IContentField<string>;
 }
 
 export interface IComboboxStyle extends IStyleWithSpacing {
@@ -283,6 +294,10 @@ export interface IColorInputStyle extends IStyleWithSpacing {
     label?: IContentField<string>;
     web_color_format?: IContentField<string>;
     web_color_input_swatches?: IContentField<string>;
+    // Capability pass (2026-06-22): picker behaviour toggles.
+    web_color_input_with_eye_dropper?: IContentField<string>;
+    web_color_input_disallow_input?: IContentField<string>;
+    web_color_input_with_preview?: IContentField<string>;
     shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
     placeholder?: IContentField<string>;
@@ -337,6 +352,12 @@ export interface INumberInputStyle extends IStyleWithSpacing {
     web_numeric_step?: IContentField<string>;
     web_number_input_decimal_scale?: IContentField<string>;
     web_number_input_clamp_behavior?: IContentField<string>;
+    // Capability pass (2026-06-22): currency/units prefix-suffix + formatting.
+    web_number_input_prefix?: IContentField<string>;
+    web_number_input_suffix?: IContentField<string>;
+    web_number_input_thousand_separator?: IContentField<string>;
+    web_number_input_allow_negative?: IContentField<string>;
+    web_number_input_hide_controls?: IContentField<string>;
     shared_size?: IContentField<TSharedSize>;
     shared_radius?: IContentField<TSharedRadius>;
     placeholder?: IContentField<string>;
@@ -394,6 +415,7 @@ export interface IProgressStyle extends IStyleWithSpacing {
 export interface IProgressRootStyle extends IBaseStyle {
     style_name: 'progress-root';
     shared_size?: IContentField<TSharedSize>;
+    shared_radius?: IContentField<TSharedRadius>;
     web_progress_auto_contrast?: IContentField<string>;}
 
 export interface IProgressSectionStyle extends IBaseStyle {
