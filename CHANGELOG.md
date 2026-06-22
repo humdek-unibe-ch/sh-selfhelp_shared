@@ -9,6 +9,30 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.13
+
+`css_mobile` Tailwind-class lockstep fix. The web CMS class dropdown
+(`generate-css-classes.js`) offers the **standard Tailwind numeric color scale**
+(`bg-blue-500`, `text-gray-800`, `border-red-500`, …), but Tailwind v4's default
+palette is authored in `oklch()`, which React Native cannot parse — so the mobile
+allow-list only ever accepted the hex-backed Mantine scale (`bg-blue-6`) and
+silently dropped every dropdown color class on mobile. Authors saw colored
+backgrounds on web and nothing on mobile.
+
+### Fixed (`cms-classes`)
+
+- **Standard Tailwind color scale → Mantine hex scale remap** in
+  `src/cms-classes/remap.ts`: `bg-/text-/border-{name}-{50..950}` is now rewritten
+  onto the RN-safe Mantine scale (`…-{0..9}`) instead of being dropped. Tailwind-only
+  names (`slate`, `purple`, `sky`, `emerald`, `amber`, …) alias to their nearest
+  Mantine palette. This is a deliberate, documented web→mobile remap (shade is the
+  closest visual match).
+- **`text-white` / `text-black`** are now allow-listed (plain colors, RN-safe).
+- The web dropdown's interactive-state classes (`hover:*`, `focus:ring-*`,
+  `focus:outline-none`) are remapped to drop cleanly on mobile instead of warning.
+
+Patch bump (additive remap/allow-list; no contract change).
+
 ## v1.14.12
 
 Layout cross-platform pass — the 13 layout styles (`container`, `box`, `flex`,
