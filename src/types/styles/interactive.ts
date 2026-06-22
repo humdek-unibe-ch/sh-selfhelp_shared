@@ -16,6 +16,9 @@ import type {
 } from '../mantine/common';
 import type { TMantineIconSize } from './typography';
 
+/** Mantine `Anchor` `underline` behaviour. */
+export type TMantineAnchorUnderline = 'always' | 'hover' | 'never';
+
 export interface IButtonStyle extends IStyleWithSpacing {
     style_name: 'button';
     shared_variant?: IContentField<TMantineVariant>;
@@ -43,6 +46,10 @@ export interface ILinkStyle extends IStyleWithSpacing {
     label?: IContentField<string>;
     url?: IContentField<string>;
     open_in_new_tab?: IContentField<string>;
+    shared_color?: IContentField<TMantineColor>;
+    web_link_underline?: IContentField<TMantineAnchorUnderline>;
+    web_left_icon?: IContentField<string>;
+    web_right_icon?: IContentField<string>;
 }
 
 export interface IActionIconStyle extends IStyleWithSpacing {
@@ -56,7 +63,9 @@ export interface IActionIconStyle extends IStyleWithSpacing {
     is_link?: IContentField<string>;
     page_keyword?: IContentField<string>;
     open_in_new_tab?: IContentField<string>;
-    disabled?: IContentField<string>;}
+    disabled?: IContentField<string>;
+    /** Accessible name for the icon-only control (screen readers). */
+    aria_label?: IContentField<string>;}
 
 export interface IAlertStyle extends IStyleWithSpacing {
     style_name: 'alert';

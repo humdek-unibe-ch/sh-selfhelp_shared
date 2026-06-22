@@ -9,6 +9,39 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.15
+
+Style-catalog field additions for the typography / media / interactive pass
+(backend migration `Version20260622110041`). All additions are optional, so the
+contract stays backward compatible.
+
+### Changed
+
+- **`IBlockquoteStyle`**: the quote body now uses a dedicated
+  `blockquote_content` (markdown-inline) field instead of the generic shared
+  `content`, so authors can apply inline bold/italic/links inside a quote without
+  affecting the `code` style (which keeps the plain `content` field). Renderers
+  must read `blockquote_content`.
+- **`IVideoStyle` / `IAudioStyle`** now extend `IStyleWithSpacing` (they expose
+  the standard spacing block like the other media styles).
+
+### Added
+
+- **`IImageStyle.fallback_src`** — image shown when the main source fails to load
+  (maps to Mantine `Image.fallbackSrc`).
+- **`IFigureStyle.img_src` + `IFigureStyle.alt`** — optional built-in image so a
+  figure can render without a child image section (renderer only; never
+  auto-creates a section).
+- **`ILinkStyle.shared_color`, `web_link_underline` (`'always' | 'hover' |
+  'never'`), `web_left_icon`, `web_right_icon`** — link colour, Mantine `Anchor`
+  underline behaviour, and optional leading/trailing icons.
+- **`IActionIconStyle.aria_label`** — accessible name for the icon-only control.
+- **`ISpoilerStyle.shared_color`** — colour of the show/hide control.
+- **`IVideoStyle`**: `video_src`, `poster_src`, `has_controls`, `media_loop`,
+  `media_autoplay`, `media_muted` playback fields (`'0' | '1'` toggles).
+- **`IAudioStyle`**: `alt`, `has_controls`, `media_loop`, `media_autoplay`.
+- New `TMantineAnchorUnderline` union exported from the interactive style types.
+
 ## v1.14.14
 
 Cross-platform **inline rich-text** keystone. CMS authors can apply lightweight

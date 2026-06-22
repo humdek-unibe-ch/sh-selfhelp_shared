@@ -72,7 +72,8 @@ export interface IHighlightStyle extends IStyleWithSpacing {
 
 export interface IBlockquoteStyle extends IStyleWithSpacing {
     style_name: 'blockquote';
-    content?: IContentField<string>;
+    /** Quote body. Dedicated markdown-inline field (not the generic `content`) so authors can bold/italic/link inside the quote without affecting the `code` style. */
+    blockquote_content?: IContentField<string>;
     cite?: IContentField<string>;
     web_left_icon?: IContentField<string>;
     web_icon_size?: IContentField<TMantineIconSize>;
@@ -104,4 +105,6 @@ export interface ISpoilerStyle extends IStyleWithSpacing {
     style_name: 'spoiler';
     web_height?: IContentField<TMantineSpoilerMaxHeight>;
     spoiler_show_label?: IContentField<string>;
-    spoiler_hide_label?: IContentField<string>;}
+    spoiler_hide_label?: IContentField<string>;
+    /** Color of the show/hide control link. */
+    shared_color?: IContentField<TMantineColor>;}

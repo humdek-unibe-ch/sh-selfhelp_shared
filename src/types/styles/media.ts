@@ -19,24 +19,41 @@ export interface IImageStyle extends IStyleWithSpacing {
     web_image_fit?: IContentField<TMantineImageFit>;
     web_width?: IContentField<TMantineWidth>;
     web_height?: IContentField<TMantineHeight>;
-    shared_radius?: IContentField<TMantineRadius>;}
+    shared_radius?: IContentField<TMantineRadius>;
+    /** Image shown when the main source fails to load (Mantine Image fallbackSrc). */
+    fallback_src?: IContentField<string>;}
 
-export interface IVideoStyle extends IBaseStyle {
+export interface IVideoStyle extends IStyleWithSpacing {
     style_name: 'video';
     is_fluid?: IContentField<string>;
     alt?: IContentField<string>;
-    sources?: IContentField<unknown[]>;
+    video_src?: IContentField<string>;
+    /** Poster image shown before playback. */
+    poster_src?: IContentField<string>;
+    /** Cross-platform playback toggles ('0' | '1'). */
+    has_controls?: IContentField<string>;
+    media_loop?: IContentField<string>;
+    media_autoplay?: IContentField<string>;
+    media_muted?: IContentField<string>;
 }
 
-export interface IAudioStyle extends IBaseStyle {
+export interface IAudioStyle extends IStyleWithSpacing {
     style_name: 'audio';
+    alt?: IContentField<string>;
     sources?: IContentField<unknown[]>;
+    /** Cross-platform playback toggles ('0' | '1'). */
+    has_controls?: IContentField<string>;
+    media_loop?: IContentField<string>;
+    media_autoplay?: IContentField<string>;
 }
 
 export interface IFigureStyle extends IBaseStyle {
     style_name: 'figure';
     caption_title?: IContentField<string>;
     caption?: IContentField<string>;
+    /** Optional built-in image so a figure needs no child image section. */
+    img_src?: IContentField<string>;
+    alt?: IContentField<string>;
 }
 
 export interface ICarouselStyle extends IStyleWithSpacing {
