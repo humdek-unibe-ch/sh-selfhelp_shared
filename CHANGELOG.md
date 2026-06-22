@@ -9,6 +9,27 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.20
+
+Type-contract drift fixes for three styles, reconciling the `@selfhelp/shared`
+interfaces with the live `admin/styles/schema` catalog. All additions are
+optional fields the DB already returns, so the contract stays backward
+compatible.
+
+### Added
+
+- **`IResetPasswordStyle.shared_color`** — the `reset-password` style has a
+  `shared_color` field in the CMS (the submit/link-button accent, default
+  `blue`), which the web `ResetPasswordStyle` renderer already reads via an
+  inline cast. Typing it removes the cast and documents the cross-platform
+  button colour.
+- **`IValidateStyle.label_timezone`** — the `validate` activation form renders a
+  timezone select for anonymous users; its label field existed in the DB but was
+  missing from the type.
+- **`IShowUserInputStyle.data_table`** — the `show-user-input` style binds to a
+  source data table (`data_table`, common scope); the field was in the DB and
+  documented in the reference but missing from the type.
+
 ## v1.14.19
 
 Fixes for the select renderers (web label + mobile multi-select), both additive

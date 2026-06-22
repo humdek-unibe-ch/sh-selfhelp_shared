@@ -50,6 +50,8 @@ export interface IValidateStyle extends IStyleWithSpacing {
     subtitle?: IContentField<string>;
     alert_success?: IContentField<string>;
     label_name?: IContentField<string>;
+    /** Label for the timezone select (anonymous-user activation form). */
+    label_timezone?: IContentField<string>;
     name_placeholder?: IContentField<string>;
     name_description?: IContentField<string>;
     label_activate?: IContentField<string>;
@@ -88,6 +90,8 @@ export interface IValidateStyle extends IStyleWithSpacing {
 
 export interface IResetPasswordStyle extends IStyleWithSpacing {
     style_name: 'reset-password';
+    /** Submit/link-button colour (cross-platform, via the shared mapper). */
+    shared_color?: IContentField<TMantineColor>;
     label_pw_reset?: IContentField<string>;
     alert_success?: IContentField<string>;
     placeholder?: IContentField<string>;    reset_title?: IContentField<string>;

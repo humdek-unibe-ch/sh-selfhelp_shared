@@ -459,6 +459,8 @@ export interface IShowUserInputEntry {
 
 export interface IShowUserInputStyle extends IBaseStyle {
     style_name: 'show-user-input';
+    /** Source data table the form entries are read from (backend data binding). */
+    data_table?: IContentField<string>;
     own_entries_only?: IContentField<string>;
     show_timestamp?: IContentField<string>;
     dt_sortable?: IContentField<string>;
