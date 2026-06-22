@@ -9,6 +9,19 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.17
+
+Mobile adapter contract additions for the form capability pass (so the mobile
+`TextInput` / `Textarea` renderers can honour the new `shared_max_length` and
+`mobile_*` fields through the adapter seam). All additions are optional.
+
+### Added
+
+- **`IMobileInputProps`**: `maxLength` (RN `maxLength`, from `shared_max_length`),
+  `autoCapitalize` (`'none' | 'sentences' | 'words' | 'characters'`, from
+  `mobile_auto_capitalize`), and `'url'` added to the `keyboardType` union.
+- **`IMobileTextareaProps`**: `maxLength` + `autoCapitalize` (same mapping).
+
 ## v1.14.16
 
 Form / interactive capability pass (backend migration

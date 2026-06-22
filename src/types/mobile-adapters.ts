@@ -87,7 +87,11 @@ export interface IMobileInputProps extends IMobileAdapterBaseProps {
     isInvalid?: boolean;
     isRequired?: boolean;
     secureTextEntry?: boolean;
-    keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
+    keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'url';
+    /** Max characters (maps to RN `maxLength`; from `shared_max_length`). */
+    maxLength?: number;
+    /** Native auto-capitalize behaviour (from `mobile_auto_capitalize`). */
+    autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
 }
 
 export interface IMobileTextareaProps extends IMobileAdapterBaseProps {
@@ -100,6 +104,10 @@ export interface IMobileTextareaProps extends IMobileAdapterBaseProps {
     isRequired?: boolean;
     /** Minimum visible rows (maps to RN `numberOfLines`). */
     numberOfLines?: number;
+    /** Max characters (maps to RN `maxLength`; from `shared_max_length`). */
+    maxLength?: number;
+    /** Native auto-capitalize behaviour (from `mobile_auto_capitalize`). */
+    autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
 }
 
 export interface IMobileSwitchProps extends IMobileAdapterBaseProps {
