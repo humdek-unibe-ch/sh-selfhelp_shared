@@ -71,7 +71,7 @@ These rules apply to every documentation change in active SelfHelp2 repositories
 - Use `IContentField<T>` for CMS field values.
 - Use literal `style_name` values in style interfaces.
 - Style names are **kebab-case** (e.g. `reset-password`, `two-factor-auth`, `entry-list`, `entry-record`, `entry-record-delete`, `no-access`, `not-found`, `show-user-input`). The legacy camelCase forms (`resetPassword`, `twoFactorAuth`, `entryList`, `entryRecord`, `entryRecordDelete`, …) were renamed to kebab-case in v1.8.0; new styles must be registered kebab-case and the backend seeds/DB, this package, the frontend, and the mobile renderers must stay in lockstep.
-- Use the cross-platform field-naming taxonomy (mobile rendering plan, section 6), matching the backend re-prefix migration: content/behavior fields stay unprefixed (`label`, `value`, `disabled`, `url`); portable visual semantics use `shared_*` (`shared_size`, `shared_radius`, `shared_spacing`, `shared_align`, …); genuinely web/Mantine-specific fields use `web_*` (`web_variant`, `web_color`, `web_spacing_margin`); native-only fields use `mobile_*`. Do not reintroduce `mantine_*` field names.
+- Use the current cross-platform field taxonomy: no prefix means both platforms for content, behaviour, data, and portable presentation (`label`, `value`, `size`, `radius`, `color`, `variant`, `spacing`, `align`, …); `web_*` and `mobile_*` are platform-specific. Do not reintroduce `mantine_*`, `heroui_*`, or general `shared_*` names. The only reserved `shared_*` exceptions are `shared_height`, `shared_width`, and `shared_icon`, whose bare names collide with page-type fields in the backend's globally unique field catalog.
 - Use `'0' | '1'` string unions where existing CMS boolean-like fields use strings.
 - Keep optional backend fields optional unless the backend guarantees them.
 - Add the SPDX header to TS/JS source files in the same format already used in `src`.
@@ -131,7 +131,7 @@ These rules apply to every documentation change in active SelfHelp2 repositories
 - `npm run lint` runs the ESLint 9 flat config (`eslint.config.mjs`) and currently passes with zero errors/warnings (`--max-warnings=0`); `npm run lint:fix` applies the safe auto-fixes. Lint is a required gate — see "Linting & Quality Gates".
 - `npm run headers:check` currently passes (all source carries the SPDX header).
 - `npm run test` now passes both with and without a sibling `sh-manager` checkout. The cross-repo `distribution.test.ts` parity check (`describe.runIf(hasManager)`) was previously red against the manager `instance-manifest.json` fixture because the shared `distribution.ts` type did not model the manifest's `backupSchedule` key; the type now mirrors the manager's authoritative contract (`BackupSchedulePolicy` + `BackupRetentionPolicy`, plus the optional `envOverrides`), so the parity test is green. Both additions are optional fields — additive and non-breaking to the published type. Keep this type in sync with `sh-manager/packages/schemas/src/types.ts` when the manifest contract changes.
-- Avoid running `npm run build` unless generated `dist` changes are intended.
+- Run `npm run build` when required by the quality gates, but do not edit or commit generated `dist` output unless the task explicitly requires it.
 
 ### Canonical Testing Rules (all SelfHelp repos)
 
@@ -271,7 +271,7 @@ Do not add migrations here. This package has no database layer. Add backend migr
 - Do not invent generic architecture rules that are not present in this repo.
 - Do not change public exports casually.
 - Do not rename backend wire fields to make them prettier.
-- Do not remove legacy style names without coordinating backend and both consumers.
+- Do not reintroduce removed camelCase style-name aliases. Any future style rename must be coordinated across backend, shared, frontend, and mobile.
 - Do not manually edit generated `dist` files.
 - Do not add backend controllers, services, entities, migrations, or secrets.
 - Do not broaden mobile class support without checking mobile renderer support.
