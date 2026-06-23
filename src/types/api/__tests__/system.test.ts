@@ -11,6 +11,10 @@ import {
     type IFrontendUpdateRequest,
     type IFrontendUpdateRequestResponse,
     type IMaintenanceSetRequest,
+    type IMobilePreviewUpdatePreflight,
+    type IMobilePreviewUpdateReleases,
+    type IMobilePreviewUpdateRequest,
+    type IMobilePreviewUpdateRequestResponse,
     type ISystemAdvisories,
     type ISystemAdvisoriesResponse,
     type ISystemAdvisory,
@@ -159,6 +163,7 @@ describe('system maintenance contracts', () => {
             selfhelp_version: '1.4.0',
             backend_version: '1.4.0',
             frontend_version: '1.4.0',
+            mobile_preview_version: '0.2.0',
             plugin_api_version: '2.1',
             database_migration_version: 'Version20260605081254',
             safe_mode: false,
@@ -183,6 +188,7 @@ describe('system maintenance contracts', () => {
             kind: 'core',
             target_version: '1.5.0',
             target_frontend_version: null,
+            target_mobile_preview_version: null,
             progress_percent: 42,
             steps: [{ name: 'backup', status: 'succeeded' }],
             requested_at: '2026-06-08T00:00:00Z',
@@ -248,6 +254,7 @@ describe('system maintenance contracts', () => {
                 kind: 'core',
                 target_version: '8.0.1',
                 target_frontend_version: null,
+                target_mobile_preview_version: null,
                 progress_percent: 100,
                 steps: [],
                 requested_at: '2026-06-08T00:00:00Z',
@@ -290,6 +297,7 @@ describe('system maintenance contracts', () => {
                 kind: 'core',
                 target_version: '8.0.1',
                 target_frontend_version: null,
+                target_mobile_preview_version: null,
                 progress_percent: 100,
                 steps: [{ name: 'migrate', status: 'succeeded' }],
                 requested_at: '2026-06-08T00:00:00Z',
@@ -379,5 +387,80 @@ describe('system maintenance contracts', () => {
         expect(status.target_frontend_version).toBe('0.1.7');
         expect(accepted.data.kind).toBe('frontend');
         expect(accepted.data.target_frontend_version).toBe('0.1.7');
+    });
+
+    it('exposes the mobile-preview update endpoints under the system prefix', () => {
+        expect(SYSTEM_ENDPOINTS.UPDATE_MOBILE_PREVIEW_RELEASES).toBe(
+            '/cms-api/v1/admin/system/update/mobile-preview/releases',
+        );
+        expect(SYSTEM_ENDPOINTS.UPDATE_MOBILE_PREVIEW_PREFLIGHT).toBe(
+            '/cms-api/v1/admin/system/update/mobile-preview/preflight',
+        );
+        expect(SYSTEM_ENDPOINTS.UPDATE_MOBILE_PREVIEW_REQUEST).toBe(
+            '/cms-api/v1/admin/system/update/mobile-preview/request',
+        );
+    });
+
+    it('models the mobile-preview update flow (stateless swap + core-compat verdict)', () => {
+        // mobile-preview is a first-class update kind alongside core/frontend.
+        const kinds: TUpdateKind[] = ['core', 'frontend', 'mobile-preview'];
+        expect(kinds).toContain('mobile-preview');
+
+        const releases: IMobilePreviewUpdateReleases = {
+            available: true,
+            current_version: 'not_installed',
+            releases: [
+                { version: '0.2.1', channel: 'stable', blocked: false },
+                { version: '0.2.0', channel: 'stable', blocked: false },
+            ],
+        };
+
+        const preflight: IMobilePreviewUpdatePreflight = {
+            preflight_id: 'mp-pf-001',
+            status: 'ok',
+            instance_id: 'inst-a',
+            current_version: 'not_installed',
+            target_version: '0.2.1',
+            // The preview ⇄ core rule is evaluated server-side against signed
+            // registry metadata, so the CMS verdict matches the manager's.
+            checks: [
+                {
+                    code: 'mobile_preview_compatibility',
+                    severity: 'info',
+                    message: 'Core 0.1.19 satisfies the target preview required core range.',
+                    component: 'mobile-preview',
+                },
+            ],
+            options: [{ type: 'mobile-preview', version: '0.2.1', label: 'SelfHelp mobile preview 0.2.1' }],
+            // The preview image is stateless: a swap is never destructive.
+            database: { destructive: false, requires_backup: false, manual_confirmation_required: false },
+            rollback: { automatic_before_migrations: true, automatic_after_destructive_migrations: true },
+        };
+
+        // No accepted_migration_risk: a preview swap is stateless. Requesting it
+        // onto a not_installed instance doubles as the enable/bootstrap path.
+        const request: IMobilePreviewUpdateRequest = { target_version: '0.2.1', preflight_id: 'mp-pf-001' };
+
+        const accepted: IMobilePreviewUpdateRequestResponse = {
+            status: 202,
+            message: 'Accepted',
+            error: null,
+            logged_in: true,
+            meta: { version: 'v1', timestamp: '2026-06-23T00:00:00Z' },
+            data: {
+                operation_id: 'op-mp-1',
+                instance_id: 'inst-a',
+                status: 'requested',
+                kind: 'mobile-preview',
+                target_mobile_preview_version: '0.2.1',
+            },
+        };
+
+        expect(releases.current_version).toBe('not_installed');
+        expect(preflight.checks[0]?.component).toBe('mobile-preview');
+        expect(preflight.database.requires_backup).toBe(false);
+        expect(request.target_version).toBe('0.2.1');
+        expect(accepted.data.kind).toBe('mobile-preview');
+        expect(accepted.data.target_mobile_preview_version).toBe('0.2.1');
     });
 });
