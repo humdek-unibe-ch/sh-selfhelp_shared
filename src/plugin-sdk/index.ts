@@ -17,8 +17,10 @@ SPDX-License-Identifier: MPL-2.0
 
 export {
     PLUGIN_API_VERSION,
+    MOBILE_RENDERER_VERSION,
     assertPluginApiVersion,
     isPluginApiCompatible,
+    isMobileRendererCompatible,
     assertCmsCompatibility,
     assertPluginVersionSemantics,
     parseSemver,
