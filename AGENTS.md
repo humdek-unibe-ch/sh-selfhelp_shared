@@ -235,7 +235,7 @@ Linting and package quality checks are **mandatory** whenever code is changed. T
 2. Use a literal `style_name` matching the backend/CMS style name.
 3. Use `IStyleWithSpacing` only if the style supports spacing fields.
 4. Add the interface to the `TStyle` union in `src/types/styles/unknown.ts`.
-5. Add the style to `STYLE_REGISTRY` with category, `frontendOnly`, and `canHaveChildren`.
+5. Add the style to `STYLE_REGISTRY` with category, `canHaveChildren`, and (optionally) `platforms`.
 6. Re-export from the relevant index file if a new file/group was added.
 7. Update consuming renderers in the web/mobile apps.
 8. Run `npm run typecheck`.
