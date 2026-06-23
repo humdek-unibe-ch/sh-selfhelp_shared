@@ -54,7 +54,6 @@ describe('style render-target targeting', () => {
         const mobileOnly: IStyleRegistryEntry = {
             description: 'QA mobile-only plugin style',
             category: 'plugin',
-            frontendOnly: true,
             canHaveChildren: false,
             platforms: ['mobile'],
         };
@@ -81,7 +80,6 @@ describe('style render-target targeting', () => {
         const webOnly: IStyleRegistryEntry = {
             description: 'QA web-only plugin style',
             category: 'plugin',
-            frontendOnly: true,
             canHaveChildren: false,
             platforms: ['web'],
         };
@@ -121,7 +119,6 @@ describe('style placement targeting', () => {
         const rootOnly: IStyleRegistryEntry = {
             description: 'QA root-only plugin style',
             category: 'plugin',
-            frontendOnly: true,
             canHaveChildren: false,
             placement: 'rootOnly',
         };
@@ -136,7 +133,6 @@ describe('style placement targeting', () => {
         const childOnly: IStyleRegistryEntry = {
             description: 'QA container-only plugin style',
             category: 'plugin',
-            frontendOnly: true,
             canHaveChildren: false,
             placement: 'containerOnly',
         };

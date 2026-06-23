@@ -7,9 +7,6 @@ import {
     FULL_RADIUS_PX,
     gridSpanToReactNativeColumn,
     mapDividerVariantToReactNative,
-    mapIntentToHeroUiButtonVariant,
-    mapIntentToHeroUiColor,
-    mapIntentToMantine,
     mapMantineColorToHeroUiButtonVariant,
     mapMantineColorToHeroUiColor,
     mapAccordionVariantToHeroUiVariant,
@@ -27,15 +24,14 @@ import {
     toHeroUiSemanticProps,
     toMantineSemanticProps,
     toReactNativeSemanticStyle,
-    type TSemanticIntent,
     type TSemanticSize,
 } from '../semantic';
 import { RADIUS_PX, SPACING_PX } from '../tokens';
 
 /**
  * The semantic mapper is the single source of truth that turns CMS
- * cross-platform (`shared_*`) values into per-platform props. Per the mobile
- * rendering plan (section 8.2) it does NOT clamp: the shared scales
+ * cross-platform (unprefixed portable) values into per-platform props. Per the
+ * mobile rendering plan (section 8.2) it does NOT clamp: the shared scales
  * (`size` = sm|md|lg, `radius` = none|sm|md|lg|full) are the true common
  * denominator, so every value maps 1:1 to both platforms. Every mapping is
  * pinned here so a regression surfaces immediately on web and mobile.
@@ -84,47 +80,15 @@ describe('semantic style mapper', () => {
         });
     });
 
-    describe('intent', () => {
-        it('maps to Mantine color + variant', () => {
-            expect(mapIntentToMantine('primary')).toEqual({ color: 'blue', variant: 'filled' });
-            expect(mapIntentToMantine('secondary')).toEqual({ color: 'gray', variant: 'light' });
-            expect(mapIntentToMantine('success')).toEqual({ color: 'green', variant: 'filled' });
-            expect(mapIntentToMantine('warning')).toEqual({ color: 'yellow', variant: 'filled' });
-            expect(mapIntentToMantine('danger')).toEqual({ color: 'red', variant: 'filled' });
-            expect(mapIntentToMantine('neutral')).toEqual({ color: 'gray', variant: 'default' });
-        });
-
-        it('maps intent to a HeroUI button variant (status color carried separately)', () => {
-            expect(mapIntentToHeroUiButtonVariant('primary')).toBe('primary');
-            expect(mapIntentToHeroUiButtonVariant('secondary')).toBe('secondary');
-            expect(mapIntentToHeroUiButtonVariant('danger')).toBe('danger');
-            // HeroUI has no success/warning BUTTON variant; the status colour is
-            // carried by mapIntentToHeroUiColor, the button stays prominent.
-            expect(mapIntentToHeroUiButtonVariant('success')).toBe('primary');
-            expect(mapIntentToHeroUiButtonVariant('warning')).toBe('primary');
-            expect(mapIntentToHeroUiButtonVariant('neutral')).toBe('secondary');
-        });
-
-        it('maps to HeroUI semantic color preserving success/warning', () => {
-            expect(mapIntentToHeroUiColor('primary')).toBe('accent');
-            expect(mapIntentToHeroUiColor('secondary')).toBe('default');
-            expect(mapIntentToHeroUiColor('success')).toBe('success');
-            expect(mapIntentToHeroUiColor('warning')).toBe('warning');
-            expect(mapIntentToHeroUiColor('danger')).toBe('danger');
-            expect(mapIntentToHeroUiColor('neutral')).toBe('default');
-        });
-    });
-
     describe('resolveSharedStyleProps (read CMS fields)', () => {
-        it('reads valid shared_* values', () => {
+        it('reads valid portable values', () => {
             expect(
                 resolveSharedStyleProps({
                     size: 'lg',
                     radius: 'full',
-                    shared_intent: 'danger',
                     full_width: '1',
                 }),
-            ).toEqual({ size: 'lg', radius: 'full', intent: 'danger', fullWidth: true });
+            ).toEqual({ size: 'lg', radius: 'full', fullWidth: true });
         });
 
         it('ignores out-of-domain values instead of clamping them', () => {
@@ -133,11 +97,9 @@ describe('semantic style mapper', () => {
             const resolved = resolveSharedStyleProps({
                 size: 'xl',
                 radius: 'xs',
-                shared_intent: 'bogus',
             });
             expect(resolved.size).toBeUndefined();
             expect(resolved.radius).toBeUndefined();
-            expect(resolved.intent).toBeUndefined();
         });
 
         it('coerces full_width booleans', () => {
@@ -199,15 +161,15 @@ describe('semantic style mapper', () => {
             expect(mapMantineColorToHeroUiButtonVariant('blue')).toBe('primary');
         });
 
-        it('toHeroUiSemanticProps prefers variant, then color, then intent', () => {
+        it('toHeroUiSemanticProps prefers variant, then color', () => {
             expect(
-                toHeroUiSemanticProps({ variant: 'outline', color: 'red', intent: 'primary' }).buttonVariant,
+                toHeroUiSemanticProps({ variant: 'outline', color: 'red' }).buttonVariant,
             ).toBe('outline');
             expect(toHeroUiSemanticProps({ color: 'red' })).toMatchObject({
                 buttonVariant: 'danger',
                 color: 'danger',
             });
-            expect(toHeroUiSemanticProps({ intent: 'success' })).toMatchObject({
+            expect(toHeroUiSemanticProps({ color: 'green' })).toMatchObject({
                 buttonVariant: 'primary',
                 color: 'success',
             });
@@ -230,9 +192,10 @@ describe('semantic style mapper', () => {
     });
 
     describe('platform resolvers', () => {
-        it('resolves a danger / lg / full / fullWidth control consistently (no clamp)', () => {
+        it('resolves a red / filled / lg / full / fullWidth control consistently (no clamp)', () => {
             const props = {
-                intent: 'danger' as const,
+                color: 'red' as const,
+                variant: 'filled' as const,
                 size: 'lg' as const,
                 radius: 'full' as const,
                 spacing: 'md' as const,
@@ -253,8 +216,8 @@ describe('semantic style mapper', () => {
 
             expect(toHeroUiSemanticProps(props)).toMatchObject({
                 size: 'lg', // 1:1, not clamped
-                buttonVariant: 'danger',
-                color: 'danger',
+                buttonVariant: 'primary', // filled -> primary
+                color: 'danger', // red -> danger
                 radiusPx: FULL_RADIUS_PX,
                 spacingPx: SPACING_PX.md,
                 isDisabled: true,
@@ -264,7 +227,7 @@ describe('semantic style mapper', () => {
         });
 
         it('resolveSharedStyle returns both platform shapes', () => {
-            const { web, mobile } = resolveSharedStyle({ size: 'md', intent: 'primary' });
+            const { web, mobile } = resolveSharedStyle({ size: 'md', color: 'blue' });
             expect(web.size).toBe('md');
             expect(web.color).toBe('blue');
             expect(mobile.size).toBe('md');
@@ -279,9 +242,9 @@ describe('semantic style mapper', () => {
             expect(mobile.isDisabled).toBeUndefined();
         });
 
-        it('covers every intent without throwing', () => {
-            for (const intent of ['primary', 'secondary', 'success', 'warning', 'danger', 'neutral'] as TSemanticIntent[]) {
-                const { web, mobile } = resolveSharedStyle({ intent });
+        it('covers every mapped colour without throwing', () => {
+            for (const color of ['blue', 'gray', 'green', 'yellow', 'red'] as const) {
+                const { web, mobile } = resolveSharedStyle({ color });
                 expect(web.color).toBeDefined();
                 expect(mobile.color).toBeDefined();
                 expect(mobile.buttonVariant).toBeDefined();

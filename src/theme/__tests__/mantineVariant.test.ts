@@ -8,8 +8,8 @@ import { COLOR_PALETTE, COLOR_SCALES } from '../tokens';
 
 /**
  * The Mantine palette resolver is the single cross-repo source of truth for
- * `web_color` + `web_variant` -> concrete RGB (consumed by the mobile Expo Web
- * preview fallback). Every variant branch is pinned so a regression surfaces
+ * the portable `color` + `variant` fields -> concrete RGB (consumed by the
+ * mobile renderer). Every variant branch is pinned so a regression surfaces
  * immediately and neither repo re-implements the ladder.
  */
 describe('resolveMantineVariant', () => {
