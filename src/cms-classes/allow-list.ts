@@ -85,7 +85,7 @@ export const CLASS_PATTERNS: readonly IClassPattern[] = [
     { prefix: 'max-w-', values: [...SIZE_VALUES, 'full', 'fit', 'screen', 'none'] },
     { prefix: 'max-h-', values: [...SIZE_VALUES, 'full', 'screen', 'none'] },
     // typography
-    { prefix: 'text-', values: [...SIZE_VALUES, 'left', 'center', 'right', 'justify', ...COLOR_SCALE_VALUES] },
+    { prefix: 'text-', values: [...SIZE_VALUES, 'left', 'center', 'right', 'justify', 'white', 'black', ...COLOR_SCALE_VALUES] },
     { prefix: 'font-', values: ['thin', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'] },
     { prefix: 'leading-', values: ['none', 'tight', 'snug', 'normal', 'relaxed', 'loose'] },
     { prefix: 'tracking-', values: ['tighter', 'tight', 'normal', 'wide', 'wider', 'widest'] },

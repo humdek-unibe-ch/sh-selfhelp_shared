@@ -29,6 +29,8 @@ import type {
     ICardSegmentStyle,
     IAspectRatioStyle,
     IBackgroundImageStyle,
+    IRefContainerStyle,
+    IDataContainerStyle,
 } from './layout';
 import type {
     ITitleStyle,
@@ -85,6 +87,7 @@ import type {
     IProgressStyle,
     IProgressRootStyle,
     IProgressSectionStyle,
+    IShowUserInputStyle,
 } from './forms';
 import type {
     IAccordionStyle,
@@ -92,6 +95,7 @@ import type {
     ITabsStyle,
     ITabStyle,
     ITimelineStyle,
+    ITimelineItemStyle,
     IListStyle,
     IListItemStyle,
     IEntryListStyle,
@@ -99,6 +103,12 @@ import type {
     IEntryRecordDeleteStyle,
     ILoopStyle,
 } from './composite';
+import type {
+    INoAccessStyle,
+    INotFoundStyle,
+    IMissingStyle,
+    IVersionStyle,
+} from './error';
 
 /**
  * Discriminated union of every supported user-facing style. Adding a new
@@ -190,7 +200,15 @@ export type TStyle =
     | IEntryListStyle
     | IEntryRecordStyle
     | IEntryRecordDeleteStyle
-    | ILoopStyle;
+    | ILoopStyle
+    | ITimelineItemStyle
+    | INoAccessStyle
+    | INotFoundStyle
+    | IMissingStyle
+    | IVersionStyle
+    | IRefContainerStyle
+    | IDataContainerStyle
+    | IShowUserInputStyle;
 
 /**
  * Discriminator — name of every supported style. Derived from the
@@ -215,6 +233,4 @@ export interface IUnknownStyle {
     children?: TStyle[];
     fields: Record<string, IContentField<unknown>>;
     css?: string;
-    css_mobile?: string;
-    use_mantine_style?: IContentField<string>;
-}
+    css_mobile?: string;}

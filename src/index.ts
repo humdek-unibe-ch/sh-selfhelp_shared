@@ -22,4 +22,5 @@ export * from './interpolation';
 export * from './condition';
 export * from './cms-classes';
 export * from './assets';
+export * from './content';
 export * from './utils';

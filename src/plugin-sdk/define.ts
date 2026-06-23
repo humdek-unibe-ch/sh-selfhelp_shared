@@ -81,7 +81,6 @@ function toRegistryRecord(styles: IStyleDefinition[]): Record<string, IStyleRegi
         out[style.name] = {
             description: style.description,
             category: style.category,
-            frontendOnly: true,
             canHaveChildren: style.canHaveChildren,
         };
     }

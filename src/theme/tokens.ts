@@ -4,7 +4,7 @@ SPDX-License-Identifier: MPL-2.0
 */
 /**
  * Mantine semantic token tables. Both the web Mantine theme and the
- * mobile HeroUI Native theme extend these so a `mantine_size: 'md'` on a
+ * mobile HeroUI Native theme extend these so a `size: 'md'` on a
  * section renders identical sizing regardless of platform.
  *
  * Pixel values come straight from Mantine v9 defaults:
@@ -91,8 +91,8 @@ export const CONTAINER_SIZE_PX: Record<TMantineSize, number> = {
 /**
  * Mantine palette base colors (color-6 from each scale). Each renderer
  * maps these to its own theme tokens. For HeroUI Native we feed these
- * into the theme builder so `mantine_color: 'blue'` resolves to the
- * same Mantine-blue look on mobile.
+ * into the theme builder so the portable `color: 'blue'` field resolves
+ * to the same Mantine-blue look on mobile.
  */
 export const COLOR_PALETTE: Record<TCanonicalColor, string> = {
     gray: '#868e96',

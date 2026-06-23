@@ -36,7 +36,6 @@ const PLUGIN_ID = 'qa-shp-registry-test';
 const pluginEntry: IStyleRegistryEntry = {
     description: 'QA plugin style for registry tests',
     category: 'plugin',
-    frontendOnly: true,
     canHaveChildren: false,
 };
 
@@ -64,7 +63,6 @@ describe('shared style registry', () => {
                 expect(typeof entry.description, `${name}.description`).toBe('string');
                 expect(entry.description.length, `${name}.description not empty`).toBeGreaterThan(0);
                 expect(ALLOWED_CATEGORIES.has(entry.category), `${name}.category`).toBe(true);
-                expect(entry.frontendOnly, `${name}.frontendOnly`).toBe(true);
                 expect(typeof entry.canHaveChildren, `${name}.canHaveChildren`).toBe('boolean');
             }
         });

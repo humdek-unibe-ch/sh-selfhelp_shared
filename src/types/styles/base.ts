@@ -65,8 +65,6 @@ export interface IBaseStyle {
 
 /** Styles that support the unified spacing field. */
 export interface IStyleWithSpacing extends IBaseStyle {
-    /** Legacy / margin-only field still used by many Mantine styles in the DB. */
-    mantine_spacing_margin?: IContentField<string>;
-    /** Newer box-model field that supports both margin and padding. */
-    mantine_spacing_margin_padding?: IContentField<string>;
+    /** Portable box-model spacing (margin + padding). Backend field `spacing`; every spacing-capable style uses this single unified field. */
+    spacing?: IContentField<string>;
 }

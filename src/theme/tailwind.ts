@@ -5,8 +5,8 @@ SPDX-License-Identifier: MPL-2.0
 /**
  * Shared Tailwind preset extended by both the web frontend (Tailwind v4)
  * and the mobile app (Uniwind v4 inside HeroUI Native). Anchors the same
- * scale values that drive `mantine_size`, `mantine_radius`,
- * `mantine_spacing`, and the color palette so a class like `p-md` or
+ * scale values that drive `size`, `radius`,
+ * `spacing`, and the color palette so a class like `p-md` or
  * `text-blue-6` resolves identically on web and mobile.
  */
 

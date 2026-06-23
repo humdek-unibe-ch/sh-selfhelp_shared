@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: 2026 Humdek, University of Bern
 SPDX-License-Identifier: MPL-2.0
 */
 import type { IContentField, IStyleWithSpacing } from './base';
-import type { TMantineRadius } from '../mantine/common';
+import type { TMantineColor, TMantineRadius } from '../mantine/common';
 
 export interface ILoginStyle extends IStyleWithSpacing {
     style_name: 'login';
@@ -13,7 +13,10 @@ export interface ILoginStyle extends IStyleWithSpacing {
     label_pw_reset?: IContentField<string>;
     alert_fail?: IContentField<string>;
     login_title?: IContentField<string>;
-    type?: IContentField<string>;
+    /** Optional subtitle under the title; hidden when empty. */
+    subtitle?: IContentField<string>;
+    /** Submit-button colour (cross-platform, via the shared mapper). */
+    color?: IContentField<TMantineColor>;
     /** Label of the link that opens the registration page. */
     label_register?: IContentField<string>;
 }
@@ -41,38 +44,39 @@ export interface IRegisterStyle extends IStyleWithSpacing {
 export interface IValidateStyle extends IStyleWithSpacing {
     style_name: 'validate';
     label_pw?: IContentField<string>;
-    label_login?: IContentField<string>;
     alert_fail?: IContentField<string>;
     label_pw_confirm?: IContentField<string>;
     title?: IContentField<string>;
     subtitle?: IContentField<string>;
     alert_success?: IContentField<string>;
     label_name?: IContentField<string>;
+    /** Label for the timezone select (anonymous-user activation form). */
+    label_timezone?: IContentField<string>;
     name_placeholder?: IContentField<string>;
     name_description?: IContentField<string>;
     label_activate?: IContentField<string>;
     pw_placeholder?: IContentField<string>;
-    success?: IContentField<string>;
     name?: IContentField<string>;
-    page_keyword?: IContentField<string>;
-    value_name?: IContentField<string>;
     anonymous_user_name_description?: IContentField<string>;
     redirect_at_end?: IContentField<string>;
-    cancel_url?: IContentField<string>;
+    // Cancel-button target page. Canonical name shared with form-log/form-record
+    // and the mobile FormUserInput (slice 5 / RF-12: was the web-only `cancel_url`).
+    btn_cancel_url?: IContentField<string>;
     label_save?: IContentField<string>;
     label_update?: IContentField<string>;
     label_cancel?: IContentField<string>;
-    mantine_buttons_size?: IContentField<string>;
-    mantine_buttons_radius?: IContentField<string>;
-    mantine_buttons_variant?: IContentField<string>;
-    mantine_buttons_position?: IContentField<string>;
-    mantine_buttons_order?: IContentField<string>;
-    mantine_btn_save_color?: IContentField<string>;
-    mantine_btn_cancel_color?: IContentField<string>;
-    mantine_card_shadow?: IContentField<string>;
-    mantine_card_padding?: IContentField<string>;
-    mantine_radius?: IContentField<TMantineRadius>;
-    mantine_border?: IContentField<string>;
+    // RF-21: shared with form-log/form-record so the mobile custom form matches.
+    buttons_size?: IContentField<string>;
+    buttons_radius?: IContentField<string>;
+    buttons_variant?: IContentField<string>;
+    buttons_position?: IContentField<string>;
+    buttons_order?: IContentField<string>;
+    btn_save_color?: IContentField<string>;
+    btn_cancel_color?: IContentField<string>;
+    web_card_shadow?: IContentField<string>;
+    web_card_padding?: IContentField<string>;
+    radius?: IContentField<TMantineRadius>;
+    web_border?: IContentField<string>;
     /** Activation lifecycle status text (shown after the registration email). */
     loading_title?: IContentField<string>;
     loading_text?: IContentField<string>;
@@ -86,13 +90,11 @@ export interface IValidateStyle extends IStyleWithSpacing {
 
 export interface IResetPasswordStyle extends IStyleWithSpacing {
     style_name: 'reset-password';
+    /** Submit/link-button colour (cross-platform, via the shared mapper). */
+    color?: IContentField<TMantineColor>;
     label_pw_reset?: IContentField<string>;
-    type?: IContentField<string>;
     alert_success?: IContentField<string>;
-    placeholder?: IContentField<string>;
-    subject_user?: IContentField<string>;
-    is_html?: IContentField<string>;
-    reset_title?: IContentField<string>;
+    placeholder?: IContentField<string>;    reset_title?: IContentField<string>;
     reset_label_pw?: IContentField<string>;
     reset_pw_placeholder?: IContentField<string>;
     reset_label_pw_confirm?: IContentField<string>;
@@ -197,9 +199,4 @@ export interface IProfileStyle extends IStyleWithSpacing {
     profile_shadow?: IContentField<string>;
 
     profile_columns?: IContentField<string>;
-
-    alert_fail?: IContentField<string>;
-    alert_del_fail?: IContentField<string>;
-    alert_del_success?: IContentField<string>;
-    alert_success?: IContentField<string>;
 }

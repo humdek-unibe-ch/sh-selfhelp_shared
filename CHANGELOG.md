@@ -9,6 +9,821 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.24
+
+Semantic mapper cleanup — remove the legacy `shared_intent` field and related
+fallback mappings that were kept for backward compatibility. The live catalog
+uses `color` and `variant` as the cross-platform appearance fields, so the
+intent path is dead code. This is a pure cleanup with no runtime behaviour
+change (no catalog data uses `shared_intent`).
+
+### Removed (`theme/semantic.ts`)
+
+- **`TSemanticIntent` type** and **`SEMANTIC_INTENTS` constant** — the intent
+  taxonomy (`primary`/`secondary`/`success`/`warning`/`danger`/`neutral`) is no
+  longer part of the shared contract.
+- **`mapIntentToHeroUiColor`** — mapped intent tokens to HeroUI Native colors.
+- **`mapIntentToHeroUiButtonVariant`** — mapped intent tokens to HeroUI Native
+  button variants.
+- **`mapIntentToMantine`** — mapped intent tokens to Mantine color/variant pairs.
+- **`ISharedStyleProps.intent`** — the intent field is removed from the shared
+  props interface.
+- **Intent fallback logic** from `resolveSharedStyleProps`,
+  `toMantineSemanticProps`, and `toHeroUiSemanticProps` — the mappers now read
+  only `color` and `variant`.
+
+### Removed (`types/styles/composite.ts`)
+
+- **`IListStyle.web_spacing`** — unused web-only spacing field; list spacing is
+  the portable `spacing` field from `IStyleWithSpacing`.
+- **Unused `TMantineSpacing` import** — no longer needed after removing
+  `web_spacing`.
+
+### Changed
+
+- **Comment updates** across `theme/semantic.ts`, `theme/tokens.ts`,
+  `types/mantine/common.ts`, and `types/styles/base.ts` to reflect that
+  cross-platform fields are now unprefixed (not `shared_*`) and to remove
+  stale migration references (e.g., RF-15).
+
+## v1.14.23
+
+Contract tidy on the back of the cross-repo style audit (no runtime behaviour
+change).
+
+### Removed
+
+- **`IImageStyle.height` / `IImageStyle.width`** — orphan optional fields with no
+  backing catalog field (image sizing is web-only via `web_width`/`web_height`).
+  No renderer read them as typed props; the mobile renderer's dead
+  `width`/`height` fallback was dropped in the same wave.
+
+### Changed
+
+- `rich-text-editor` registry description updated — it is a native inline-format
+  toolbar **editor** on mobile, not the old "READ-ONLY viewer on mobile v1".
+- `media.ts` interface closings reformatted (`;}` on one line → `;` + `}` on its
+  own line) so line-based tooling (e.g. the backend style-field audit parser)
+  reads each interface cleanly.
+
+## v1.14.22
+
+Field-naming unification (Option B): the `shared_*` field-name prefix is dropped
+so that **no prefix = applies to both platforms**. `shared_*` (cross-platform
+presentation) and the unprefixed `common` fields (cross-platform behaviour) were
+the same scope, so the prefix was redundant. Backend migration
+`Version20260622165615` renames the catalog in lockstep; consumers read the new
+unprefixed field names. Pre-1.0 coordinated breaking change.
+
+### Changed
+
+- **47 `shared_*` style props renamed to unprefixed** across the style
+  interfaces (`size`, `spacing`, `radius`, `color`, `variant`, `gap`, `cols`,
+  `justify`, `align`, `direction`, `wrap`, `full_width`, `orientation`,
+  `multiple`, `clearable`, `searchable`, `max_length`, `min_rows`/`max_rows`,
+  `mih`/`miw`/`mah`/`maw`, `grid_*`, `buttons_*`, `btn_*_color`, `text_align`,
+  `vertical_spacing`, `line_clamp`, `label_position`, `with_close_button`,
+  `*_variant`, …). The rule is now: no prefix = both platforms (translatable
+  when `display=1`), `web_`/`mobile_` = platform-specific.
+
+### Kept (reserved-name exceptions)
+
+- **`shared_height`, `shared_width`, `shared_icon`** keep their prefix. The bare
+  names `height`/`width`/`icon` already exist as **page-type** fields in the
+  globally-unique backend `fields` table (page `icon` is live on real pages), so
+  these three style fields cannot drop the prefix without a collision.
+
+## v1.14.21
+
+Style authoring upgrade contracts for the form / notification / show-user-input
+styles (approved `/style` run, 2026-06-22). All additions are optional and the
+two notification renames are pre-1.0 portability promotions; consumers read the
+new field names.
+
+### Added
+
+- **`IFormStyle.title` + `description`** — optional auto-styled heading/subtitle
+  rendered above `form-record` / `form-log` when set (empty = unchanged).
+- **`IFormStyle.alert_success_title` + `alert_error_title`** — translatable
+  headings for the success/error alerts (were hardcoded `Success`/`Error`).
+- **`IFormStyle.confirm_submit` + `confirm_message`** — optional
+  confirm-before-save dialog (off by default).
+- **`IShowUserInputStyle.title` + `empty_text`** — optional heading and a
+  configurable empty-state message (was hardcoded `No entries found.`).
+
+### Changed
+
+- **`INotificationStyle`** — `web_left_icon` → **`shared_icon`** and
+  `web_notification_with_close_button` → **`shared_with_close_button`**: the icon
+  and dismiss toggle are now portable so the mobile renderer honours them too.
+  (`web_left_icon` stays a web-only field on the other 15 styles that use it.)
+
+## v1.14.20
+
+Type-contract drift fixes for three styles, reconciling the `@selfhelp/shared`
+interfaces with the live `admin/styles/schema` catalog. All additions are
+optional fields the DB already returns, so the contract stays backward
+compatible.
+
+### Added
+
+- **`IResetPasswordStyle.shared_color`** — the `reset-password` style has a
+  `shared_color` field in the CMS (the submit/link-button accent, default
+  `blue`), which the web `ResetPasswordStyle` renderer already reads via an
+  inline cast. Typing it removes the cast and documents the cross-platform
+  button colour.
+- **`IValidateStyle.label_timezone`** — the `validate` activation form renders a
+  timezone select for anonymous users; its label field existed in the DB but was
+  missing from the type.
+- **`IShowUserInputStyle.data_table`** — the `show-user-input` style binds to a
+  source data table (`data_table`, common scope); the field was in the DB and
+  documented in the reference but missing from the type.
+
+## v1.14.19
+
+Fixes for the select renderers (web label + mobile multi-select), both additive
+so the contract stays backward compatible.
+
+### Added
+
+- **`ISelectStyle.label`** — the `select` style has always had a `label`
+  (markdown-inline, content scope) field in the CMS, but the type omitted it, so
+  the web `SelectStyle` renderer never displayed it. Typing it lets the frontend
+  render the label like every other form field.
+- **`IMobileSelectProps.multiple`** — multi-select mode for the mobile select
+  adapter (CMS `is_multiple`). The contract value stays a single string, now a
+  comma-separated list in multiple mode; the adapter maps it to HeroUI Native's
+  `selectionMode="multiple"`.
+
+## v1.14.18
+
+Mobile-only capability pass (backend migration `Version20260622145334`): HeroUI
+Native props that have no web/Mantine equivalent, exposed as `mobile_*` CMS
+fields so authors configure the native look from the CMS. The web renderer
+ignores `mobile_*`. All additions are optional, so the contract stays backward
+compatible.
+
+### Added
+
+- **Type aliases**: `TMobileSelectPresentation` (`'bottom-sheet' | 'dialog' |
+  'popover'`), `TMobileFieldVariant` (`'primary' | 'secondary'`),
+  `TMobileButtonFeedback` (`'scale-highlight' | 'scale-ripple' | 'scale' |
+  'none'`).
+- **`ISelectStyle` / `IComboboxStyle`**: `mobile_select_presentation` — how the
+  HeroUI Native option list opens (combobox reuses the mobile select renderer).
+- **`IButtonStyle`**: `mobile_button_feedback` — HeroUI Native press feedback.
+- **`ISliderStyle` / `IRangeSliderStyle`**: `mobile_slider_show_value` /
+  `mobile_range_slider_show_value` — toggle the HeroUI Native `Slider.Output`
+  value bubble.
+- **`ITextInputStyle` / `ITextareaStyle` / `ICheckboxStyle`**:
+  `mobile_input_variant` / `mobile_textarea_variant` / `mobile_checkbox_variant`
+  — HeroUI Native primary/secondary field variant.
+- **Mobile adapter contract**: `IMobileSelectProps.presentation`,
+  `IMobileButtonProps.feedbackVariant`, `IMobileInputProps.variant`,
+  `IMobileTextareaProps.variant`, `IMobileCheckboxProps.variant`.
+
+## v1.14.17
+
+Mobile adapter contract additions for the form capability pass (so the mobile
+`TextInput` / `Textarea` renderers can honour the new `shared_max_length` and
+`mobile_*` fields through the adapter seam). All additions are optional.
+
+### Added
+
+- **`IMobileInputProps`**: `maxLength` (RN `maxLength`, from `shared_max_length`),
+  `autoCapitalize` (`'none' | 'sentences' | 'words' | 'characters'`, from
+  `mobile_auto_capitalize`), and `'url'` added to the `keyboardType` union.
+- **`IMobileTextareaProps`**: `maxLength` + `autoCapitalize` (same mapping).
+
+## v1.14.16
+
+Form / interactive capability pass (backend migration
+`Version20260622132034`). All additions are optional, so the contract stays
+backward compatible; the one removal (`ISelectStyle.alt`) drops a field that no
+renderer read.
+
+### Added
+
+- **`INumberInputStyle`**: `web_number_input_prefix`,
+  `web_number_input_suffix`, `web_number_input_thousand_separator`,
+  `web_number_input_allow_negative`, `web_number_input_hide_controls` — Mantine
+  `NumberInput` currency/unit affixes + formatting/spinner toggles.
+- **`IColorInputStyle`**: `web_color_input_with_eye_dropper`,
+  `web_color_input_disallow_input`, `web_color_input_with_preview` — Mantine
+  `ColorInput` picker behaviour toggles.
+- **`ITabsStyle`**: `web_tabs_grow`, `web_tabs_justify`,
+  `web_tabs_keep_mounted`, `web_tabs_placement` — Mantine `Tabs` list layout +
+  panel mount behaviour.
+- **`ISwitchStyle`**: `web_switch_with_thumb_indicator`,
+  `web_switch_thumb_icon` — Mantine `Switch` thumb indicator + optional thumb
+  icon.
+- **`ITextInputStyle` / `ITextareaStyle`**: `shared_max_length` (cross-platform
+  max characters) plus mobile keyboard knobs `mobile_keyboard_type`,
+  `mobile_auto_capitalize`, and (text-input only) `mobile_secure_entry`.
+- **`IProgressRootStyle.shared_radius`** — corner radius for the progress track
+  (links the existing shared radius field).
+
+### Removed
+
+- **`ISelectStyle.alt`** — unused legacy field; no web or mobile renderer read
+  it. Backend migration unlinks it from the `select` style.
+
+## v1.14.15
+
+Style-catalog field additions for the typography / media / interactive pass
+(backend migration `Version20260622110041`). All additions are optional, so the
+contract stays backward compatible.
+
+### Changed
+
+- **`IBlockquoteStyle`**: the quote body now uses a dedicated
+  `blockquote_content` (markdown-inline) field instead of the generic shared
+  `content`, so authors can apply inline bold/italic/links inside a quote without
+  affecting the `code` style (which keeps the plain `content` field). Renderers
+  must read `blockquote_content`.
+- **`IVideoStyle` / `IAudioStyle`** now extend `IStyleWithSpacing` (they expose
+  the standard spacing block like the other media styles).
+
+### Added
+
+- **`IImageStyle.fallback_src`** — image shown when the main source fails to load
+  (maps to Mantine `Image.fallbackSrc`).
+- **`IFigureStyle.img_src` + `IFigureStyle.alt`** — optional built-in image so a
+  figure can render without a child image section (renderer only; never
+  auto-creates a section).
+- **`ILinkStyle.shared_color`, `web_link_underline` (`'always' | 'hover' |
+  'never'`), `web_left_icon`, `web_right_icon`** — link colour, Mantine `Anchor`
+  underline behaviour, and optional leading/trailing icons.
+- **`IActionIconStyle.aria_label`** — accessible name for the icon-only control.
+- **`ISpoilerStyle.shared_color`** — colour of the show/hide control.
+- **`IVideoStyle`**: `video_src`, `poster_src`, `has_controls`, `media_loop`,
+  `media_autoplay`, `media_muted` playback fields (`'0' | '1'` toggles).
+- **`IAudioStyle`**: `alt`, `has_controls`, `media_loop`, `media_autoplay`.
+- New `TMantineAnchorUnderline` union exported from the interactive style types.
+
+## v1.14.14
+
+Cross-platform **inline rich-text** keystone. CMS authors can apply lightweight
+inline formatting (Ctrl+B bold, Ctrl+I italic, Ctrl+U underline, links) to
+`markdown-inline` content fields. Web could already render that HTML subset, but
+React Native `<Text>` cannot render HTML, so mobile (and several web leaf slots)
+used to strip it and the formatting was lost. This adds the canonical parser that
+turns the safe subset into a flat list of formatted runs each platform can render
+natively (web → `<strong>/<em>/<u>/<a>`, mobile → nested `<Text>`).
+
+### Added (`content`)
+
+- **`parseInlineRich(value)`** → `IInlineNode[]`: parses the safe inline subset
+  (`<strong>`/`<b>`, `<em>`/`<i>`, `<u>`, `<a href>`) into `{ text, bold?,
+  italic?, underline?, href? }` runs. Block tags (`<p>`, `<div>`, headings,
+  lists, `<blockquote>`) and `<br>` collapse to a single space (an inline text
+  slot cannot lay out blocks); unknown tags are dropped but their text kept;
+  HTML entities are decoded; adjacent same-format runs are merged.
+- **`hasInlineFormatting(value)`** → `boolean`: cheap check for whether a string
+  carries any supported inline tag (lets renderers fast-path plain strings).
+- **`stripHtmlToText(value)`**: the canonical plain-text strip (web `stripHtmlTags`
+  / mobile `sanitizeContent` mirror this) — drop tags, decode entities, collapse
+  whitespace, block tags → spaces.
+- **JSON-aware (hard):** any value that parses as JSON is returned untouched, so
+  structured content payloads are never mangled.
+- New `IInlineNode` type and `./content` re-export from the package root.
+
+Consumers (frontend web + mobile) currently use behaviour-identical local copies
+of the parser/strip (mirroring the existing `stripHtmlToText` pattern); folding
+them onto this shared export is a follow-up.
+
+## v1.14.13
+
+`css_mobile` Tailwind-class lockstep fix. The web CMS class dropdown
+(`generate-css-classes.js`) offers the **standard Tailwind numeric color scale**
+(`bg-blue-500`, `text-gray-800`, `border-red-500`, …), but Tailwind v4's default
+palette is authored in `oklch()`, which React Native cannot parse — so the mobile
+allow-list only ever accepted the hex-backed Mantine scale (`bg-blue-6`) and
+silently dropped every dropdown color class on mobile. Authors saw colored
+backgrounds on web and nothing on mobile.
+
+### Fixed (`cms-classes`)
+
+- **Standard Tailwind color scale → Mantine hex scale remap** in
+  `src/cms-classes/remap.ts`: `bg-/text-/border-{name}-{50..950}` is now rewritten
+  onto the RN-safe Mantine scale (`…-{0..9}`) instead of being dropped. Tailwind-only
+  names (`slate`, `purple`, `sky`, `emerald`, `amber`, …) alias to their nearest
+  Mantine palette. This is a deliberate, documented web→mobile remap (shade is the
+  closest visual match).
+- **`text-white` / `text-black`** are now allow-listed (plain colors, RN-safe).
+- The web dropdown's interactive-state classes (`hover:*`, `focus:ring-*`,
+  `focus:outline-none`) are remapped to drop cleanly on mobile instead of warning.
+
+Patch bump (additive remap/allow-list; no contract change).
+
+## v1.14.12
+
+Layout cross-platform pass — the 13 layout styles (`container`, `box`, `flex`,
+`group`, `stack`, `simple-grid`, `grid`, `grid-column`, `space`, `divider`,
+`paper`, `center`, `scroll-area`) are now configurable on mobile, not just web.
+The portable sizing/behaviour props that were trapped under `web_*` were promoted
+to `shared_*` so the same field drives the Mantine (web) and the React-Native
+(mobile) renderer through the semantic mapper. Pairs with backend migration
+`Version20260622063129`. Patch bump (pre-1.0; style contracts are renamed/additive
+but not guaranteed backward compatible).
+
+### Changed (style contracts in `types/styles/layout.ts`)
+
+- **width/height are cross-platform**: `web_width`/`web_height` → `shared_width`/
+  `shared_height` on `flex`, `group`, `stack`, `grid`, `grid-column`, `simple-grid`,
+  `center`, and (height only) `scroll-area`, typed `TSharedDimension`.
+- **`grid`/`simple-grid` columns**: `web_cols` → `shared_cols` (`TSharedCols`);
+  `simple-grid` gains `shared_gap`, `shared_vertical_spacing`, and the web-only
+  responsive overrides `web_cols_sm`/`web_cols_md`/`web_cols_lg`.
+- **`grid-column`**: `web_grid_span|offset|order|grow` → `shared_grid_*`; now
+  extends `IStyleWithSpacing`.
+- **`center`**: `web_miw|mih|maw|mah` → `shared_miw|mih|maw|mah`; now extends
+  `IStyleWithSpacing`.
+- **`divider`**: `web_divider_variant` → `shared_divider_variant`
+  (`TSharedDividerVariant`), `web_divider_label_position` →
+  `shared_divider_label_position` (`TSharedDividerLabelPosition`); now extends
+  `IStyleWithSpacing`.
+- **`space`**: `web_space_direction` → `shared_orientation`.
+- **`paper`**: `web_border` → `shared_border` (`TSharedBorder`, matches `card`)
+  plus a new optional auto-styled `title` content field; `web_px`/`web_py` removed
+  (padding is the portable `shared_spacing`).
+- **`container`**: `web_px`/`web_py` removed (padding via `shared_spacing`).
+
+### Added (semantic mapper `theme/semantic.ts`)
+
+- **`parseDimensionToReactNative`** / **`parseDimensionToWeb`**: turn a CMS
+  dimension (`"320px"`/`"100%"`/`"auto"`) into an RN-safe value (a `px` suffix
+  becomes a unitless number; web keeps the string verbatim).
+- **`gridSpanToReactNativeColumn`**: convert a Mantine `Grid.Col` span into the RN
+  flex layout (`flexBasis`/`flexGrow`/`flexShrink`) for the emulated mobile grid.
+- **`mapDividerVariantToReactNative`**: map `shared_divider_variant` onto an RN
+  `borderStyle` (identical vocabulary, validated; defaults to `solid`).
+
+## v1.14.11
+
+Style polish wave (card) — remove the redundant web-only card padding control.
+`ICardStyle` already extends `IStyleWithSpacing` (`shared_spacing`), whose padding
+side renders on web AND mobile, so the separate `web_card_padding` (Mantine
+`padding` prop) was a duplicate that confused authors. Patch bump: one optional
+field removed from a style contract (pre-1.0, not backward compatible). Pairs with
+backend migration `Version20260619205908` (unlinks the field from `card`; it stays
+on `validate`) and the web `CardStyle` renderer (fixed `padding="md"` default).
+
+### Removed
+
+- **`ICardStyle.web_card_padding`**: padding is now the portable `shared_spacing`
+  (`pt`/`pb`/`ps`/`pe`) field exclusively. The web renderer keeps a fixed Mantine
+  inner padding (`"md"`) as the default + Card.Section image-bleed reference.
+
+## v1.14.10
+
+Style polish wave (mobile) — extend the mobile checkbox adapter contract so the
+`checkbox` style's `shared_label_position` is honoured on mobile too (it already
+worked on web via Mantine `labelPosition`). Patch bump: one additive optional
+adapter prop.
+
+### Added
+
+- **`IMobileCheckboxProps.labelPosition`** (`'left' | 'right'`, optional,
+  defaults to `right`): mirrors the cross-platform `shared_label_position` field
+  so the mobile `MobileCheckbox` adapter can place the label before or after the
+  box, matching the web Mantine `labelPosition`.
+
+## v1.14.9
+
+Style polish wave (card / card-segment / checkbox / chip / code / title) — align
+the typed contracts with the backend `Version20260619191224` migration and the
+coupled web + mobile renderer reads. Patch bump: renamed optional style fields,
+additive optional content/visual fields, and a new additive mobile mapper helper.
+
+### Changed
+
+- **`ICardStyle`:** border is now the cross-platform `shared_border`
+  (`TSharedBorder`); the web-only `web_border` was replaced (the global
+  `web_border` field stays on indicator/notification/paper/validate). Added the
+  optional auto-styled `title` and `img_src` content fields (rendered only when
+  non-empty) and the explicit `web_card_padding` (`TMantineCardPadding`).
+- **`ICardSegmentStyle`:** added `shared_border` (Mantine `Card.Section`
+  `withBorder` / themed divider on mobile) and the web-only
+  `web_segment_inherit_padding` (Mantine `inheritPadding`).
+- **`ICheckboxStyle`:** `web_checkbox_label_position` →
+  `shared_label_position` (`TSharedLabelPosition`; honoured on both platforms).
+- **`IChipStyle`:** `web_chip_variant` → `shared_chip_variant`
+  (`TMantineChipVariant`; cross-platform).
+- **`ICodeStyle`:** `web_code_block` → `code_block` (cross-platform
+  block-vs-inline) and added `shared_radius` (`TSharedRadius`).
+- **`ITitleStyle`:** added `shared_color` (`TMantineColor`); `web_title_order` →
+  `title_order` (`TMantineTitleOrder`) and `web_title_line_clamp` →
+  `shared_line_clamp` (`TMantineTitleLineClamp`). `web_title_text_wrap` stays
+  web-only.
+
+### Added
+
+- **`mapChipVariantToHeroUiVariant(variant)`:** maps the chip variant token
+  (`filled`/`outline`/`light`) onto the HeroUI Native Chip `variant`
+  (`primary` | `secondary` | `tertiary` | `soft`): filled → primary, light →
+  soft, outline → tertiary.
+- **`TSharedBorder`, `TMantineCardPadding`, `TSharedLabelPosition`** helper types.
+
+## v1.14.8
+
+Accordion polish wave (accordion / accordion-item) — align the typed contracts
+with the backend `Version20260619183601` migration and the coupled web + mobile
+renderer reads. Patch bump: a renamed optional style field, one additive optional
+content field, and a new additive mobile mapper helper.
+
+### Changed
+
+- **`IAccordionStyle`:** the variant is now the cross-platform
+  `shared_accordion_variant` (`TMantineAccordionVariant`); the web-only
+  `web_accordion_variant` was renamed (the backend migrated the field by id, so
+  authored values + options are preserved). Web maps it to the Mantine variant;
+  mobile maps it through `mapAccordionVariantToHeroUiVariant`.
+
+### Added
+
+- **`IAccordionItemStyle.description`:** optional translatable subtitle
+  (`IContentField<string>`) rendered under the item label on both platforms;
+  empty = hidden.
+- **`mapAccordionVariantToHeroUiVariant(variant)`:** maps the accordion variant
+  token (`default`/`contained`/`filled`/`separated`) onto the HeroUI Native
+  Accordion `variant` (`default` | `surface`) — boxed Mantine variants collapse
+  to `surface`.
+
+## v1.14.7
+
+Mobile button authored-colour parity. Patch bump: one additive optional prop on
+the mobile button adapter contract.
+
+### Added
+
+- **`IMobileButtonProps.accentColor`:** optional resolved hex that overrides the
+  HeroUI variant fill so a CMS style can colour the mobile button for
+  cross-platform parity with the web Mantine `color` prop (e.g. `login`'s
+  `shared_color`). The adapter keeps the variant's readable foreground (white
+  label on a filled button); leave undefined to use the variant's themed colour.
+  Resolve it through `resolveMantineVariant(...).accent`, never a hard-coded hex.
+
+## v1.14.6
+
+Style polish wave (alert/badge/avatar/button/login) — align the typed contracts
+with the backend `Version20260619131830` migration. Patch bump: additive/renamed
+optional style fields plus a behaviour-preserving mapper lint fix.
+
+### Changed
+
+- **`IButtonStyle`:** the variant is now the cross-platform `shared_variant`
+  (`TMantineVariant`); the button-only `web_variant` was removed (the backend
+  migrated existing values onto `shared_variant`).
+- **`IBadgeStyle`:** added the cross-platform `shared_variant`
+  (`TMantineBadgeVariant`) as the primary control and a `circle` toggle;
+  `web_variant` stays as an optional web-only override (e.g. `dot`).
+- **`IAvatarStyle`:** renamed the stale `web_avatar_variant` to `web_variant`
+  (matches the DB field) and added the `name` field (auto-initials + auto colour).
+- **`IAlertStyle`:** renamed `web_with_close_button` to the cross-platform
+  `closable` (the DB field is now `common`-scoped so mobile can honour it).
+- **`ILoginStyle`:** added the optional translatable `subtitle` and the
+  `shared_color` submit-button colour (both now in the live catalog).
+- **`semantic.ts`:** removed an unnecessary `as TSemanticColor` assertion
+  (`TMantineColor` already collapses to `string`); resolves a pre-existing
+  `@typescript-eslint/no-unnecessary-type-assertion` lint error. No behaviour
+  change — `resolveSharedStyleProps`/`toHeroUiSemanticProps` already read
+  `shared_variant`/`shared_color`, so the new badge/button variants flow through
+  the existing mapper unchanged.
+
+## v1.14.5
+
+Semantic mapper completion — reconcile the shared mapper with the live DB
+catalog (style-field audit, "shared semantics disconnected from the database").
+Minor bump: additive new exports + the `toHeroUiSemanticProps` /
+`resolveSharedStyleProps` resolvers now read the REAL cross-platform appearance
+fields instead of the phantom `shared_intent`. Pairs with the coupled mobile
+renderer reads (mobile `mobileStyleProps` + the layout/typography/interactive
+components switched from phantom `web_*` to the real `shared_*` fields).
+
+### Added
+
+- **`semantic.ts` — Mantine → HeroUI Native maps:** `mapMantineColorToHeroUiColor`,
+  `mapMantineColorToHeroUiButtonVariant`, `mapMantineVariantToHeroUiButtonVariant`,
+  plus the `TSemanticColor` / `TSemanticVariant` types. These turn the catalog's
+  Mantine palette/variant values (stored verbatim in `shared_color` /
+  `shared_variant`) into the HeroUI Native button/colour vocabulary.
+- **`ISharedStyleProps`:** new optional `color` / `variant` fields (the real
+  cross-platform appearance inputs).
+
+### Changed
+
+- **`resolveSharedStyleProps`:** now reads `shared_color` + `shared_variant`
+  (the fields the DB actually has, and the same ones the web renderer reads). The
+  legacy `shared_intent` read is kept as a back-compat fallback only — it is not
+  in the live catalog.
+- **`toHeroUiSemanticProps`:** appearance precedence is now `shared_variant` →
+  `shared_color` → legacy `intent`, mirroring the web renderer. Existing
+  intent-only callers are unaffected (intent stays the final fallback).
+
+### Notes
+
+- The web frontend does not consume this mapper (it reads `shared_*` straight
+  into Mantine), so this change is mobile-facing only; web behaviour is unchanged.
+- Fixes the latent bug where CMS-authored `shared_color` / `shared_variant` were
+  silently dropped on mobile because the mapper only looked for `shared_intent`.
+
+## v1.14.4
+
+Style-field cleanup slice 9 — spacing consolidation (RF-15). Pairs with backend
+migration `Version20260619100642` and the coupled web + mobile renderer reads.
+Patch bump: the legacy margin-only `web_spacing_margin` is merged into the
+portable box-model `shared_spacing`, so spacing is one cross-platform field.
+
+### Changed
+
+- **`IStyleWithSpacing`:** dropped `web_spacing_margin`. Every spacing-capable
+  style now uses the single portable `shared_spacing` box-model field (margin +
+  padding), mapped to both platforms. The backend migration repoints the 39
+  margin-only style links + their authored section values onto `shared_spacing`
+  and drops the `web_spacing_margin` field and its `spacing-margin` field type.
+
+### Notes
+
+- Both fields stored the **same** box-model JSON (`{"mt":"md",…}`) and were
+  mutually exclusive at the style level, so this is a value-preserving merge, not
+  a format conversion.
+- Web `BasicStyle` drops its `?? web_spacing_margin` fallback (now always
+  `shared_spacing`). Mobile `buildSectionClasses` now reads `shared_spacing`
+  first (it previously read a non-existent field name and the margin-only one,
+  giving the 37 `shared_spacing` styles no mobile spacing — now fixed); the
+  legacy `web_spacing_margin` is kept only as a transitional read-fallback.
+
+## v1.14.3
+
+Style-field cleanup slice 7 — form/validate button knobs (RF-21).
+Pairs with backend migration `Version20260619100044` and the coupled web + mobile
+renderer reads. Patch bump: `web_*` → `shared_*` rename of the portable button
+knobs on the custom composite form styles, so the mobile custom form renders the
+same authored config as the web Mantine form.
+
+### Changed
+
+- **`IFormStyle` (`form-log` / `form-record`):** `buttons_size` /
+  `buttons_radius` / `buttons_variant` / `buttons_position` / `btn_save_color` /
+  `btn_cancel_color` → the `shared_*` equivalents, and the previously-missing
+  `shared_buttons_order` is added. (The catalog field is `web_buttons_*`; the web
+  `FormStyle` had been reading the un-prefixed names, which matched neither the
+  catalog nor the type — so its button styling silently fell back to defaults.
+  This rename fixes that latent bug and unblocks mobile.)
+- **`IFormRecordStyle`:** `btn_update_color` → `shared_btn_update_color`.
+- **`IValidateStyle`:** `web_buttons_size` / `web_buttons_radius` /
+  `web_buttons_variant` / `web_buttons_position` / `web_buttons_order` /
+  `web_btn_save_color` / `web_btn_cancel_color` → the `shared_*` equivalents
+  (the web `ValidateStyle` already read the `web_` names correctly; both
+  renderers now agree on `shared_*`).
+
+### Notes
+
+- Pure web cosmetics stay `web_`: `web_card_padding`, `web_card_shadow`,
+  `web_border` on `validate` (RF-16 — no clean React Native peer).
+- The mobile `FormUserInput` now builds its action row from these knobs
+  (`shared_btn_save_color` / `shared_btn_cancel_color`, `shared_buttons_order` /
+  `_position` / `_size` / `_radius` / `_variant`), themed inline.
+
+## v1.14.2
+
+Style-field cleanup slice 6 — mobile configurability (RF-17, RF-18, RF-19).
+Pairs with backend migration `Version20260619095732` and the coupled web + mobile
+renderer reads. Patch bump: behaviour/sizing knobs promoted from the web-only
+`web_*` prefix to the semantic `shared_*` prefix so the mobile renderer can read
+the same authored value.
+
+### Changed
+
+- **`ISelectStyle` (RF-17):** the stale, DB-absent `live_search` / `allow_clear`
+  are replaced by the portable `shared_searchable` / `shared_clearable`. The web
+  `SelectStyle` now reads them (previously hard-coded: searchable on, clearable
+  when not required — preserved as defaults). Mobile maps them to its
+  search-field / clear affordance where the select adapter supports it.
+- **`ITextareaStyle` (RF-18):** `web_textarea_autosize` → `shared_autosize`,
+  `web_textarea_min_rows` → `shared_min_rows`, `web_textarea_max_rows` →
+  `shared_max_rows`. Row sizing is portable (mobile maps to `numberOfLines` /
+  auto-grow). `web_textarea_resize` / `web_textarea_variant` stay web-only (RF-16
+  — no clean RN peer). The redundant `web_textarea_rows` is also renamed to
+  `shared_rows` in the catalog (read by no renderer; Mantine uses min/max rows).
+- **`IAccordionStyle` (RF-19):** `web_accordion_multiple` → `shared_multiple`
+  (selection mode — single vs multiple open). Both the web `AccordionStyle` and
+  the mobile `Accordion` already read it; only the name changes.
+  `web_accordion_variant` stays web-only (Mantine-specific visual, RF-16).
+
+### Notes
+
+- **RF-20** (`button` / `link` `open_in_new_tab`) needed no change — the field is
+  already unprefixed/common and both renderers already read it (web opens a new
+  tab; mobile `Link`/`Button` open via `Linking`/in-app navigation).
+
+## v1.14.1
+
+Style-field cleanup slice 5 — DB↔type reconciliation tail (RF-12, RF-22, RF-23).
+Pairs with backend migration `Version20260619095112` and the coupled web + mobile
+renderer reads. Patch bump: type-only changes (stale-field drops + one canonical
+rename); no runtime/registry code reads these by name.
+
+### Changed
+
+- **`IValidateStyle.cancel_url` → `btn_cancel_url` (RF-12).** The cancel-button
+  target page is one concept across the form family: the DB, `form-log`/
+  `form-record`, `FormStyle` (web), and the mobile `FormUserInput` all use
+  `btn_cancel_url`. Only `validate` (type + web renderer) used the divergent
+  `cancel_url`, so the cancel button never resolved a URL. Renamed to the
+  canonical name; the web `ValidateStyle` now reads `btn_cancel_url` (the DB
+  already has the field, so no migration is needed for this).
+
+### Removed
+
+- **`IProfileStyle`: dropped `alert_fail`, `alert_del_fail`, `alert_del_success`,
+  `alert_success` (RF-22).** Runtime evidence: no web or mobile renderer reads
+  these on `profile` (it uses the per-section `profile_*_success` /
+  `profile_*_error_general` copy instead). They were stale type fields and never
+  existed in the catalog.
+- **`IValidateStyle`: dropped `label_login`, `success`, `page_keyword`,
+  `value_name` (RF-12).** Not present in the catalog and read by no renderer
+  (`validate` is a web-only activation surface; the web renderer reads
+  `success_title`, not `success`). `page_keyword` / `value_name` were never
+  catalog fields here.
+
+### Notes
+
+- `two-factor-auth` heading is unified on `title` (DB seeded it in slice 4; the
+  mobile `TwoFactorAuth` now reads `title` instead of the divergent
+  `label_title`). The unused DB `label` link on `two-factor-auth` is dropped by
+  the backend migration.
+- `validate.label_timezone` exists in the catalog but no renderer reads it yet
+  (first-login timezone selection is a documented gap); it is intentionally NOT
+  added to the type until a renderer consumes it.
+
+## v1.14.0
+
+Style-field cleanup slice 3 — semantic variant promotion (RF-14) plus the
+translatable `web_*` un-prefix sweep (RF-35). Pairs with backend migration
+`Version20260619093723` and the coupled web + mobile renderer reads. These are
+pure field renames; no mapper/registry/runtime code reads them by name, so the
+type surface is the only change here (pre-stable: shipped as a minor).
+
+### Changed
+
+- **`web_button_variant` → `shared_variant` (RF-14).** The error/surface styles
+  (`missing`, `no-access`, `not-found`) carry a button variant that is a semantic
+  token both platforms should honour, so it loses the `web_` prefix and its
+  backend scope flips from `web` to `shared` (scope is derived from the name
+  prefix). Renamed on `IMissingStyle`, `INoAccessStyle`, `INotFoundStyle` in
+  `error`.
+- **Translatable `web_*` content fields lose the `web_` prefix (RF-35).** Every
+  `display = 1` field is already grouped as `content` by the backend regardless
+  of prefix (so it was always shipped to both platforms) — the `web_` prefix was
+  a naming lie. Un-prefixed across `forms`, `typography`, `layout`, and
+  `composite`:
+  - `web_radio_options` → `radio_options`,
+    `web_combobox_options` → `combobox_options`,
+    `web_segmented_control_data` → `segmented_control_data`,
+    `web_slider_marks_values` → `slider_marks_values`,
+    `web_range_slider_marks_values` → `range_slider_marks_values`
+  - `web_switch_on_label` → `switch_on_label`,
+    `web_switch_off_label` → `switch_off_label`
+  - `web_spoiler_show_label` → `spoiler_show_label`,
+    `web_spoiler_hide_label` → `spoiler_hide_label`
+  - `web_color_picker_saturation_label` → `color_picker_saturation_label`,
+    `web_color_picker_hue_label` → `color_picker_hue_label`,
+    `web_color_picker_alpha_label` → `color_picker_alpha_label`
+  - `web_datepicker_placeholder` → `datepicker_placeholder`,
+    `web_rich_text_editor_placeholder` → `rich_text_editor_placeholder`
+  - `web_tooltip_label` → `tooltip_label`,
+    `web_highlight_highlight` → `highlight_highlight`,
+    `web_divider_label` → `divider_label`,
+    `web_list_item_content` → `list_item_content`
+  - The web-only *presentation* twins keep their prefix (e.g.
+    `web_divider_label_position`, `web_radio_card`, `web_color_format`).
+
+## v1.13.0
+
+Style-field cleanup slice 2 — semantic colour promotion (RF-13) plus two
+field-name fixes (RF-36, RF-37). Pairs with backend migration
+`Version20260619092612` and the coupled web + mobile renderer reads. No
+mapper/registry/runtime code reads these fields by name (the
+`resolveMantineVariant(variant, color)` resolver is value-based), so the type
+surface is the only change here (pre-stable: shipped as a minor).
+
+### Changed
+
+- **`web_color` → `shared_color` (RF-13).** Colour is a semantic token both
+  platforms use — an author setting a login / alert / button colour must have it
+  apply on mobile too — so it loses the `web_` prefix and its backend scope flips
+  from `web` to `shared` (scope is derived from the name prefix). Renamed on
+  every interface that carried it across `forms`, `interactive`, `typography`,
+  `layout`, `composite`, and `error`. The web-only colour-widget config fields
+  (`web_color_format`, `web_color_input_*`, `web_color_picker_*`) are
+  intentionally left `web_` — they configure the colour-picker UI, not a
+  semantic colour.
+- **`web_checkbox_labelPosition` → `web_checkbox_label_position` (RF-37).** The
+  catalog field name now follows the `snake_case` field-naming rule.
+
+### Removed
+
+- **`web_image_src` / `web_image_alt` removed from `IImageStyle` family
+  context (RF-36).** They duplicated the `img_src` / `alt` content fields the
+  renderers already read; the catalog drops the duplicates. (They were already
+  absent from the shared types; this entry records the coupled catalog removal.)
+
+## v1.12.0
+
+Style-field cleanup slice 1 — the type surface now matches backend migration
+`Version20260619090609`. No mapper/registry/runtime code consumed any of these
+fields, so this is a type-only change (pre-stable: shipped as a minor).
+
+### Removed
+
+- **`use_web_style` removed from every style interface (RF-01).** The
+  Mantine/raw toggle is retired — the web renderer always renders Mantine. The
+  optional `use_web_style` field is dropped from all 59 style interfaces across
+  `forms`, `interactive`, `composite`, `layout`, `typography`, `media`, and
+  `unknown`.
+- **`is_log` removed from `IFormStyle` (RF-04/05).** Record vs log is decided by
+  the style (`form-record` / `form-log`), never a content field — separate form
+  styles already encode it.
+- **Stale auth fields removed:** `type` from `ILoginStyle` and
+  `IResetPasswordStyle` (RF-02; never existed in the DB) and the legacy
+  email-send leftovers `subject_user` + `is_html` from `IResetPasswordStyle`
+  (RF-06; reset email now goes through the mail templates).
+- **`close_button_label` removed from `IAlertStyle`** (stale; not in the DB).
+
+### Changed
+
+- **`IAlertStyle.web_alert_title` → `alert_title` (RF-10).** The alert heading is
+  translatable content shared by web and mobile, so it loses the `web_` prefix.
+
+## v1.11.0
+
+### Added
+
+- **Mobile UI adapter contract is now a single public source
+  (`IMobileUiAdapters` + the `IMobile*Props` capability interfaces).** Mobile
+  rendering plan sections 8.3 / 9: both mobile tiers (the public app's
+  open-source adapters and the private `@selfhelp/mobile-pro-ui` overrides) now
+  consume one contract from `@selfhelp/shared` instead of each repo keeping a
+  hand-synced copy. The module is type-only (it imports `react` types and the
+  shared semantic scales `THeroUiSize`/`THeroUiButtonVariant`; it pulls in no
+  React Native runtime dependency), which is why it lives here rather than in a
+  separate contract package. The milestone-one capability set is
+  `MobileButton`, `MobileText`, `MobileContainer`, `MobileCard`, `MobileInput`,
+  `MobileTextarea`, `MobileSwitch`, `MobileCheckbox`, `MobileSelect`, and
+  `MobileModal`. Covered by a contract test (`src/types/__tests__`) that locks
+  the exact set; consumers enforce the shape at compile time
+  (`ossAdapters`/`proAdapters: IMobileUiAdapters`).
+
+## v1.10.0
+
+### Changed
+
+- **Style catalog reconciled to the established 90-style backend catalog
+  (mobile rendering plan, milestone one).** The experimental registry/union had
+  drifted to 98 entries: it included 16 speculative styles and omitted 8
+  established ones. Removed the 16 speculative styles (`dialog`, `popover`,
+  `menu`, `menu-item`, `bottom-sheet`, `skeleton`, `skeleton-group`, `spinner`,
+  `toast`, `tag-group`, `tag`, `input-group`, `input-otp`, `search-field`,
+  `fab-button`, `biometric-login-button`) from `BASE_STYLE_REGISTRY`, the
+  `TStyle` union, and the type files (deleted `src/types/styles/catalog.ts`).
+  Added the 8 established styles that were missing from the registry/union:
+  `no-access`, `missing`, `not-found`, `version`, `ref-container`,
+  `data-container`, `show-user-input`, `timeline-item`. The applications may
+  still use dialogs/menus/etc. internally — they are simply not author-selectable
+  CMS styles.
+- **Field naming taxonomy aligned with the backend re-prefix migration.** The
+  11 portable visual-semantic fields are now `shared_*` (was the experimental
+  `web_*`): `shared_align`, `shared_justify`, `shared_gap`, `shared_direction`,
+  `shared_wrap`, `shared_orientation`, `shared_full_width`, `shared_size`,
+  `shared_radius`, `shared_text_align`, and `shared_spacing` (was
+  `web_spacing_margin_padding`). Genuinely web-specific fields keep `web_*`; the
+  margin-only `web_spacing_margin` stays `web_` (not consolidated). This matches
+  backend migration `Version20260618143216`.
+- Documented that the registry `platforms`/`TStylePlatform` value mirrors the
+  backend `renderTarget` (`styleRenderTargets` lookup); page render target is
+  the existing `pageAccessTypes` value, never a duplicate page-platform field.
+- **Semantic mapper reworked to a non-clamping common scale (plan §6.2/§8.2).**
+  `shared_size` is now `sm | md | lg` and `shared_radius` is `none | sm | md |
+  lg | full` — the true cross-platform common denominator (HeroUI Native has no
+  `xs`/`xl`). New `TSharedSize`/`TSharedRadius` types
+  (`src/types/mantine/common.ts`) back the `shared_size`/`shared_radius` catalog
+  fields across `layout`, `composite`, `interactive`, `forms`, and `error`.
+  `src/theme/semantic.ts` no longer clamps unsupported sizes (out-of-domain
+  values are ignored, not silently coerced) and exposes the plan's pure
+  functions `resolveSharedStyleProps`, `toMantineSemanticProps`,
+  `toHeroUiSemanticProps`, and `toReactNativeSemanticStyle(props, theme)`; the
+  earlier `resolveSharedStyleForWeb` / `resolveSharedStyleForMobile` names remain
+  as deprecated aliases. The backend enforces the same narrowed domain (migration
+  `Version20260618195450`).
+
+### Notes / follow-ups
+
+- Consumer dependency-range updates and `release-manifest.json` compatibility
+  floors land with the coordinated cross-repo release (plan section 16 / Phase 6)
+  as the frontend and mobile consumers adopt `@selfhelp/shared@1.10.0`.
+
 ## v1.8.0
 
 ### Changed

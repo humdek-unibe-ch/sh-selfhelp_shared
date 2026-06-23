@@ -34,6 +34,24 @@ describe('classifyClass (css_mobile classifier)', () => {
         expect(classifyClass('grid-cols-7').kind).toBe('drop');
         expect(classifyClass('').kind).toBe('drop');
     });
+
+    it('remaps the web dropdown standard Tailwind color scale onto the Mantine hex scale (RN-safe)', () => {
+        // Tailwind v4 default palette is oklch and crashes RN, so the standard
+        // scale the dropdown offers is rewritten onto the hex-backed Mantine scale.
+        expect(classifyClass('bg-blue-500')).toMatchObject({ kind: 'remap', from: 'bg-blue-500', to: 'bg-blue-6' });
+        expect(classifyClass('bg-green-600')).toMatchObject({ kind: 'remap', to: 'bg-green-7' });
+        expect(classifyClass('bg-gray-800')).toMatchObject({ kind: 'remap', to: 'bg-gray-9' });
+        expect(classifyClass('text-indigo-700')).toMatchObject({ kind: 'remap', to: 'text-indigo-8' });
+        expect(classifyClass('border-red-500')).toMatchObject({ kind: 'remap', to: 'border-red-6' });
+        // Tailwind-only names alias to the nearest Mantine palette.
+        expect(classifyClass('bg-purple-500')).toMatchObject({ kind: 'remap', to: 'bg-grape-6' });
+        expect(classifyClass('bg-slate-700')).toMatchObject({ kind: 'remap', to: 'bg-gray-8' });
+    });
+
+    it('allows text-white / text-black (plain colors, RN-safe)', () => {
+        expect(classifyClass('text-white').kind).toBe('allow');
+        expect(classifyClass('text-black').kind).toBe('allow');
+    });
 });
 
 describe('classifyClassString', () => {
