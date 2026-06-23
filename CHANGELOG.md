@@ -9,6 +9,36 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.15.0
+
+Mobile preview service contracts. Adds the cross-repo types for the new
+`selfhelp-mobile-preview` image + the CMS mobile preview session auth surface,
+and introduces the mobile-renderer compatibility axis consumed by the SelfHelp
+Manager preflight. All additions are additive (optional fields / new types), so
+existing consumers are unaffected.
+
+### Added
+
+- **`MobilePreviewRelease`** (`types/distribution.ts`) — the
+  `selfhelp-mobile-preview-release` descriptor (peer of `FrontendRelease`),
+  including `mobileRendererVersion` and the curated `bundledPlugins[]`
+  (`BundledPluginRef`).
+- **Preview session DTOs** (`types/api/mobile-preview.ts`) —
+  `IMobilePreviewSessionRequest/Response`, `IMobilePreviewExchangeRequest/Response`,
+  and `MOBILE_PREVIEW_ENDPOINTS` (admin mint + public exchange).
+- **`MOBILE_RENDERER_VERSION`** constant + **`isMobileRendererCompatible()`**
+  helper (`plugin-sdk`) — the mobile renderer contract version a plugin's
+  `compatibility.mobile` range targets.
+
+### Changed (additive, non-breaking)
+
+- `RegistryIndex.mobilePreview?` + `IPluginRegistry.mobilePreview?` — additive
+  release-ref array (registry `schemaVersion` 1.1; older managers ignore it).
+- `InstanceVersions.mobilePreview?`, `InstanceImages.mobilePreview?`,
+  `InstanceLock.core.mobilePreviewImageDigest?` — per-instance pin fields.
+- `PluginRelease.compatibility.mobile?`, `IPluginRelease.compatibility.mobile?`,
+  and `IPluginManifestCompatibility.mobile?` — the new mobile-renderer axis.
+
 ## v1.14.24
 
 Semantic mapper cleanup — remove the legacy `shared_intent` field and related
