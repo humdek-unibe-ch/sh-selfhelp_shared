@@ -9,6 +9,43 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.14.24
+
+Semantic mapper cleanup — remove the legacy `shared_intent` field and related
+fallback mappings that were kept for backward compatibility. The live catalog
+uses `color` and `variant` as the cross-platform appearance fields, so the
+intent path is dead code. This is a pure cleanup with no runtime behaviour
+change (no catalog data uses `shared_intent`).
+
+### Removed (`theme/semantic.ts`)
+
+- **`TSemanticIntent` type** and **`SEMANTIC_INTENTS` constant** — the intent
+  taxonomy (`primary`/`secondary`/`success`/`warning`/`danger`/`neutral`) is no
+  longer part of the shared contract.
+- **`mapIntentToHeroUiColor`** — mapped intent tokens to HeroUI Native colors.
+- **`mapIntentToHeroUiButtonVariant`** — mapped intent tokens to HeroUI Native
+  button variants.
+- **`mapIntentToMantine`** — mapped intent tokens to Mantine color/variant pairs.
+- **`ISharedStyleProps.intent`** — the intent field is removed from the shared
+  props interface.
+- **Intent fallback logic** from `resolveSharedStyleProps`,
+  `toMantineSemanticProps`, and `toHeroUiSemanticProps` — the mappers now read
+  only `color` and `variant`.
+
+### Removed (`types/styles/composite.ts`)
+
+- **`IListStyle.web_spacing`** — unused web-only spacing field; list spacing is
+  the portable `spacing` field from `IStyleWithSpacing`.
+- **Unused `TMantineSpacing` import** — no longer needed after removing
+  `web_spacing`.
+
+### Changed
+
+- **Comment updates** across `theme/semantic.ts`, `theme/tokens.ts`,
+  `types/mantine/common.ts`, and `types/styles/base.ts` to reflect that
+  cross-platform fields are now unprefixed (not `shared_*`) and to remove
+  stale migration references (e.g., RF-15).
+
 ## v1.14.23
 
 Contract tidy on the back of the cross-repo style audit (no runtime behaviour
