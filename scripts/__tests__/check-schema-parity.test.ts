@@ -51,7 +51,7 @@ describe('check-schema-parity script', () => {
         expect(output).toContain('RESULT: OK');
     });
 
-    it('covers the auth, page and form response contracts when the backend is present', () => {
+    it('covers the auth, page, form and mobile-preview contracts when the backend is present', () => {
         if (!backendSchemasPresent) {
             // No sibling backend checkout -> the script SKIPs the response
             // contracts; the binary green assertions above still apply.
@@ -62,6 +62,9 @@ describe('check-schema-parity script', () => {
         expect(output).toContain('CMS page payload');
         expect(output).toContain('form submit data');
         expect(output).toContain('form update data');
+        expect(output).toContain('mobile preview session data');
+        expect(output).toContain('mobile preview exchange data');
+        expect(output).toContain('mobile preview exchange request');
         // The form-submit drift was resolved (no longer a tolerated warning).
         expect(output).not.toContain('known-drift');
     });

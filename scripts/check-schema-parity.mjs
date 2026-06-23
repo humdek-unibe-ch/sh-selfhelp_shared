@@ -198,6 +198,20 @@ const RESPONSE_SCHEMA_MAPPING = [
         label: 'frontend update request data (IFrontendUpdateRequestResponse)',
         requiredPath: ['properties', 'data', 'required'],
     },
+    {
+        // Admin mint response consumed by the frontend BFF/mobile preview panel.
+        schemaFile: 'responses/admin/mobile_preview_session.json',
+        sourceFile: 'src/types/api/mobile-preview.ts',
+        label: 'mobile preview session data (IMobilePreviewSessionData)',
+        requiredPath: ['properties', 'data', 'required'],
+    },
+    {
+        // Public exchange response consumed by the mobile-preview web image.
+        schemaFile: 'responses/frontend/mobile_preview_exchange.json',
+        sourceFile: 'src/types/api/mobile-preview.ts',
+        label: 'mobile preview exchange data (IMobilePreviewExchangeData)',
+        requiredPath: ['properties', 'data', 'required'],
+    },
 ];
 
 /**
@@ -241,6 +255,21 @@ const REQUEST_SCHEMA_MAPPING = [
         schemaFile: 'requests/admin/frontend_update_request.json',
         sourceFile: 'src/types/api/system.ts',
         label: 'system frontend update request (IFrontendUpdateRequest)',
+        requiredPath: ['required'],
+    },
+    {
+        // Admin mobile-preview mint request. All scope fields are optional, but
+        // the mapping keeps this schema in the explicit parity inventory.
+        schemaFile: 'requests/admin/mobile_preview_session.json',
+        sourceFile: 'src/types/api/mobile-preview.ts',
+        label: 'mobile preview session request (IMobilePreviewSessionRequest)',
+        requiredPath: ['required'],
+    },
+    {
+        // Public mobile-preview exchange request consumed by the preview image.
+        schemaFile: 'requests/frontend/mobile_preview_exchange.json',
+        sourceFile: 'src/types/api/mobile-preview.ts',
+        label: 'mobile preview exchange request (IMobilePreviewExchangeRequest)',
         requiredPath: ['required'],
     },
 ];
