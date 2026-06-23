@@ -390,6 +390,17 @@ export interface MobilePreviewRelease {
     backendCompatibility: ServiceBackendCompatibility;
     /** Mobile renderer contract version advertised by this image (semver). */
     mobileRendererVersion: string;
+    /**
+     * React Native version the preview image was built with. Top-level canonical
+     * value the SelfHelp Manager gates a plugin's `compatibility.reactNative`
+     * range against (the `builtFrom.reactNative` provenance field mirrors it).
+     */
+    reactNativeVersion?: string;
+    /**
+     * Expo SDK version the preview image was built with. Gated against a plugin's
+     * `compatibility.expoSdk` range (mirrors `builtFrom.expoSdk`).
+     */
+    expoSdkVersion?: string;
     /** Curated plugin mobile packages baked into the image. */
     bundledPlugins: BundledPluginRef[];
     security: SignatureBlock;
@@ -404,11 +415,13 @@ export interface PluginRelease {
     official: boolean;
     /**
      * Compatibility ranges the host must satisfy. `mobile` (additive) is the
-     * NEW mobile-renderer axis: the range of host `mobileRendererVersion` the
-     * plugin's mobile package supports (parallel to `pluginApi`). Absent for
-     * web-only plugins.
+     * mobile-renderer axis: the range of host `mobileRendererVersion` the
+     * plugin's mobile package supports (parallel to `pluginApi`). `reactNative`
+     * and `expoSdk` (additive) are gated against the resolved
+     * `selfhelp-mobile-preview` image's `reactNativeVersion` / `expoSdkVersion`.
+     * All three are absent for web-only plugins.
      */
-    compatibility: { core: string; pluginApi: string; mobile?: string };
+    compatibility: { core: string; pluginApi: string; mobile?: string; reactNative?: string; expoSdk?: string };
     dependencies?: { plugins: { id: string; range: string }[] };
     artifacts: { manifestUrl: string; archiveUrl: string; sha256: string };
     security: SignatureBlock;

@@ -9,7 +9,55 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
-## v1.15.0
+## v1.15.1
+
+Mobile preview RN/Expo provenance parity **plus the CMS-driven mobile-preview
+update contract**. Promotes the React Native / Expo SDK versions to **top-level**
+canonical fields on the mobile-preview release descriptor and adds the matching
+plugin-compatibility axes, so the SelfHelp Manager's dual-axis plugin gate reads
+one canonical location across every repo (mobile CI emitter, registry assembler,
+manager schema). It also adds the System-Maintenance contracts that let the CMS
+show the provisioned preview version and request a compatible mobile-preview
+update/enable (mirroring the frontend-only update flow). All additions are
+additive (optional fields / new types / a widened union arm), so `^1.14.25`
+consumers are unaffected.
+
+### Added (additive, non-breaking)
+
+- **Mobile-preview update flow contracts** (`types/api/system.ts`):
+  `SYSTEM_ENDPOINTS.UPDATE_MOBILE_PREVIEW_{RELEASES,PREFLIGHT,REQUEST}`, the
+  `IMobilePreviewUpdateRequest` body, and the `IMobilePreviewUpdate{Releases,
+  Preflight,Request}Response` aliases — the CMS analogue of the frontend-only
+  update surface. Requesting a preview onto an instance that has none doubles as
+  the enable/bootstrap path the SelfHelp Manager provisions.
+- **`ISystemVersion.mobile_preview_version`** — the provisioned
+  `selfhelp-mobile-preview` image version surfaced in System Maintenance
+  (`unknown` until the manager stamps `SELFHELP_MOBILE_PREVIEW_VERSION`,
+  `not_installed` when no preview is provisioned).
+- **`IUpdateStatus.target_mobile_preview_version`** — the targeted preview
+  version for a `mobile-preview`-kind operation (`null` otherwise).
+
+### Changed (additive, non-breaking)
+
+- **`TUpdateKind` widened to include `'mobile-preview'`** (`types/api/system.ts`)
+  alongside `'core' | 'frontend'`, and **`ICompatibilityError.component`** gains
+  the `'mobile-preview'` arm so the standardized compatibility-error object can
+  describe a preview ⇄ core block. Existing `'core' | 'frontend'` consumers keep
+  working (the new arm is only emitted for preview operations).
+
+- **`MobilePreviewRelease.reactNativeVersion?` + `.expoSdkVersion?`**
+  (`types/distribution.ts`) — the canonical top-level React Native / Expo SDK
+  versions the image was built with, mirroring the registry
+  `mobile-preview-release.schema.json` and the manager's internal schema. The
+  existing `builtFrom.{reactNative,expoSdk}` stay as raw build provenance; the
+  manager gates a plugin's RN/Expo range against the top-level values.
+- **`PluginRelease.compatibility.reactNative?` + `.expoSdk?`**
+  (`types/distribution.ts`) — the RN/Expo runtime axes a plugin's native bundle
+  targets, gated against the resolved preview image's `reactNativeVersion` /
+  `expoSdkVersion` (parallel to the existing `compatibility.mobile` renderer
+  axis; web-only plugins omit all three).
+
+## v1.14.25
 
 Mobile preview service contracts. Adds the cross-repo types for the new
 `selfhelp-mobile-preview` image + the CMS mobile preview session auth surface,

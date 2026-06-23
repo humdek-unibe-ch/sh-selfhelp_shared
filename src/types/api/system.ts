@@ -35,10 +35,25 @@ export const SYSTEM_ENDPOINTS = {
     UPDATE_FRONTEND_RELEASES: `${SYSTEM_PREFIX}/update/frontend/releases`,
     UPDATE_FRONTEND_PREFLIGHT: `${SYSTEM_PREFIX}/update/frontend/preflight`,
     UPDATE_FRONTEND_REQUEST: `${SYSTEM_PREFIX}/update/frontend/request`,
+    // Mobile-preview update flow. The `selfhelp-mobile-preview` web image is
+    // provisioned with every install and ships independently of the core (like
+    // the frontend), so an instance can move it to a newer compatible version on
+    // its own. These reuse the core preflight/releases response shapes; the
+    // request body omits `accepted_migration_risk` (a preview swap is stateless).
+    // Requesting one onto an instance that never had it doubles as the
+    // enable/bootstrap path (the SelfHelp Manager provisions it).
+    UPDATE_MOBILE_PREVIEW_RELEASES: `${SYSTEM_PREFIX}/update/mobile-preview/releases`,
+    UPDATE_MOBILE_PREVIEW_PREFLIGHT: `${SYSTEM_PREFIX}/update/mobile-preview/preflight`,
+    UPDATE_MOBILE_PREVIEW_REQUEST: `${SYSTEM_PREFIX}/update/mobile-preview/request`,
 } as const;
 
-/** Discriminates a core (full-stack) update from a frontend-only update. */
-export type TUpdateKind = 'core' | 'frontend';
+/**
+ * Discriminates a core (full-stack) update from the stateless component-only
+ * swaps. `frontend` swaps the Next.js image; `mobile-preview` swaps the
+ * `selfhelp-mobile-preview` web image. Both are lightweight (no DB migration,
+ * no backup) and performed by the SelfHelp Manager.
+ */
+export type TUpdateKind = 'core' | 'frontend' | 'mobile-preview';
 
 export interface ISystemInstalledPlugin {
     id: string;
@@ -59,6 +74,16 @@ export interface ISystemVersion {
     selfhelp_version: string;
     backend_version: string;
     frontend_version: string;
+    /**
+     * The provisioned `selfhelp-mobile-preview` web image version reported by the
+     * backend (set by the SelfHelp Manager via `SELFHELP_MOBILE_PREVIEW_VERSION`
+     * when it provisions/updates the service). `unknown` until the manager stamps
+     * it; `not_installed` when no preview service is provisioned for this
+     * instance (e.g. an instance that predates default provisioning, or a dev
+     * source checkout). The page-editor preview panel additionally probes the
+     * running image's `version.json` for the live value.
+     */
+    mobile_preview_version: string;
     plugin_api_version: string;
     database_migration_version: string;
     deployment: TSystemDeployment;
@@ -214,7 +239,7 @@ export interface IUpdatePreflightCheck {
  * and the plugin-specific `pinned` affordance). Snake_case is the wire contract.
  */
 export interface ICompatibilityError {
-    component: 'core' | 'frontend' | 'plugin';
+    component: 'core' | 'frontend' | 'mobile-preview' | 'plugin';
     component_id: string;
     current_version: string | null;
     target_version: string | null;
@@ -347,6 +372,11 @@ export interface IUpdateStatus {
      * for the synthetic `idle` status.
      */
     target_frontend_version: string | null;
+    /**
+     * The mobile-preview image version a `mobile-preview`-kind operation targets;
+     * `null` for core/frontend operations and the synthetic `idle` status.
+     */
+    target_mobile_preview_version: string | null;
     progress_percent: number;
     steps: IUpdateStep[];
     requested_at: string;
@@ -408,4 +438,54 @@ export type IFrontendUpdateRequestResponse = IBaseApiResponse<{
     status: TUpdateOperationStatus;
     kind: 'frontend';
     target_frontend_version: string;
+}>;
+
+/**
+ * POST /admin/system/update/mobile-preview/request — request a MOBILE-PREVIEW
+ * update for THIS instance. Like {@link IFrontendUpdateRequest} it carries no
+ * `instance_id` (the backend derives + verifies it) and no
+ * `accepted_migration_risk` (a preview swap is stateless). Requesting it onto an
+ * instance that has no preview yet is also the enable/bootstrap path: the
+ * SelfHelp Manager provisions the `selfhelp-mobile-preview` service. The manager
+ * re-resolves the signed release and is the final authority on compatibility +
+ * signatures + image digests before it swaps the container.
+ */
+export interface IMobilePreviewUpdateRequest {
+    target_version: string;
+    preflight_id: string;
+}
+
+/**
+ * GET /admin/system/update/mobile-preview/releases — mobile-preview image
+ * versions published in the official registry (newest first). Reuses
+ * {@link IUpdateReleases}: `current_version` is the instance's provisioned
+ * preview version (or `not_installed`) and `available: false` means the registry
+ * was unreachable (fall back to manual entry). Aliased for call-site clarity.
+ */
+export type IMobilePreviewUpdateReleases = IUpdateReleases;
+export type IMobilePreviewUpdateReleasesResponse = IUpdateReleasesResponse;
+
+/**
+ * GET /admin/system/update/mobile-preview/preflight — compatibility verdict for
+ * a mobile-preview target. Reuses {@link IUpdatePreflight}; the preview is
+ * stateless so `database.destructive`/`requires_backup` are always false. The
+ * preview ⇄ core compatibility rule IS evaluated here (as a
+ * `mobile_preview_compatibility` check) against the same signed registry
+ * metadata the SelfHelp Manager resolves — the running core must satisfy the
+ * target preview's `backendCompatibility.requiredCoreRange` — so the CMS verdict
+ * matches the manager's instead of always reporting "OK". The manager still
+ * re-verifies signatures + image digests and re-runs the per-plugin RN/Expo
+ * twin-axis gate at execution and remains the final authority. Aliased for
+ * call-site clarity.
+ */
+export type IMobilePreviewUpdatePreflight = IUpdatePreflight;
+export type IMobilePreviewUpdatePreflightResponse = IUpdatePreflightResponse;
+
+/** POST /admin/system/update/mobile-preview/request — accepted record. */
+export type IMobilePreviewUpdateRequestResponse = IBaseApiResponse<{
+    operation_id: string;
+    instance_id: string;
+    status: TUpdateOperationStatus;
+    kind: 'mobile-preview';
+    target_mobile_preview_version: string;
 }>;
