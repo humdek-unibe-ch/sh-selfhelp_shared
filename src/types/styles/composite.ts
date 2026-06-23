@@ -6,7 +6,6 @@ import type { IBaseStyle, IContentField, IStyleWithSpacing } from './base';
 import type {
     TMantineColor,
     TMantineRadius,
-    TMantineSpacing,
     TMantineOrientation,
     TMantineAccordionVariant,
     TMantineTabsVariant,
@@ -109,7 +108,6 @@ export interface ITimelineItemStyle extends IBaseStyle {
 export interface IListStyle extends IStyleWithSpacing {
     style_name: 'list';
     web_list_type?: IContentField<TMantineListType>;
-    web_spacing?: IContentField<TMantineSpacing>;
     size?: IContentField<TSharedSize>;    web_list_list_style_type?: IContentField<TMantineListStyleType>;
     web_list_with_padding?: IContentField<TMantineListWithPadding>;
     web_list_center?: IContentField<TMantineListCenter>;

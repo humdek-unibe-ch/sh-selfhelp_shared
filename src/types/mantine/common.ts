@@ -15,14 +15,15 @@ export type TMantineRadius = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | string;
 export type TMantineSpacing = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'none' | string;
 
 /**
- * Cross-platform (`shared_*`) semantic scales — the TRUE common denominator
+ * Cross-platform semantic scales — the TRUE common denominator
  * between Mantine (web) and HeroUI Native / React Native (mobile). HeroUI Native
- * only exposes `sm | md | lg`, so portable `size` / `radius` fields
+ * only exposes `sm | md | lg`, so the portable unprefixed `size` / `radius` fields
  * use these narrowed scales instead of the full Mantine `xs..xl` range. The
  * backend enforces the same domain (migration `Version20260618195450`), and the
  * semantic mapper (`theme/semantic.ts`) maps these 1:1 without clamping.
  *
- * Web-only `web_size` / `web_radius` keep the full `TMantineSize` / `TMantineRadius`.
+ * Genuinely web-specific size/radius fields (typed `TMantineSize` / `TMantineRadius`)
+ * keep the full Mantine range.
  */
 export type TSharedSize = 'sm' | 'md' | 'lg';
 export type TSharedRadius = 'none' | 'sm' | 'md' | 'lg' | 'full';

@@ -4,8 +4,9 @@ SPDX-License-Identifier: MPL-2.0
 */
 /**
  * Shared semantic style mapper — the single source of truth that turns
- * renderer-agnostic CMS values (`shared_*` fields) into concrete per-platform
- * props. Renderers consume this module instead of duplicating mapping logic.
+ * renderer-agnostic CMS values (the unprefixed portable fields) into concrete
+ * per-platform props. Renderers consume this module instead of duplicating
+ * mapping logic.
  *
  *   - Web    -> Mantine          (`toMantineSemanticProps`)
  *   - Mobile -> HeroUI Native    (`toHeroUiSemanticProps`)
@@ -17,14 +18,15 @@ SPDX-License-Identifier: MPL-2.0
  *     value maps 1:1 to each platform. The backend enforces the same domain
  *     (migration `Version20260618195450`).
  *   - NO implicit cross-platform fallback. These functions take already-resolved
- *     SHARED props; the precedence `web_*`/`mobile_*` override -> `shared_*` ->
- *     component default is applied by each platform renderer, never here.
+ *     portable props; the precedence `web_*`/`mobile_*` override -> portable
+ *     (unprefixed) -> component default is applied by each platform renderer,
+ *     never here.
  *   - Exhaustive enum handling (every switch covers the full domain).
  *
- * Platform-specific props stay separate from these shared values:
+ * Platform-specific props stay separate from these portable values:
  *   - `web_*`    Mantine-only fields
  *   - `mobile_*` HeroUI/native-only fields
- *   - shared     the semantic fields mapped here
+ *   - portable   the unprefixed semantic fields mapped here
  */
 
 import { RADIUS_PX, SPACING_PX, type TCanonicalSpacing } from './tokens';
@@ -37,23 +39,14 @@ export type TSemanticSize = TSharedSize; // 'sm' | 'md' | 'lg'
 export type TSemanticSpacing = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 /** Cross-platform radius. `full` = pill; `none` = square. */
 export type TSemanticRadius = TSharedRadius; // 'none' | 'sm' | 'md' | 'lg' | 'full'
-export type TSemanticIntent =
-    | 'primary'
-    | 'secondary'
-    | 'success'
-    | 'warning'
-    | 'danger'
-    | 'neutral';
 export type TSemanticState = 'disabled' | 'loading' | 'invalid' | 'required';
 
 /**
  * Cross-platform colour + variant authored in the CMS (`color` /
- * `variant`). These are stored as Mantine palette / variant *values* —
- * the catalog keeps them verbatim (migration `Version20260618143216` renamed the
- * legacy `mantine_*` fields to `shared_*` without touching the values). They are
- * the REAL cross-platform appearance fields (there is no `shared_intent` in the
- * live catalog); the mapper maps them onto HeroUI Native for mobile, while the
- * web renderer feeds them straight into Mantine.
+ * `variant`), stored as Mantine palette / variant *values* kept verbatim by the
+ * catalog. They are the canonical cross-platform appearance fields; the mapper
+ * maps them onto HeroUI Native for mobile, while the web renderer feeds them
+ * straight into Mantine.
  */
 export type TSemanticColor = TMantineColor;
 export type TSemanticVariant = TMantineVariant;
@@ -63,14 +56,6 @@ export const FULL_RADIUS_PX = 9999;
 
 const SEMANTIC_SIZES: readonly TSemanticSize[] = ['sm', 'md', 'lg'];
 const SEMANTIC_RADII: readonly TSemanticRadius[] = ['none', 'sm', 'md', 'lg', 'full'];
-const SEMANTIC_INTENTS: readonly TSemanticIntent[] = [
-    'primary',
-    'secondary',
-    'success',
-    'warning',
-    'danger',
-    'neutral',
-];
 
 /**
  * Renderer-agnostic style values configured in the CMS. Every field is
@@ -85,12 +70,6 @@ export interface ISharedStyleProps {
     color?: TSemanticColor;
     /** Mantine variant authored via `variant` (cross-platform). */
     variant?: TSemanticVariant;
-    /**
-     * Legacy semantic intent. Kept for back-compat; `shared_intent` is NOT in the
-     * live catalog, so real CMS sections drive appearance through `color` /
-     * `variant` above. Used as the final fallback in the platform resolvers.
-     */
-    intent?: TSemanticIntent;
     /** Active boolean states. Stored as a small set so multiple can apply. */
     states?: readonly TSemanticState[];
     /** Layout: stretch the control to the full width of its container. */
@@ -99,19 +78,13 @@ export interface ISharedStyleProps {
 
 // ===== Mantine (web) target shapes =====
 
-export type TMantineMappedColor =
-    | 'blue'
-    | 'gray'
-    | 'green'
-    | 'yellow'
-    | 'red';
-export type TMantineMappedVariant = 'filled' | 'light' | 'outline' | 'default';
-
 export interface IMantineResolvedStyle {
     /** Mantine accepts sm|md|lg 1:1 (a subset of its xs..xl scale). */
     size?: TSemanticSize;
-    color?: TMantineMappedColor;
-    variant?: TMantineMappedVariant;
+    /** Mantine palette colour, read verbatim from the `color` field. */
+    color?: TSemanticColor;
+    /** Mantine variant, read verbatim from the `variant` field. */
+    variant?: TSemanticVariant;
     /** Mantine `radius` accepts a token or a number; pill => FULL_RADIUS_PX. */
     radius?: TSemanticSize | number;
     /** Margin/padding spacing token (xs..xl); `none` => undefined. */
@@ -141,9 +114,9 @@ export type THeroUiColor = 'accent' | 'default' | 'success' | 'warning' | 'dange
 
 export interface IHeroUiResolvedStyle {
     size?: THeroUiSize;
-    /** Intent mapped onto the Button variant vocabulary. */
+    /** Button variant derived from the Mantine `variant`/`color`. */
     buttonVariant?: THeroUiButtonVariant;
-    /** Intent mapped onto the semantic color vocabulary (Chip/Tag/etc). */
+    /** Semantic color derived from the Mantine `color` (Chip/Tag/etc). */
     color?: THeroUiColor;
     /** Resolved radius in px (pill => FULL_RADIUS_PX, none => 0). */
     radiusPx?: number;
@@ -241,109 +214,6 @@ export function mapSpacingToPx(spacing: TSemanticSpacing | undefined): number | 
     if (!spacing) return undefined;
     if (spacing === 'none') return 0;
     return SPACING_PX[spacing as TCanonicalSpacing];
-}
-
-// ===== intent =====
-
-/**
- * Map a semantic intent to a Mantine `{ color, variant }` pair.
- *   primary   -> blue / filled
- *   secondary -> gray / light
- *   success   -> green / filled
- *   warning   -> yellow / filled
- *   danger    -> red / filled
- *   neutral   -> gray / default
- */
-export function mapIntentToMantine(
-    intent: TSemanticIntent | undefined,
-): { color: TMantineMappedColor; variant: TMantineMappedVariant } | undefined {
-    if (!intent) return undefined;
-    switch (intent) {
-        case 'primary':
-            return { color: 'blue', variant: 'filled' };
-        case 'secondary':
-            return { color: 'gray', variant: 'light' };
-        case 'success':
-            return { color: 'green', variant: 'filled' };
-        case 'warning':
-            return { color: 'yellow', variant: 'filled' };
-        case 'danger':
-            return { color: 'red', variant: 'filled' };
-        case 'neutral':
-            return { color: 'gray', variant: 'default' };
-        default:
-            return undefined;
-    }
-}
-
-/**
- * Map a semantic intent to a HeroUI Native **Button** variant.
- *
- * HeroUI buttons have no dedicated success/warning variant. Rather than
- * silently collapse them, the dedicated status surfaces use
- * {@link mapIntentToHeroUiColor}; the Button variant maps success/warning to
- * `primary` because that is the closest *prominent* action affordance, and the
- * status color is carried separately. This is an explicit semantic choice, not
- * a clamp that hides an unsupported size/scale value.
- *   primary   -> primary
- *   secondary -> secondary
- *   success   -> primary   (status color carried by mapIntentToHeroUiColor)
- *   warning   -> primary   (status color carried by mapIntentToHeroUiColor)
- *   danger    -> danger
- *   neutral   -> secondary
- */
-export function mapIntentToHeroUiButtonVariant(
-    intent: TSemanticIntent | undefined,
-): THeroUiButtonVariant | undefined {
-    if (!intent) return undefined;
-    switch (intent) {
-        case 'primary':
-            return 'primary';
-        case 'secondary':
-            return 'secondary';
-        case 'success':
-            return 'primary';
-        case 'warning':
-            return 'primary';
-        case 'danger':
-            return 'danger';
-        case 'neutral':
-            return 'secondary';
-        default:
-            return undefined;
-    }
-}
-
-/**
- * Map a semantic intent to a HeroUI Native semantic color (Chip/Tag/
- * status surfaces, which DO support success/warning).
- *   primary   -> accent
- *   secondary -> default
- *   success   -> success
- *   warning   -> warning
- *   danger    -> danger
- *   neutral   -> default
- */
-export function mapIntentToHeroUiColor(
-    intent: TSemanticIntent | undefined,
-): THeroUiColor | undefined {
-    if (!intent) return undefined;
-    switch (intent) {
-        case 'primary':
-            return 'accent';
-        case 'secondary':
-            return 'default';
-        case 'success':
-            return 'success';
-        case 'warning':
-            return 'warning';
-        case 'danger':
-            return 'danger';
-        case 'neutral':
-            return 'default';
-        default:
-            return undefined;
-    }
 }
 
 // ===== color / variant (the REAL cross-platform appearance fields) =====
@@ -625,13 +495,6 @@ export function resolveSharedStyleProps(fields: Record<string, unknown>): IShare
         resolved.variant = variant as TSemanticVariant;
     }
 
-    // Legacy: `shared_intent` is not in the live catalog, but keep reading it so
-    // any forward-compat seed still resolves. Domain-checked like size/radius.
-    const intent = readString(fields.shared_intent);
-    if (intent !== undefined && (SEMANTIC_INTENTS as readonly string[]).includes(intent)) {
-        resolved.intent = intent as TSemanticIntent;
-    }
-
     const fullWidth = readBool(fields.full_width);
     if (fullWidth !== undefined) {
         resolved.fullWidth = fullWidth;
@@ -644,12 +507,11 @@ export function resolveSharedStyleProps(fields: Record<string, unknown>): IShare
 
 /** Resolve shared props into Mantine (web) props. */
 export function toMantineSemanticProps(props: ISharedStyleProps): IMantineResolvedStyle {
-    const intent = mapIntentToMantine(props.intent);
     const spacing = props.spacing && props.spacing !== 'none' ? props.spacing : undefined;
     return {
         size: mapSizeToMantine(props.size),
-        color: intent?.color,
-        variant: intent?.variant,
+        color: props.color,
+        variant: props.variant,
         radius: mapRadiusToMantine(props.radius),
         spacing,
         disabled: hasState(props.states, 'disabled') || undefined,
@@ -666,16 +528,14 @@ export function toMantineSemanticProps(props: ISharedStyleProps): IMantineResolv
  * Appearance precedence (mirrors the web renderer, which reads the same CMS
  * fields straight into Mantine):
  *   1. `variant` (Mantine variant) mapped onto the HeroUI button vocab;
- *   2. else `color` (Mantine palette) mapped onto a button variant;
- *   3. else the legacy `intent` mapping (back-compat fallback).
- * The semantic `color` is resolved from `color` first, then `intent`.
+ *   2. else `color` (Mantine palette) mapped onto a button variant.
+ * The semantic `color` is resolved from `color`.
  */
 export function toHeroUiSemanticProps(props: ISharedStyleProps): IHeroUiResolvedStyle {
     const buttonVariant =
         mapMantineVariantToHeroUiButtonVariant(props.variant) ??
-        mapMantineColorToHeroUiButtonVariant(props.color) ??
-        mapIntentToHeroUiButtonVariant(props.intent);
-    const color = mapMantineColorToHeroUiColor(props.color) ?? mapIntentToHeroUiColor(props.intent);
+        mapMantineColorToHeroUiButtonVariant(props.color);
+    const color = mapMantineColorToHeroUiColor(props.color);
     return {
         size: mapSizeToHeroUi(props.size),
         buttonVariant,

@@ -65,6 +65,6 @@ export interface IBaseStyle {
 
 /** Styles that support the unified spacing field. */
 export interface IStyleWithSpacing extends IBaseStyle {
-    /** Portable box-model spacing (margin + padding). Backend field `spacing`; RF-15 merged the legacy margin-only `web_spacing_margin` into this, so every spacing-capable style now uses it. */
+    /** Portable box-model spacing (margin + padding). Backend field `spacing`; every spacing-capable style uses this single unified field. */
     spacing?: IContentField<string>;
 }

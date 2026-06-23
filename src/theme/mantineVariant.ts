@@ -13,10 +13,10 @@ SPDX-License-Identifier: MPL-2.0
  * SCOPE — this is NOT the semantic mapper (`semantic.ts`). The two have
  * different input domains and both live here so there is exactly one home
  * for style mapping:
- *   - `semantic.ts`        maps renderer-agnostic shared fields
- *                          (`intent` / `size` / `radius` / `spacing`) per platform.
+ *   - `semantic.ts`        maps renderer-agnostic unprefixed portable fields
+ *                          (`color` / `variant` / `size` / `radius` / `spacing`) per platform.
  *   - `mantineVariant.ts`  resolves a Mantine palette `color` + `variant` value
- *                          pair (e.g. the semantic `color` + `web_variant`)
+ *                          pair (e.g. the portable `color` + `variant`)
  *                          into concrete RGB. Its only runtime
  *                          consumer today is the mobile **Expo Web preview**
  *                          fallback (where `heroui-native` cannot render and the

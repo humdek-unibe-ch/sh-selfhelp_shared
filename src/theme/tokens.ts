@@ -91,8 +91,8 @@ export const CONTAINER_SIZE_PX: Record<TMantineSize, number> = {
 /**
  * Mantine palette base colors (color-6 from each scale). Each renderer
  * maps these to its own theme tokens. For HeroUI Native we feed these
- * into the theme builder so `web_color: 'blue'` resolves to the
- * same Mantine-blue look on mobile.
+ * into the theme builder so the portable `color: 'blue'` field resolves
+ * to the same Mantine-blue look on mobile.
  */
 export const COLOR_PALETTE: Record<TCanonicalColor, string> = {
     gray: '#868e96',
