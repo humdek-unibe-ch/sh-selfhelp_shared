@@ -88,6 +88,8 @@ export interface InstanceVersions {
     frontend: string;
     scheduler: string;
     worker: string;
+    /** Mobile-preview web image version pinned for this instance (additive). */
+    mobilePreview?: string;
     pluginApi: string;
 }
 
@@ -99,6 +101,8 @@ export interface InstanceImages {
     mysql: string;
     redis: string;
     mercure: string;
+    /** Mobile-preview web image reference (additive). */
+    mobilePreview?: string;
 }
 
 export interface InstanceRouting {
@@ -205,6 +209,8 @@ export interface InstanceLock {
         version: string;
         backendImageDigest: string;
         frontendImageDigest: string;
+        /** Mobile-preview web image digest pinned for this instance (additive). */
+        mobilePreviewImageDigest?: string;
         schedulerImageDigest: string;
         workerImageDigest: string;
         migrationVersion: string;
@@ -245,6 +251,8 @@ export interface RegistryIndex {
     scheduler: RegistryReleaseRef[];
     worker: RegistryReleaseRef[];
     plugins: RegistryReleaseRef[];
+    /** Mobile-preview web image release refs (additive; older managers ignore). */
+    mobilePreview?: RegistryReleaseRef[];
     advisoriesUrl?: string;
     compatibilityUrl?: string;
     trustedKeysUrl?: string;
@@ -349,13 +357,71 @@ export interface WorkerRelease {
     blocked?: boolean;
 }
 
+/**
+ * One plugin mobile package baked into a mobile-preview image at build time.
+ * The preview CI runs `plugins-sync.mjs` against a curated official-plugin set
+ * and records the result here so the manager can compute coverage (which
+ * enabled plugins render natively vs. fall back to open-on-web in the preview)
+ * without inspecting the image.
+ */
+export interface BundledPluginRef {
+    id: string;
+    version: string;
+    mobilePackage: string;
+    mobilePackageVersion: string;
+}
+
+/**
+ * Mobile-preview web image release, resolved/pinned as a first-class artifact
+ * (peer of the frontend release). The image serves the Expo web export at
+ * `/mobile-preview` and proxies a narrow `/mobile-preview/api` allowlist to the
+ * private backend. `mobileRendererVersion` is the mobile renderer contract the
+ * image was built against (what plugin `compatibility.mobile` ranges target);
+ * `bundledPlugins` is the curated official-plugin set baked into the image.
+ */
+export interface MobilePreviewRelease {
+    kind: 'selfhelp-mobile-preview-release';
+    id: string;
+    version: string;
+    channel: ReleaseChannel;
+    image: string;
+    digest: string;
+    builtFrom?: { sharedPackageVersion?: string; expoSdk?: string; reactNative?: string };
+    backendCompatibility: ServiceBackendCompatibility;
+    /** Mobile renderer contract version advertised by this image (semver). */
+    mobileRendererVersion: string;
+    /**
+     * React Native version the preview image was built with. Top-level canonical
+     * value the SelfHelp Manager gates a plugin's `compatibility.reactNative`
+     * range against (the `builtFrom.reactNative` provenance field mirrors it).
+     */
+    reactNativeVersion?: string;
+    /**
+     * Expo SDK version the preview image was built with. Gated against a plugin's
+     * `compatibility.expoSdk` range (mirrors `builtFrom.expoSdk`).
+     */
+    expoSdkVersion?: string;
+    /** Curated plugin mobile packages baked into the image. */
+    bundledPlugins: BundledPluginRef[];
+    security: SignatureBlock;
+    blocked?: boolean;
+}
+
 export interface PluginRelease {
     kind: 'selfhelp-plugin-release';
     id: string;
     version: string;
     channel: ReleaseChannel;
     official: boolean;
-    compatibility: { core: string; pluginApi: string };
+    /**
+     * Compatibility ranges the host must satisfy. `mobile` (additive) is the
+     * mobile-renderer axis: the range of host `mobileRendererVersion` the
+     * plugin's mobile package supports (parallel to `pluginApi`). `reactNative`
+     * and `expoSdk` (additive) are gated against the resolved
+     * `selfhelp-mobile-preview` image's `reactNativeVersion` / `expoSdkVersion`.
+     * All three are absent for web-only plugins.
+     */
+    compatibility: { core: string; pluginApi: string; mobile?: string; reactNative?: string; expoSdk?: string };
     dependencies?: { plugins: { id: string; range: string }[] };
     artifacts: { manifestUrl: string; archiveUrl: string; sha256: string };
     security: SignatureBlock;

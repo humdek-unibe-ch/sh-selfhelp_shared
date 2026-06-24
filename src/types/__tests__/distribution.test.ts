@@ -10,6 +10,7 @@ import type {
     AdvisoryFeed,
     CompatibilityRules,
     CoreRelease,
+    MobilePreviewRelease,
     PluginRelease,
     RegistryIndex,
 } from '../distribution';
@@ -29,7 +30,7 @@ function readExample(name: string): Record<string, unknown> {
 const SPEC: Record<string, { required: string[]; optional?: string[]; kind?: string }> = {
     'registry-index.json': {
         required: ['schemaVersion', 'requiresManager', 'publishedAt', 'baseUrl', 'publisher', 'core', 'frontend', 'scheduler', 'worker', 'plugins'],
-        optional: ['advisoriesUrl', 'compatibilityUrl', 'trustedKeysUrl'],
+        optional: ['mobilePreview', 'advisoriesUrl', 'compatibilityUrl', 'trustedKeysUrl'],
     },
     'core-release.json': {
         kind: 'selfhelp-core-release',
@@ -164,5 +165,58 @@ describe('distribution contracts compile and are usable', () => {
         expect(plugin.official).toBe(true);
         expect(advisories.advisories[0]?.blocked).toBe(true);
         expect(compatibility.rules[0]?.runtime.mysql.recommendedImage).toBe('mysql:8.4');
+    });
+
+    it('types a mobile-preview release with bundled plugins + renderer version', () => {
+        const preview: MobilePreviewRelease = {
+            kind: 'selfhelp-mobile-preview-release',
+            id: 'selfhelp-mobile-preview-0.2.0',
+            version: '0.2.0',
+            channel: 'stable',
+            image: 'ghcr.io/humdek-unibe-ch/selfhelp-mobile-preview:0.2.0',
+            digest: 'sha256:abc',
+            backendCompatibility: { requiredCoreRange: '>=0.1.0 <0.2.0', requiredApiVersion: '0.1.0' },
+            mobileRendererVersion: '0.1.0',
+            bundledPlugins: [
+                {
+                    id: 'sh2-shp-survey-js',
+                    version: '0.2.23',
+                    mobilePackage: '@humdek/sh2-shp-survey-js-mobile',
+                    mobilePackageVersion: '0.2.23',
+                },
+            ],
+            security: { signature: 'sig', keyId: 'selfhelp-dev-fixture' },
+        };
+        // Index can carry the additive mobilePreview ref array; a plugin can
+        // declare the additive compatibility.mobile axis.
+        const index: RegistryIndex = {
+            schemaVersion: '1.1',
+            requiresManager: '>=0.1.0',
+            publishedAt: '2026-06-23T12:00:00Z',
+            baseUrl: 'https://example/',
+            publisher: { name: 'SelfHelp', url: 'https://example/' },
+            core: [],
+            frontend: [],
+            scheduler: [],
+            worker: [],
+            plugins: [],
+            mobilePreview: [
+                { id: preview.id, version: preview.version, channel: 'stable', releaseUrl: 'releases/mobile-preview/x.json' },
+            ],
+        };
+        const plugin: PluginRelease = {
+            kind: 'selfhelp-plugin-release',
+            id: 'sh2-shp-survey-js',
+            version: '0.2.23',
+            channel: 'stable',
+            official: true,
+            compatibility: { core: '>=0.1.0 <0.2.0', pluginApi: '0.1.0', mobile: '>=0.1.0 <0.2.0' },
+            artifacts: { manifestUrl: 'm', archiveUrl: 'a', sha256: 'sha256:0' },
+            security: { signature: 'sig', keyId: 'selfhelp-dev-fixture' },
+        };
+        expect(preview.bundledPlugins[0]?.mobilePackage).toBe('@humdek/sh2-shp-survey-js-mobile');
+        expect(preview.mobileRendererVersion).toBe('0.1.0');
+        expect(index.mobilePreview?.[0]?.version).toBe('0.2.0');
+        expect(plugin.compatibility.mobile).toBe('>=0.1.0 <0.2.0');
     });
 });

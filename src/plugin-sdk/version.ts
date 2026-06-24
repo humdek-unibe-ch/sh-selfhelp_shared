@@ -16,6 +16,24 @@ SPDX-License-Identifier: MPL-2.0
  */
 export const PLUGIN_API_VERSION = '0.1.0' as const;
 
+/**
+ * Mobile renderer contract version. This is the SECOND, mobile-only
+ * compatibility axis (independent of `PLUGIN_API_VERSION`): it versions the
+ * mobile plugin rendering surface — the `registerMobile()` shape, `IStyleProps`
+ * / `TPluginStyleImplMap`, and the mobile host SDK primitives — that a plugin's
+ * mobile npm package compiles against.
+ *
+ * The mobile app and the `selfhelp-mobile-preview` image advertise this value
+ * (in `version.json` + the signed `mobile-preview-release.json`). A plugin
+ * declares the range it supports in `plugin.json` under `compatibility.mobile`;
+ * the SelfHelp Manager gates the plugin against the selected preview image's
+ * advertised `mobileRendererVersion` using {@see isMobileRendererCompatible}.
+ *
+ * Bump rules mirror the SDK contract: patch = additive fix, minor = additive
+ * renderer feature, major = breaking mobile renderer change.
+ */
+export const MOBILE_RENDERER_VERSION = '0.1.0' as const;
+
 export interface ISemver {
     major: number;
     minor: number;
@@ -136,6 +154,26 @@ export function assertPluginApiVersion(required: string): void {
         throw new Error(
             `[plugin-sdk] host SDK too old for plugin: plugin wants '${required}', host is '${PLUGIN_API_VERSION}'.`,
         );
+    }
+}
+
+/**
+ * Non-throwing satisfaction check for the mobile-renderer axis: returns true
+ * when the host's `mobileRendererVersion` falls inside the plugin's declared
+ * `compatibility.mobile` range. Used by the SelfHelp Manager preflight to gate
+ * an enabled plugin's mobile package against the selected preview image, and by
+ * the mobile/preview runtime to skip an incompatible plugin instead of crashing.
+ * An empty/undefined range is treated as "no mobile support declared" → false.
+ */
+export function isMobileRendererCompatible(
+    requiredRange: string | undefined,
+    host: string = MOBILE_RENDERER_VERSION,
+): boolean {
+    if (!requiredRange) return false;
+    try {
+        return satisfiesSemverRange(host, requiredRange);
+    } catch {
+        return false;
     }
 }
 

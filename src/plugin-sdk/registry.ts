@@ -84,6 +84,12 @@ export interface IPluginRelease {
         core: string;
         /** Semver range of host plugin-API versions this plugin runs on. */
         pluginApi: string;
+        /**
+         * Semver range of the host mobile renderer contract
+         * (`mobileRendererVersion`) this plugin's mobile package supports.
+         * Additive; absent for web-only plugins.
+         */
+        mobile?: string;
     };
     /** Optional other-plugin requirements consumed by the resolver. */
     dependencies?: {
@@ -132,6 +138,11 @@ export interface IPluginRegistry {
     worker: IRegistryReleaseRef[];
     /** Plugin release refs (CMS-installed) — multi-version, one ref per published version. */
     plugins: IRegistryReleaseRef[];
+    /**
+     * Mobile-preview web image release refs (Manager-installed). Additive in
+     * registry `schemaVersion` 1.1 — older managers ignore the unknown array.
+     */
+    mobilePreview?: IRegistryReleaseRef[];
     /** Optional path to the security advisory feed. */
     advisoriesUrl?: string;
     /** Optional path to the cross-component compatibility feed. */

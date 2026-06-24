@@ -46,6 +46,14 @@ export interface IPluginManifestCompatibility {
     reactNative?: string;
     /** SemVer range for Expo SDK. */
     expoSdk?: string;
+    /**
+     * SemVer range for the host mobile renderer contract
+     * (`MOBILE_RENDERER_VERSION`) the plugin's mobile package supports. The
+     * SelfHelp Manager gates a plugin's mobile package against the selected
+     * `selfhelp-mobile-preview` image's advertised `mobileRendererVersion`.
+     * Absent for web-only plugins.
+     */
+    mobile?: string;
 }
 
 export interface IPluginManifestDependency {
