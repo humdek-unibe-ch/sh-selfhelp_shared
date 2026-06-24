@@ -14,6 +14,7 @@ SPDX-License-Identifier: MPL-2.0
 import { describe, expect, it } from 'vitest';
 import {
     PREVIEW_BRIDGE_MESSAGE,
+    arePreviewPreferencesEqual,
     isPreviewBridgeMessage,
     previewKeywordFromPath,
     type TPreviewBridgeMessage,
@@ -54,6 +55,51 @@ describe('isPreviewBridgeMessage', () => {
         ).toBe(true);
     });
 
+    it('accepts a shell->frame set-preferences command (theme + locale)', () => {
+        const msg: TPreviewBridgeMessage = {
+            type: PREVIEW_BRIDGE_MESSAGE.SET_PREFERENCES,
+            preferences: { colorScheme: 'dark', locale: 'de-CH' },
+        };
+        expect(isPreviewBridgeMessage(msg)).toBe(true);
+        // `auto` scheme + unknown locale (null) is valid too.
+        expect(
+            isPreviewBridgeMessage({
+                type: PREVIEW_BRIDGE_MESSAGE.SET_PREFERENCES,
+                preferences: { colorScheme: 'auto', locale: null },
+            }),
+        ).toBe(true);
+    });
+
+    it('accepts a frame->shell preferences-changed message', () => {
+        const msg: TPreviewBridgeMessage = {
+            type: PREVIEW_BRIDGE_MESSAGE.PREFERENCES_CHANGED,
+            source: 'mobile',
+            preferences: { colorScheme: 'light', locale: 'en-GB' },
+        };
+        expect(isPreviewBridgeMessage(msg)).toBe(true);
+    });
+
+    it('rejects preference messages with an invalid scheme or missing payload', () => {
+        // unknown colour scheme
+        expect(
+            isPreviewBridgeMessage({
+                type: PREVIEW_BRIDGE_MESSAGE.SET_PREFERENCES,
+                preferences: { colorScheme: 'sepia', locale: 'de-CH' },
+            }),
+        ).toBe(false);
+        // preferences-changed without a source
+        expect(
+            isPreviewBridgeMessage({
+                type: PREVIEW_BRIDGE_MESSAGE.PREFERENCES_CHANGED,
+                preferences: { colorScheme: 'dark', locale: null },
+            }),
+        ).toBe(false);
+        // missing payload entirely
+        expect(
+            isPreviewBridgeMessage({ type: PREVIEW_BRIDGE_MESSAGE.SET_PREFERENCES }),
+        ).toBe(false);
+    });
+
     it('rejects foreign / malformed messages so cross-frame noise is ignored', () => {
         expect(isPreviewBridgeMessage(null)).toBe(false);
         expect(isPreviewBridgeMessage('selfhelp-preview:navigate')).toBe(false);
@@ -74,6 +120,45 @@ describe('isPreviewBridgeMessage', () => {
         expect(
             isPreviewBridgeMessage({ type: PREVIEW_BRIDGE_MESSAGE.NAVIGATE, keyword: 5 }),
         ).toBe(false);
+    });
+});
+
+describe('arePreviewPreferencesEqual (loop guard)', () => {
+    it('treats same scheme + locale as equal so an echo is skipped', () => {
+        expect(
+            arePreviewPreferencesEqual(
+                { colorScheme: 'dark', locale: 'de-CH' },
+                { colorScheme: 'dark', locale: 'de-CH' },
+            ),
+        ).toBe(true);
+        expect(
+            arePreviewPreferencesEqual(
+                { colorScheme: 'auto', locale: null },
+                { colorScheme: 'auto', locale: null },
+            ),
+        ).toBe(true);
+    });
+
+    it('treats a differing scheme or locale as not equal so the change propagates', () => {
+        expect(
+            arePreviewPreferencesEqual(
+                { colorScheme: 'dark', locale: 'de-CH' },
+                { colorScheme: 'light', locale: 'de-CH' },
+            ),
+        ).toBe(false);
+        expect(
+            arePreviewPreferencesEqual(
+                { colorScheme: 'dark', locale: 'de-CH' },
+                { colorScheme: 'dark', locale: 'en-GB' },
+            ),
+        ).toBe(false);
+    });
+
+    it('treats a null/undefined side as not equal (no last value yet → always emit)', () => {
+        const prefs = { colorScheme: 'light', locale: 'en-GB' } as const;
+        expect(arePreviewPreferencesEqual(null, prefs)).toBe(false);
+        expect(arePreviewPreferencesEqual(prefs, undefined)).toBe(false);
+        expect(arePreviewPreferencesEqual(null, null)).toBe(false);
     });
 });
 

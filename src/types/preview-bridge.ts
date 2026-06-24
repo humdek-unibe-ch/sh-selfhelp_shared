@@ -11,10 +11,12 @@ SPDX-License-Identifier: MPL-2.0
  * The shell owns the canonical preview page. Each frame runs a small bridge that
  * (a) reports its in-app navigations up to the shell and (b) accepts a
  * "navigate to keyword" command down from the shell, so clicking a link in one
- * frame keeps the other frame on the same page. The shell prevents sync loops
- * with a per-frame "expected keyword" guard (it ignores the echo of a command it
- * just sent). See the frontend `LivePreview` shell + `PreviewShellBridge` and the
- * mobile `PreviewSyncBridge`.
+ * frame keeps the other frame on the same page. The same channel also carries
+ * the shared colour-scheme + language preferences both ways (SET_PREFERENCES
+ * down, PREFERENCES_CHANGED up) so the two panes stay in the same theme/locale.
+ * The shell prevents sync loops with a per-frame "expected value" guard (it
+ * ignores the echo of a command it just sent). See the frontend `LivePreview`
+ * shell + `PreviewShellBridge` and the mobile `PreviewSyncBridge`.
  *
  * This module is the SINGLE SOURCE OF TRUTH for the message `type` strings, the
  * activation/origin query-param names, the payload shapes, and the runtime type
@@ -29,6 +31,25 @@ SPDX-License-Identifier: MPL-2.0
 
 /** Which embedded preview frame a bridge message refers to. */
 export type TPreviewFrameSource = 'web' | 'mobile';
+
+/**
+ * Three-way colour-scheme choice, shared VERBATIM across both panes — it maps
+ * 1:1 onto the web's Mantine `useMantineColorScheme` and the mobile theme store
+ * (`'auto'` = follow the OS on both).
+ */
+export type TPreviewColorScheme = 'light' | 'dark' | 'auto';
+
+/**
+ * The shared, cross-pane preview preferences. `locale` (e.g. `de-CH`) is the
+ * cross-platform language key — each pane maps it to its own language id from
+ * its languages list; `null` means "unknown / leave as-is". Carried by both the
+ * shell→frame {@link IPreviewSetPreferencesCommand} and the frame→shell
+ * {@link IPreviewPreferencesChangedMessage} so theme + language stay in sync.
+ */
+export interface IPreviewPreferences {
+    colorScheme: TPreviewColorScheme;
+    locale: string | null;
+}
 
 /**
  * Query param the shell appends to a frame URL to ACTIVATE its bridge
@@ -54,6 +75,13 @@ export const PREVIEW_BRIDGE_MESSAGE = {
     NAVIGATED: 'selfhelp-preview:navigated',
     /** shell → frame: navigate the frame to a CMS keyword (soft, no reload). */
     NAVIGATE: 'selfhelp-preview:navigate',
+    /**
+     * shell → frame: apply the shared colour-scheme + language preferences (no
+     * reload), so the web pane and the mobile frame stay in the same theme/locale.
+     */
+    SET_PREFERENCES: 'selfhelp-preview:set-preferences',
+    /** frame → shell: the user changed the colour scheme / language in the frame. */
+    PREFERENCES_CHANGED: 'selfhelp-preview:preferences-changed',
 } as const;
 
 export type TPreviewBridgeMessageType =
@@ -68,8 +96,8 @@ export interface IPreviewReadyMessage {
 /**
  * frame → shell: the frame moved to a new page. `keyword` is the CMS keyword of
  * the current page (the cross-platform sync unit), or `null` for home / a
- * non-CMS location. `locale` is the frame's active locale when known — a
- * read-only toolbar indicator; locales are NOT cross-synced.
+ * non-CMS location. `locale` is the frame's active locale when known (a toolbar
+ * indicator); active cross-pane language sync rides {@link PREVIEW_BRIDGE_MESSAGE.PREFERENCES_CHANGED}.
  */
 export interface IPreviewNavigatedMessage {
     type: typeof PREVIEW_BRIDGE_MESSAGE.NAVIGATED;
@@ -90,11 +118,46 @@ export interface IPreviewNavigateCommand {
     keyword: string | null;
 }
 
+/**
+ * shell → frame: apply the shared colour-scheme + language {@link IPreviewPreferences}
+ * with NO reload, so a theme/language change in one pane (or the toolbar) is
+ * mirrored in the other. Idempotent — re-applying the current values is a no-op.
+ */
+export interface IPreviewSetPreferencesCommand {
+    type: typeof PREVIEW_BRIDGE_MESSAGE.SET_PREFERENCES;
+    preferences: IPreviewPreferences;
+}
+
+/**
+ * frame → shell: the user changed the colour scheme and/or language inside the
+ * frame; the shell applies it to the other pane. The shell guards against the
+ * echo of a value it just pushed so the two panes never ping-pong.
+ */
+export interface IPreviewPreferencesChangedMessage {
+    type: typeof PREVIEW_BRIDGE_MESSAGE.PREFERENCES_CHANGED;
+    source: TPreviewFrameSource;
+    preferences: IPreviewPreferences;
+}
+
 /** Every message that can cross the preview bridge, in either direction. */
 export type TPreviewBridgeMessage =
     | IPreviewReadyMessage
     | IPreviewNavigatedMessage
-    | IPreviewNavigateCommand;
+    | IPreviewNavigateCommand
+    | IPreviewSetPreferencesCommand
+    | IPreviewPreferencesChangedMessage;
+
+/** Runtime guard for the shared preferences payload. */
+function isPreviewPreferences(value: unknown): value is IPreviewPreferences {
+    if (typeof value !== 'object' || value === null) return false;
+    const record = value as Record<string, unknown>;
+    return (
+        (record.colorScheme === 'light' ||
+            record.colorScheme === 'dark' ||
+            record.colorScheme === 'auto') &&
+        (typeof record.locale === 'string' || record.locale === null)
+    );
+}
 
 /**
  * Runtime guard: is `value` a well-formed preview-bridge message? Use it on the
@@ -115,9 +178,30 @@ export function isPreviewBridgeMessage(value: unknown): value is TPreviewBridgeM
             );
         case PREVIEW_BRIDGE_MESSAGE.NAVIGATE:
             return typeof record.keyword === 'string' || record.keyword === null;
+        case PREVIEW_BRIDGE_MESSAGE.SET_PREFERENCES:
+            return isPreviewPreferences(record.preferences);
+        case PREVIEW_BRIDGE_MESSAGE.PREFERENCES_CHANGED:
+            return (
+                (record.source === 'web' || record.source === 'mobile') &&
+                isPreviewPreferences(record.preferences)
+            );
         default:
             return false;
     }
+}
+
+/**
+ * Loop-guard equality for the shared preferences. Both bridges keep the last
+ * value they pushed to / received from the other pane and skip re-emitting (or
+ * re-applying) an equal one, so a theme/language change never ping-pongs. Shared
+ * so the two panes compare preferences identically.
+ */
+export function arePreviewPreferencesEqual(
+    a: IPreviewPreferences | null | undefined,
+    b: IPreviewPreferences | null | undefined,
+): boolean {
+    if (!a || !b) return false;
+    return a.colorScheme === b.colorScheme && a.locale === b.locale;
 }
 
 /**

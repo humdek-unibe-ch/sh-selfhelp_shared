@@ -9,6 +9,26 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.15.3
+
+**Live Preview shared theme + language sync** — extends the bridge contract so a
+colour-scheme / language change in either preview pane (the inline web pane or
+the embedded mobile frame) is mirrored in the other. Additive only — two new
+message types + payload — so `^1.15.x` consumers are unaffected; the frontend
+(`>=0.1.39`) and mobile (`>=0.1.17`) Live Preview adopt it.
+
+### Added (additive, non-breaking)
+
+- **`types/preview-bridge.ts`** new exports:
+  - message types `PREVIEW_BRIDGE_MESSAGE.SET_PREFERENCES` (shell → frame) and
+    `PREVIEW_BRIDGE_MESSAGE.PREFERENCES_CHANGED` (frame → shell);
+  - the shared payload `IPreviewPreferences` (`colorScheme` +
+    cross-platform `locale`) and `TPreviewColorScheme` (`light` / `dark` /
+    `auto`, 1:1 with Mantine + the mobile theme store);
+  - the message shapes `IPreviewSetPreferencesCommand` /
+    `IPreviewPreferencesChangedMessage`, both added to the `TPreviewBridgeMessage`
+    union and validated by `isPreviewBridgeMessage`. Covered by the bridge tests.
+
 ## v1.15.2
 
 **Live Preview bridge contract** — the `postMessage` protocol that keeps the CMS
