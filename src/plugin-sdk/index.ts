@@ -89,6 +89,14 @@ export type {
 export { definePlugin, defineMobilePlugin, definePluginRealtimeTopic } from './define';
 
 export type {
+    IMobileHostServices,
+    IMobileHostRequest,
+    IMobileHostResponse,
+    TMobileHostMethod,
+} from './host-services';
+export { setMobileHostServices, getMobileHostServices } from './host-services';
+
+export type {
     IRealtimeTransport,
     TRealtimeTransportFactory,
     IUsePluginRealtimeOptions,

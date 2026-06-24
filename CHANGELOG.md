@@ -9,6 +9,26 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.16.0
+
+**Mobile host-services bridge** — a typed contract so a plugin's mobile package
+routes protected API calls through the native host (which owns the access token,
+the single 401-refresh round-trip, and session-expiry) instead of injecting raw
+tokens into plugin/WebView code. Additive only — new `plugin-sdk` module +
+exports — so `^1.x` consumers are unaffected; the SurveyJS mobile WebView
+renderer (`@selfhelp/sh2-shp-survey-js-mobile`) and the mobile host adopt it.
+
+### Added (additive, non-breaking)
+
+- **`plugin-sdk/host-services.ts`** new exports (via `@selfhelp/shared/plugin-sdk`):
+  - `IMobileHostServices` (`apiBaseUrl()`, `getAccessToken()`, `request()`),
+    `IMobileHostRequest`, `IMobileHostResponse<TData>`, `TMobileHostMethod`;
+  - the singleton registry `setMobileHostServices()` / `getMobileHostServices()`
+    (host registers at boot; the plugin consumes at runtime).
+- **`MOBILE_RENDERER_VERSION`** bumped `0.1.0 -> 0.2.0` (additive renderer
+  feature). Plugins declaring `compatibility.mobile: ^0.2.0` gate against it
+  through `isMobileRendererCompatible`.
+
 ## v1.15.3
 
 **Live Preview shared theme + language sync** — extends the bridge contract so a

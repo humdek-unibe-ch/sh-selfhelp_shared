@@ -31,8 +31,13 @@ export const PLUGIN_API_VERSION = '0.1.0' as const;
  *
  * Bump rules mirror the SDK contract: patch = additive fix, minor = additive
  * renderer feature, major = breaking mobile renderer change.
+ *
+ * `0.2.0` adds the typed mobile host-services bridge (`IMobileHostServices` +
+ * `set/getMobileHostServices`) so a plugin's mobile package routes protected
+ * API calls through the native host (token + 401-refresh owned host-side)
+ * instead of injecting raw tokens — an additive renderer feature.
  */
-export const MOBILE_RENDERER_VERSION = '0.1.0' as const;
+export const MOBILE_RENDERER_VERSION = '0.2.0' as const;
 
 export interface ISemver {
     major: number;
