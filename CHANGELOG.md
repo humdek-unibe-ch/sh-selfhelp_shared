@@ -9,6 +9,31 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.15.2
+
+**Live Preview bridge contract** — the `postMessage` protocol that keeps the CMS
+**Live Preview** shell and its two embedded frames (web frontend +
+`selfhelp-mobile-preview`) on the same page. Clicking a link in one frame reports
+the navigation up to the shell, which drives the other frame to the same CMS
+keyword (with a per-frame loop guard). Additive only — new module + exports — so
+`^1.15.x` consumers are unaffected; the frontend (`>=0.1.35`) and mobile
+(`>=0.1.14`) Live Preview adopt it.
+
+### Added (additive, non-breaking)
+
+- **`types/preview-bridge.ts`** (re-exported from the root): the single source of
+  truth for the bridge protocol —
+  - message-type constants `PREVIEW_BRIDGE_MESSAGE` (`READY` / `NAVIGATED` /
+    `NAVIGATE`) + `TPreviewBridgeMessageType`;
+  - activation/origin query-param names `PREVIEW_SHELL_PARAM` (`previewShell`) and
+    `PREVIEW_PARENT_ORIGIN_PARAM` (`parentOrigin`);
+  - payload shapes `IPreviewReadyMessage`, `IPreviewNavigatedMessage`,
+    `IPreviewNavigateCommand`, the `TPreviewBridgeMessage` union, and
+    `TPreviewFrameSource`;
+  - runtime helpers `isPreviewBridgeMessage(value)` (defensive guard for
+    `event.data`) and `previewKeywordFromPath(path)` (web/mobile paths → the same
+    keyword sync unit). Covered by `types/__tests__/preview-bridge.test.ts`.
+
 ## v1.15.1
 
 Mobile preview RN/Expo provenance parity **plus the CMS-driven mobile-preview
