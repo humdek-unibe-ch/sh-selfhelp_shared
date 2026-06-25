@@ -36,8 +36,14 @@ export const PLUGIN_API_VERSION = '0.1.0' as const;
  * `set/getMobileHostServices`) so a plugin's mobile package routes protected
  * API calls through the native host (token + 401-refresh owned host-side)
  * instead of injecting raw tokens — an additive renderer feature.
+ *
+ * `0.3.0` adds the optional `IMobileHostServices.navigate(target, external)`
+ * host-navigation capability so a plugin can honour an in-content redirect
+ * through the host router (correct in the native app AND the CMS web preview
+ * iframe) instead of touching `window.location` — an additive renderer feature.
+ * It is optional, so older plugins/hosts stay compatible.
  */
-export const MOBILE_RENDERER_VERSION = '0.2.0' as const;
+export const MOBILE_RENDERER_VERSION = '0.3.0' as const;
 
 export interface ISemver {
     major: number;

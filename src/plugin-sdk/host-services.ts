@@ -92,6 +92,27 @@ export interface IMobileHostServices {
     getAccessToken(): string | null;
     /** Perform an authenticated request with host-managed 401 refresh. */
     request<TData = unknown>(req: IMobileHostRequest): Promise<IMobileHostResponse<TData>>;
+    /**
+     * Navigate the host app on the user's behalf to honour an in-content
+     * redirect (e.g. a survey's "redirect on completion") WITHOUT the plugin
+     * touching `window.location`. The host owns the router, so it routes an
+     * internal CMS page keyword / in-app path through its own navigation stack
+     * and only leaves the app for an explicit external URL. This keeps redirects
+     * correct in EVERY host surface — the native app AND the CMS web preview,
+     * where a raw `location` assignment would navigate (and break) the embedded
+     * iframe instead of the app.
+     *
+     * @param target   CMS page keyword / in-app path, or an absolute URL when
+     *                 `external` is true.
+     * @param external When true the target is a full off-app URL the host opens
+     *                 in the system browser (native) / a new tab (web) instead of
+     *                 routing inside the app. Defaults to false.
+     *
+     * Optional: a host registered by an older app binary (renderer < 0.3.0) may
+     * omit it, so a plugin MUST feature-detect (`if (host.navigate)`) and degrade
+     * gracefully rather than assume it exists.
+     */
+    navigate?(target: string, external?: boolean): void;
 }
 
 let registeredHostServices: IMobileHostServices | null = null;

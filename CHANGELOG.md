@@ -9,6 +9,27 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.17.0
+
+**Mobile host-navigation capability** — adds the optional
+`IMobileHostServices.navigate(target, external?)` so a plugin's mobile package can
+honour an in-content redirect (e.g. a survey's "redirect on completion") through
+the host router instead of touching `window.location`. The host owns the router,
+so it routes an internal CMS page keyword / in-app path through its own navigation
+stack and only leaves the app for an explicit external URL — keeping redirects
+correct in BOTH the native app and the CMS web preview iframe (where a raw
+`location` assignment navigates and breaks the embedded frame). Additive only —
+the method is optional, so `^1.x` consumers and older hosts/plugins are unaffected.
+
+### Added (additive, non-breaking)
+
+- **`IMobileHostServices.navigate?(target, external?)`** — optional host-owned
+  navigation; a plugin MUST feature-detect (`if (host.navigate)`) and degrade
+  gracefully on an older host.
+- **`MOBILE_RENDERER_VERSION`** bumped `0.2.0 -> 0.3.0` (additive renderer
+  feature). Plugins that need host navigation declare `compatibility.mobile`
+  including `0.3.0`; they gate against it through `isMobileRendererCompatible`.
+
 ## v1.16.0
 
 **Mobile host-services bridge** — a typed contract so a plugin's mobile package

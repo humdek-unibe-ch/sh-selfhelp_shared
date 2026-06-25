@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: 2026 Humdek, University of Bern
 SPDX-License-Identifier: MPL-2.0
 */
 /**
- * Mobile host-services bridge contract (mobile renderer axis 0.2.0).
+ * Mobile host-services bridge contract (mobile renderer axis 0.3.0).
  *
  * The shared package only owns the *contract* + the singleton registry; the
  * real 401-refresh / session-expired logic lives in the native host's
@@ -14,7 +14,9 @@ SPDX-License-Identifier: MPL-2.0
  *     plugin branch on lifecycle + refresh outcomes through a representative
  *     fake host that performs a single 401 -> refresh -> retry, and reports
  *     session-expired when the refresh itself fails,
- *   - `isMobileRendererCompatible` covers the bumped 0.2.0 host.
+ *   - `isMobileRendererCompatible` covers the bumped 0.3.0 host,
+ *   - the host may expose the optional `navigate()` capability a plugin
+ *     feature-detects to honour an in-content redirect through the host router.
  */
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -56,6 +58,29 @@ describe('mobile host-services singleton', () => {
         });
         setMobileHostServices(null);
         expect(getMobileHostServices()).toBeNull();
+    });
+
+    it('exposes the optional navigate() a renderer-0.3.0 host registers', () => {
+        const navigate = vi.fn();
+        setMobileHostServices({
+            apiBaseUrl: () => 'https://cms.example.com',
+            getAccessToken: () => null,
+            request: () => Promise.resolve({ ok: true, status: 200, data: null }),
+            navigate,
+        });
+        const host = getMobileHostServices();
+        expect(typeof host?.navigate).toBe('function');
+        host?.navigate?.('contact', false);
+        expect(navigate).toHaveBeenCalledWith('contact', false);
+    });
+
+    it('omits navigate on an older host so a plugin must feature-detect it', () => {
+        setMobileHostServices({
+            apiBaseUrl: () => 'https://cms.example.com',
+            getAccessToken: () => null,
+            request: () => Promise.resolve({ ok: true, status: 200, data: null }),
+        });
+        expect(getMobileHostServices()?.navigate).toBeUndefined();
     });
 });
 
@@ -128,9 +153,10 @@ describe('host request contract (host owns token + refresh)', () => {
 });
 
 describe('mobile renderer compatibility at the bumped version', () => {
-    it('advertises 0.2.0 and gates plugin compatibility.mobile ranges against it', () => {
-        expect(MOBILE_RENDERER_VERSION).toBe('0.2.0');
-        expect(isMobileRendererCompatible('^0.2.0')).toBe(true);
+    it('advertises 0.3.0 and gates plugin compatibility.mobile ranges against it', () => {
+        expect(MOBILE_RENDERER_VERSION).toBe('0.3.0');
+        expect(isMobileRendererCompatible('^0.3.0')).toBe(true);
+        expect(isMobileRendererCompatible('>=0.2.0')).toBe(true);
         expect(isMobileRendererCompatible('^0.1.0')).toBe(false);
     });
 });
