@@ -323,6 +323,10 @@ The SDK ships helpers that codify the rule:
 
 `assertPluginVersionSemantics(prev, next, hasMigration)` is exposed for CI and the host installer.
 
+### Version bump synchronization (bump it EVERYWHERE, in one change)
+
+A version bump is a SINGLE atomic change. When you publish a new `@selfhelp/shared`, update — in the same change — `package.json` `version`, the root `version` in `package-lock.json`, and `CHANGELOG.md`. When the change touches the mobile renderer contract, also bump `MOBILE_RENDERER_VERSION` in `src/plugin-sdk/version.ts` (consumers pin it: the mobile app and plugins assert against this exact value, so a stale constant breaks their CI). A JSON-Schema/type change is at least a **minor** bump (see "Schemas mirror, not duplicate"). Never bump one location and leave another stale — grep the old version to confirm.
+
 ### Plugin file paths (this repo)
 
 - `src/plugin-sdk/index.ts` and submodules — public SDK.
