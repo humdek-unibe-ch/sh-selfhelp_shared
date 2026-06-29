@@ -9,6 +9,22 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.17.1
+
+**`IShowUserInputStyle.field_labels`** — adds the optional header map
+`field_key => display_name` the backend now sends with `show-user-input` entries
+(host issue #56 v2). Rows are keyed by the immutable data-column `field_key`, so
+the renderer reads `field_labels` to show the human column label in the table
+header; renaming a column relabels the header automatically, and `fields_map`
+stays an explicit override. Additive only — the field is optional, so `^1.x`
+consumers and older hosts (which omit it) fall back to the raw key and are
+unaffected.
+
+### Added (additive, non-breaking)
+
+- **`IShowUserInputStyle.field_labels?: Record<string, string>`** — `field_key`
+  to `display_name` map for `show-user-input` headers (issue #56 v2).
+
 ## v1.17.0
 
 **Mobile host-navigation capability** — adds the optional
