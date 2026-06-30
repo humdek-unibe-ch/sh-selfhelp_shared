@@ -48,6 +48,29 @@ describe('transformPageData', () => {
         expect(result.children[0].navPosition).toBe(5);
     });
 
+    it('passes through the navigation icon + render fields', () => {
+        const result = transformPageData({
+            id: 1,
+            keyword: 'team',
+            icon: 'IconUsers',
+            mobile_icon: 'Users',
+            web_nav_render: 'hero-cards',
+            mobile_nav_render: 'bottom-tabs',
+        });
+        expect(result.icon).toBe('IconUsers');
+        expect(result.mobile_icon).toBe('Users');
+        expect(result.web_nav_render).toBe('hero-cards');
+        expect(result.mobile_nav_render).toBe('bottom-tabs');
+    });
+
+    it('defaults the navigation fields to null when absent', () => {
+        const result = transformPageData({ id: 1, keyword: 'plain' });
+        expect(result.icon).toBeNull();
+        expect(result.mobile_icon).toBeNull();
+        expect(result.web_nav_render).toBeNull();
+        expect(result.mobile_nav_render).toBeNull();
+    });
+
     it('defaults missing id/keyword safely', () => {
         const result = transformPageData({});
         expect(result.id).toBe(0);

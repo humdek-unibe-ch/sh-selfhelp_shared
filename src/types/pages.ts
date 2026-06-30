@@ -4,6 +4,7 @@ SPDX-License-Identifier: MPL-2.0
 */
 import type { IContentField } from './styles/base';
 import type { TStyleName } from './styles/unknown';
+import type { TWebNavRender, TMobileNavRender } from '../navigation/navRender';
 
 /**
  * Comprehensive page type system, single source of truth for both apps.
@@ -62,6 +63,14 @@ export interface IPageItem extends IBasePageInfo {
     id_page_access_types?: number;
     title?: string | null;
     description?: string | null;
+    /** Web menu icon (Tabler component name, e.g. `IconHome`). Page property field `icon`. */
+    icon?: string | null;
+    /** Mobile menu icon (curated lucide name, e.g. `Home`). Page property field `mobile_icon`. */
+    mobile_icon?: string | null;
+    /** How this page renders its children as navigation on web. Page property field `web_nav_render`. */
+    web_nav_render?: TWebNavRender | null;
+    /** How this page renders its children as navigation on mobile. Page property field `mobile_nav_render`. */
+    mobile_nav_render?: TMobileNavRender | null;
     children?: IPageItem[];
 }
 
@@ -75,6 +84,14 @@ export interface IPageContent {
     footer_position: number | null;
     title?: string | null;
     description?: string | null;
+    /** Web menu icon (Tabler component name). Mirrors the `icon` page property field. */
+    icon?: string | null;
+    /** Mobile menu icon (curated lucide name). Mirrors the `mobile_icon` page property field. */
+    mobile_icon?: string | null;
+    /** Web child-navigation render type. Mirrors the `web_nav_render` page property field. */
+    web_nav_render?: TWebNavRender | null;
+    /** Mobile child-navigation render type. Mirrors the `mobile_nav_render` page property field. */
+    mobile_nav_render?: TMobileNavRender | null;
     /**
      * Snake_case route params extracted from the matched public URL pattern
      * (e.g. `{ user_id: '42', token: 'abc' }` or `{ record_id: '7' }`). Present

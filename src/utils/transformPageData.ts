@@ -19,9 +19,18 @@ SPDX-License-Identifier: MPL-2.0
  * removed all legacy aliases (`parent`, `id_type`,
  * `id_pageAccessTypes`). The backend is the single source of canonical
  * keys; the transformer no longer accepts the legacy shapes.
+ *
+ * ROUTE METADATA (issue #30): this transformer deliberately does NOT carry
+ * `route_params` / `matched_url_pattern` / `canonical_url`. Those are
+ * resolve-time fields of a single page's full content (`IPageContent`, returned
+ * by `GET /pages/resolve`) and are consumed directly off that type. `IPageItem`
+ * is the navigation/menu projection of the page tree (keyword, url,
+ * nav/footer position, parent/children) and never participates in URL
+ * resolution, so adding a route passthrough here would be dead weight.
  */
 
 import type { IPageItem } from '../types/pages';
+import type { TWebNavRender, TMobileNavRender } from '../navigation/navRender';
 
 interface IRawPage {
     id?: number;
@@ -39,6 +48,10 @@ interface IRawPage {
     is_open_access?: number | boolean | null;
     title?: string | null;
     description?: string | null;
+    icon?: string | null;
+    mobile_icon?: string | null;
+    web_nav_render?: TWebNavRender | string | null;
+    mobile_nav_render?: TMobileNavRender | string | null;
     id_users?: number;
     acl_select?: 0 | 1;
     acl_insert?: 0 | 1;
@@ -76,6 +89,10 @@ export function transformPageData(apiPage: IRawPage): IPageItem {
         is_system: apiPage.is_system !== undefined ? toBool(apiPage.is_system) : undefined,
         title: apiPage.title ?? null,
         description: apiPage.description ?? null,
+        icon: apiPage.icon ?? null,
+        mobile_icon: apiPage.mobile_icon ?? null,
+        web_nav_render: (apiPage.web_nav_render as TWebNavRender | null) ?? null,
+        mobile_nav_render: (apiPage.mobile_nav_render as TMobileNavRender | null) ?? null,
         children: apiPage.children?.map(transformPageData) ?? [],
 
         id_users: apiPage.id_users,

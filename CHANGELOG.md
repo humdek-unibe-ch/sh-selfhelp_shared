@@ -9,6 +9,30 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.19.0
+
+**Navigation rendering + page icons contract (navigation pages)** — additive
+contracts for the configurable navigation-rendering model and the web/mobile
+page-icon fields. `IPageItem` and `IPageContent` (`src/types/pages.ts`) gain the
+optional `icon`, `mobile_icon`, `web_nav_render`, and `mobile_nav_render`
+fields, and `transformPageData` now passes them through. A new `navigation`
+module (`src/navigation/`) is exported from the package root with:
+
+- `TWebNavRender` (`header-dropdown | tabs | sidebar-drawer | hero-cards`) and
+  `TMobileNavRender` (`segmented-tabs | bottom-tabs | drawer | hero-cards`) plus
+  their value lists, defaults (`DEFAULT_WEB_NAV_RENDER` = `tabs`,
+  `DEFAULT_MOBILE_NAV_RENDER` = `segmented-tabs`, global defaults
+  `header-dropdown` / `bottom-tabs`), option metadata (`WEB_NAV_RENDER_OPTIONS`,
+  `MOBILE_NAV_RENDER_OPTIONS`), and `resolveWebNavRender` / `resolveMobileNavRender`.
+- The curated mobile icon set (`MOBILE_ICON_SET`, `MOBILE_ICON_NAMES`,
+  `DEFAULT_MOBILE_ICON`, `resolveMobileIcon`) — lucide names shared by the admin
+  picker and the mobile renderer so they never drift.
+- The shared menu-visibility predicate (`isMenuVisible`,
+  `getMenuVisibleChildren`, `isNavigationPage`) used by web + mobile menus and by
+  the automatic virtual-navigation decision.
+
+All additions are optional/new, so `^1.x` consumers are unaffected.
+
 ## v1.18.0
 
 **DB-driven public routing types (issue #30)** — additive contracts for the new
