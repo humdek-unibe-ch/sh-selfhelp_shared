@@ -75,7 +75,34 @@ export interface IPageContent {
     footer_position: number | null;
     title?: string | null;
     description?: string | null;
+    /**
+     * Snake_case route params extracted from the matched public URL pattern
+     * (e.g. `{ user_id: '42', token: 'abc' }` or `{ record_id: '7' }`). Present
+     * only when the page was resolved via `GET /pages/resolve`. Backend also
+     * exposes these to interpolation as `{{route.<name>}}`.
+     */
+    route_params?: Record<string, string>;
+    /** The `page_routes` pattern that matched (e.g. `/reset/{user_id}/{token}`). Resolve responses only. */
+    matched_url_pattern?: string | null;
+    /** The canonical active route pattern for the page, for canonical-link generation. Resolve responses only. */
+    canonical_url?: string | null;
     sections: IPageSectionWithFields[];
+}
+
+/**
+ * A public, parameterized route contract for a CMS page (issue #30). Mirrors a
+ * backend `page_routes` row. `path_pattern` uses Symfony route syntax
+ * (`/team/{record_id}`) and `requirements` maps each placeholder to a regex
+ * (`{ record_id: '\\d+' }`). Param names are snake_case and are NEVER remapped
+ * on export/import. Used by the admin page-routes editor and page export/import.
+ */
+export interface IPageRoute {
+    id?: number;
+    path_pattern: string;
+    requirements?: Record<string, string> | null;
+    is_canonical: boolean;
+    is_active: boolean;
+    priority: number;
 }
 
 export interface IPageFieldTranslation {

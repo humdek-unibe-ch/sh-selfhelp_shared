@@ -9,6 +9,19 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.18.0
+
+**DB-driven public routing types (issue #30)** — additive contracts for the new
+backend public-routing resolver. `IPageContent` (`src/types/pages.ts`) gains the
+optional route metadata `route_params` (`Record<string, string>`),
+`matched_url_pattern`, and `canonical_url`; a new `IResolvePageResponse`
+(`src/types/api/page.ts`) types the `GET /cms-api/v1/pages/resolve` payload; and
+`PAGES.RESOLVE` is added to the endpoint registry (`src/api/endpoints.ts`). The
+resolved dynamic URL params surface to interpolation as `{{route.<snake_case>}}`.
+
+All additions are optional/new, so `^1.x` consumers are unaffected. Pairs with
+core `0.1.31`, frontend `0.1.57`, and mobile `0.1.31`.
+
 ## v1.17.1
 
 **`IShowUserInputStyle.field_labels`** — adds the optional header map

@@ -40,6 +40,13 @@ export const ENDPOINTS = {
         BY_KEYWORD: (keyword: string): string =>
             `${API_VERSION_PREFIX}/pages/by-keyword/${encodeURIComponent(keyword)}`,
         BY_ID: (pageId: number): string => `${API_VERSION_PREFIX}/pages/${pageId}`,
+        /**
+         * DB-driven public path resolution (issue #30): maps a full public URL
+         * path (e.g. `/reset/42/abc`, `/team/7`) to a page payload + route
+         * params. `path` is sent URL-encoded as a query parameter.
+         */
+        RESOLVE: (path: string): string =>
+            `${API_VERSION_PREFIX}/pages/resolve?path=${encodeURIComponent(path)}`,
     },
     LANGUAGES: `${API_VERSION_PREFIX}/languages`,
     FORMS: {
