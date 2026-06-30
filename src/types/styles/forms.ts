@@ -498,5 +498,16 @@ export interface IShowUserInputStyle extends IBaseStyle {
     web_table_with_row_borders?: IContentField<string>;
     web_table_sticky_header?: IContentField<string>;
     web_table_caption_side?: IContentField<string>;
+    /**
+     * show-user-input rows, each keyed by the immutable data-column `field_key`
+     * (issue #56 v2). Header labels come from {@link field_labels}, not the keys.
+     */
     entries?: IShowUserInputEntry[];
+    /**
+     * Header map `field_key => display_name` for {@link entries} (issue #56 v2).
+     * Lets the table show the human column label while rows stay keyed by the
+     * stable `field_key`, so renaming a column relabels the header automatically.
+     * `fields_map` still overrides individual headers when set.
+     */
+    field_labels?: Record<string, string>;
 }
