@@ -11,8 +11,6 @@ describe('transformPageData', () => {
             id_pages: 7,
             keyword: 'qa-home',
             url: '/qa-home',
-            nav_position: 3,
-            footer_position: null,
             is_headless: 1,
             is_system: 0,
         });
@@ -20,15 +18,8 @@ describe('transformPageData', () => {
         expect(result.id).toBe(7);
         expect(result.id_pages).toBe(7);
         expect(result.keyword).toBe('qa-home');
-        expect(result.navPosition).toBe(3);
-        expect(result.footerPosition).toBeNull();
         expect(result.is_headless).toBe(true);
         expect(result.is_system).toBe(false);
-    });
-
-    it('prefers an explicit camelCase navPosition over the snake_case key', () => {
-        const result = transformPageData({ id: 1, keyword: 'k', navPosition: 9, nav_position: 1 });
-        expect(result.navPosition).toBe(9);
     });
 
     it('coerces boolean-like is_headless values (number/string/boolean)', () => {
@@ -41,34 +32,27 @@ describe('transformPageData', () => {
         const result = transformPageData({
             id: 1,
             keyword: 'parent',
-            children: [{ id_pages: 2, keyword: 'child', nav_position: 5 }],
+            children: [{ id_pages: 2, keyword: 'child' }],
         });
         expect(result.children).toHaveLength(1);
         expect(result.children[0].id).toBe(2);
-        expect(result.children[0].navPosition).toBe(5);
     });
 
-    it('passes through the navigation icon + render fields', () => {
+    it('passes through icon fields', () => {
         const result = transformPageData({
             id: 1,
             keyword: 'team',
             icon: 'IconUsers',
             mobile_icon: 'Users',
-            web_nav_render: 'hero-cards',
-            mobile_nav_render: 'bottom-tabs',
         });
         expect(result.icon).toBe('IconUsers');
         expect(result.mobile_icon).toBe('Users');
-        expect(result.web_nav_render).toBe('hero-cards');
-        expect(result.mobile_nav_render).toBe('bottom-tabs');
     });
 
-    it('defaults the navigation fields to null when absent', () => {
+    it('defaults icon fields to null when absent', () => {
         const result = transformPageData({ id: 1, keyword: 'plain' });
         expect(result.icon).toBeNull();
         expect(result.mobile_icon).toBeNull();
-        expect(result.web_nav_render).toBeNull();
-        expect(result.mobile_nav_render).toBeNull();
     });
 
     it('defaults missing id/keyword safely', () => {

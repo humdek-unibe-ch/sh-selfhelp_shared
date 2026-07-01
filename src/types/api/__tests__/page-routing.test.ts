@@ -23,8 +23,6 @@ describe('IPageContent route metadata (resolve responses)', () => {
             url: '/reset',
             parent_page_id: null,
             is_headless: true,
-            nav_position: null,
-            footer_position: null,
             route_params: { user_id: '42', token: 'abc.def~1' },
             matched_url_pattern: '/reset/{user_id}/{token}',
             canonical_url: '/reset',
@@ -44,8 +42,6 @@ describe('IPageContent route metadata (resolve responses)', () => {
             url: '/',
             parent_page_id: null,
             is_headless: false,
-            nav_position: 1,
-            footer_position: null,
             sections: [],
         };
 
@@ -67,8 +63,6 @@ describe('IPageContent route metadata (resolve responses)', () => {
                     url: '/team/7',
                     parent_page_id: null,
                     is_headless: false,
-                    nav_position: null,
-                    footer_position: null,
                     route_params: { record_id: '7' },
                     sections: [],
                 },

@@ -3,61 +3,79 @@ SPDX-FileCopyrightText: 2026 Humdek, University of Bern
 SPDX-License-Identifier: MPL-2.0
 */
 import { describe, it, expect } from 'vitest';
-import type { IPageItem } from '../../types/pages';
+import type { INavigationMenuItem, INavigationPayload } from '../navigationPayload';
 import {
-    DEFAULT_MOBILE_NAV_RENDER,
-    DEFAULT_WEB_NAV_RENDER,
-    isMobileNavRender,
-    isWebNavRender,
-    MOBILE_NAV_RENDER_OPTIONS,
-    resolveMobileNavRender,
-    resolveWebNavRender,
-    WEB_NAV_RENDER_OPTIONS,
-} from '../navRender';
+    getNavigationItemHref,
+    getNavigationItemLabel,
+    flattenNavigationMenuItems,
+} from '../navLinks';
+import { pageUrlToMobileRoute } from '../mobileRoute';
+import {
+    DEFAULT_WEB_HEADER_PRESET,
+    isWebHeaderPreset,
+    resolveWebHeaderPreset,
+    WEB_HEADER_PRESET_VALUES,
+} from '../headerPreset';
 import { DEFAULT_MOBILE_ICON, isMobileIconName, MOBILE_ICON_SET, resolveMobileIcon } from '../mobileIcons';
-import { getMenuVisibleChildren, isMenuVisible, isNavigationPage } from '../menuVisibility';
+import {
+    flattenMenuItems,
+    isPageOnMobileMenu,
+    isPageOnWebMenu,
+} from '../menuVisibility';
+import {
+    resolveHolderRedirectPath,
+    resolveMobileSegmentGroup,
+    resolveWebBranchNavGroup,
+} from '../branchNav';
+import { searchMenuPagesInPayload } from '../menuSearch';
 
-function page(partial: Partial<IPageItem>): IPageItem {
+function menuItem(partial: Partial<INavigationMenuItem>): INavigationMenuItem {
     return {
-        id: 0,
-        keyword: 'k',
-        url: null,
-        parent_page_id: null,
-        is_headless: false,
-        navPosition: null,
-        footerPosition: null,
+        id: 1,
+        item_type: 'page',
+        label: 'Team',
+        position: 10,
+        page: {
+            id: 9,
+            keyword: 'team',
+            url: '/team',
+            title: 'Team',
+        },
         ...partial,
     };
 }
 
-describe('navRender', () => {
-    it('validates web/mobile render values', () => {
-        expect(isWebNavRender('tabs')).toBe(true);
-        expect(isWebNavRender('bottom-tabs')).toBe(false); // mobile-only value
-        expect(isMobileNavRender('bottom-tabs')).toBe(true);
-        expect(isMobileNavRender('header-dropdown')).toBe(false); // web-only value
-        expect(isWebNavRender(null)).toBe(false);
+describe('navLinks', () => {
+    it('builds href from page url', () => {
+        expect(getNavigationItemHref(menuItem({}))).toBe('/team');
+        expect(getNavigationItemHref(menuItem({ page: { id: 1, keyword: 'home', url: '/', title: 'Home' } }))).toBe('/');
     });
 
-    it('resolves to the value when valid and falls back otherwise', () => {
-        expect(resolveWebNavRender('hero-cards')).toBe('hero-cards');
-        expect(resolveWebNavRender('nope')).toBe(DEFAULT_WEB_NAV_RENDER);
-        expect(resolveWebNavRender(null, 'header-dropdown')).toBe('header-dropdown');
-        expect(resolveMobileNavRender('drawer')).toBe('drawer');
-        expect(resolveMobileNavRender(undefined)).toBe(DEFAULT_MOBILE_NAV_RENDER);
+    it('flattens nested menu items', () => {
+        const root = menuItem({
+            children: [menuItem({ id: 2, label: 'Child' })],
+        });
+        expect(flattenNavigationMenuItems([root])).toHaveLength(2);
+        expect(getNavigationItemLabel(menuItem({ label: '', page: { id: 1, keyword: 'x', url: null, title: 'T' } }))).toBe('T');
     });
+});
 
-    it('option metadata covers every value with a label + description', () => {
-        for (const opt of WEB_NAV_RENDER_OPTIONS) {
-            expect(isWebNavRender(opt.value)).toBe(true);
-            expect(opt.label.length).toBeGreaterThan(0);
-            expect(opt.description.length).toBeGreaterThan(0);
-        }
-        for (const opt of MOBILE_NAV_RENDER_OPTIONS) {
-            expect(isMobileNavRender(opt.value)).toBe(true);
-            expect(opt.label.length).toBeGreaterThan(0);
-            expect(opt.description.length).toBeGreaterThan(0);
-        }
+describe('mobileRoute', () => {
+    it('maps canonical urls to expo keyword routes', () => {
+        expect(pageUrlToMobileRoute('/', 'home')).toBe('/index');
+        expect(pageUrlToMobileRoute('/about', 'about')).toBe('/about');
+        expect(pageUrlToMobileRoute('/parent/child', 'child')).toBe('/child');
+        expect(pageUrlToMobileRoute(null, 'profile')).toBe('/profile');
+    });
+});
+
+describe('headerPreset', () => {
+    it('validates and resolves web header presets', () => {
+        expect(isWebHeaderPreset('dropdown')).toBe(true);
+        expect(isWebHeaderPreset('nope')).toBe(false);
+        expect(resolveWebHeaderPreset('mega-menu')).toBe('mega-menu');
+        expect(resolveWebHeaderPreset(null)).toBe(DEFAULT_WEB_HEADER_PRESET);
+        expect(WEB_HEADER_PRESET_VALUES).toContain('double-dropdown');
     });
 });
 
@@ -77,30 +95,100 @@ describe('mobileIcons', () => {
     });
 });
 
-describe('menuVisibility', () => {
-    it('treats a page with a nav position and not headless as a menu page', () => {
-        expect(isMenuVisible(page({ navPosition: 1 }))).toBe(true);
-        expect(isMenuVisible(page({ navPosition: null }))).toBe(false);
-        expect(isMenuVisible(page({ navPosition: 1, is_headless: true }))).toBe(false);
+function navigationPayload(items: INavigationMenuItem[]): INavigationPayload {
+    return {
+        menus: {
+            web_header: { key: 'web_header', platform: 'web', surface: 'header', items },
+            web_footer: { key: 'web_footer', platform: 'web', surface: 'footer', items: [] },
+            mobile_drawer: { key: 'mobile_drawer', platform: 'mobile', surface: 'drawer', items },
+            mobile_bottom_tabs: { key: 'mobile_bottom_tabs', platform: 'mobile', surface: 'bottom_tabs', items: [] },
+        },
+        startup: {
+            web_guest_start_page: { keyword: 'home', url: '/', title: 'Home' },
+            web_user_start_page: { keyword: 'home', url: '/', title: 'Home' },
+            web_user_start_mode: 'fixed_page',
+            mobile_guest_start_page: { keyword: 'home', url: '/', title: 'Home' },
+            mobile_user_start_page: { keyword: 'home', url: '/', title: 'Home' },
+            mobile_user_start_mode: 'fixed_page',
+            mobile_start_page_source: 'same_as_web',
+        },
+        search: {
+            mode: 'content_index',
+            min_chars: 2,
+            result_limit: 8,
+            default_visibility: 'all_accessible_pages',
+            field_policy: 'all_display_text',
+        },
+    };
+}
+
+describe('menu membership + branch nav', () => {
+    const parent = menuItem({
+        id: 10,
+        page: { id: 100, keyword: 'parent', url: '/parent', title: 'Parent' },
+        children: [
+            menuItem({ id: 11, page: { id: 101, keyword: 'child-a', url: '/parent/child-a', title: 'A' } }),
+            menuItem({ id: 12, page: { id: 102, keyword: 'child-b', url: '/parent/child-b', title: 'B' } }),
+        ],
     });
 
-    it('returns only menu-visible children in nav order', () => {
-        const parent = page({
-            keyword: 'team',
-            navPosition: 1,
-            children: [
-                page({ keyword: 'b', navPosition: 2 }),
-                page({ keyword: 'a', navPosition: 1 }),
-                page({ keyword: 'hidden', navPosition: null }),
-                page({ keyword: 'headless', navPosition: 3, is_headless: true }),
-            ],
-        });
-        const visible = getMenuVisibleChildren(parent);
-        expect(visible.map((child) => child.keyword)).toEqual(['a', 'b']);
-        expect(isNavigationPage(parent)).toBe(true);
+    it('detects page membership in resolved menus', () => {
+        const payload = navigationPayload([parent]);
+        expect(isPageOnWebMenu(payload, 100)).toBe(true);
+        expect(isPageOnWebMenu(payload, 999)).toBe(false);
+        expect(isPageOnMobileMenu(payload, 101)).toBe(true);
     });
 
-    it('a leaf page (no menu-visible children) is not a navigation page', () => {
-        expect(isNavigationPage(page({ navPosition: 1, children: [] }))).toBe(false);
+    it('resolves child segment group for branch navigation', () => {
+        const payload = navigationPayload([parent]);
+        const segments = resolveWebBranchNavGroup(payload, 100);
+        expect(segments?.map((s) => s.keyword)).toEqual(['child-a', 'child-b']);
+    });
+
+    it('redirects holder pages to the first menu-visible child', () => {
+        const payload = navigationPayload([parent]);
+        expect(resolveHolderRedirectPath(payload, 100, 'web', false)).toBe('/parent/child-a');
+        expect(resolveHolderRedirectPath(payload, 100, 'web', true)).toBeNull();
+    });
+
+    it('flattens menu items for admin helpers', () => {
+        expect(flattenMenuItems([parent])).toHaveLength(3);
+    });
+});
+
+describe('mobile segment group', () => {
+    it('prepends self segment when tab page has content and children', () => {
+        const payload = navigationPayload([
+            menuItem({
+                id: 1,
+                page: { id: 5, keyword: 'root', url: '/root', title: 'Root', has_content: true },
+                children: [
+                    menuItem({
+                        id: 2,
+                        page: { id: 6, keyword: 'one', url: '/root/one', title: 'One' },
+                    }),
+                    menuItem({
+                        id: 3,
+                        page: { id: 7, keyword: 'two', url: '/root/two', title: 'Two' },
+                    }),
+                ],
+            }),
+        ]);
+        const segments = resolveMobileSegmentGroup(payload, 5);
+        expect(segments?.map((s) => s.keyword)).toEqual(['root', 'one', 'two']);
+    });
+});
+
+describe('menu search', () => {
+    it('filters resolved menu pages client-side', () => {
+        const payload = navigationPayload([
+            menuItem({
+                id: 1,
+                page: { id: 10, keyword: 'about', url: '/about', title: 'About us' },
+            }),
+        ]);
+        const hits = searchMenuPagesInPayload(payload, 'about');
+        expect(hits).toHaveLength(1);
+        expect(hits[0]?.keyword).toBe('about');
     });
 });
