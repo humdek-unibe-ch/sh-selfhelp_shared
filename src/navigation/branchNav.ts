@@ -214,3 +214,48 @@ export function resolveHolderRedirectPath(
 
     return target.keyword === 'home' ? '/' : `/${target.keyword}`;
 }
+
+/**
+ * Returns the top-level bottom-tab item that owns a nested page, if any.
+ */
+export function findNearestBottomTabMenuItemForPage(
+    tabs: INavigationMenuItem[],
+    pageId: number,
+): INavigationMenuItem | null {
+    for (const tab of tabs) {
+        if (tab.page?.id === pageId) {
+            return tab;
+        }
+        if (findMenuItemByPageId(tab.children ?? [], pageId)) {
+            return tab;
+        }
+    }
+
+    return null;
+}
+
+function navigationPathMatches(item: INavigationMenuItem, pathname: string): boolean {
+    const href = pageUrlToMobileRoute(item.page?.url ?? null, item.page?.keyword ?? '');
+    if (pathname === href) {
+        return true;
+    }
+    if (href !== '/' && pathname.startsWith(`${href}/`)) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Active state for a flat bottom-tab item, including descendants on the current path.
+ */
+export function isBottomTabMenuItemActive(item: INavigationMenuItem, pathname: string): boolean {
+    if (navigationPathMatches(item, pathname)) {
+        return true;
+    }
+
+    return (item.children ?? []).some(
+        (child) => navigationPathMatches(child, pathname)
+            || isBottomTabMenuItemActive(child, pathname),
+    );
+}

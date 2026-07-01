@@ -2,7 +2,7 @@
 SPDX-FileCopyrightText: 2026 Humdek, University of Bern
 SPDX-License-Identifier: MPL-2.0
 */
-import type { INavigationMenu, INavigationMenuItem, TNavigationMenuKey } from './navigationPayload';
+import type { INavigationMenu, INavigationMenuItem, INavigationPayload, INavigationResolvedPageRef, TNavigationMenuKey } from './navigationPayload';
 
 function flattenItems(items: INavigationMenuItem[]): INavigationMenuItem[] {
     const out: INavigationMenuItem[] = [];
@@ -59,5 +59,31 @@ export function findMenuItemByPageId(
             return item;
         }
     }
+    return null;
+}
+
+/** Resolved page metadata from any public menu tree (for holder redirects, etc.). */
+export function findPageRefInNavigationPayload(
+    payload: INavigationPayload,
+    pageId: number,
+): INavigationResolvedPageRef | null {
+    const menuKeys: TNavigationMenuKey[] = [
+        'web_header',
+        'web_footer',
+        'mobile_drawer',
+        'mobile_bottom_tabs',
+    ];
+
+    for (const key of menuKeys) {
+        const menu = payload.menus[key];
+        if (!menu?.items?.length) {
+            continue;
+        }
+        const item = findMenuItemByPageId(menu.items, pageId);
+        if (item?.page) {
+            return item.page;
+        }
+    }
+
     return null;
 }

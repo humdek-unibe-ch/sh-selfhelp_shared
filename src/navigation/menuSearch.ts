@@ -32,7 +32,8 @@ export function searchMenuPagesInPayload(
     limit = 8,
 ): IMenuSearchHit[] {
     const needle = query.trim().toLowerCase();
-    if (needle === '') {
+    const minChars = payload.search?.min_chars ?? 2;
+    if (needle === '' || needle.length < minChars) {
         return [];
     }
 

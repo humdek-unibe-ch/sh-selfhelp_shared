@@ -22,7 +22,10 @@ import {
     isPageOnMobileMenu,
     isPageOnWebMenu,
 } from '../menuVisibility';
+import { findPageRefInNavigationPayload } from '../menuMembership';
 import {
+    findNearestBottomTabMenuItemForPage,
+    isBottomTabMenuItemActive,
     resolveHolderRedirectPath,
     resolveMobileSegmentGroup,
     resolveWebBranchNavGroup,
@@ -190,5 +193,63 @@ describe('menu search', () => {
         const hits = searchMenuPagesInPayload(payload, 'about');
         expect(hits).toHaveLength(1);
         expect(hits[0]?.keyword).toBe('about');
+    });
+
+    it('honours payload.search.min_chars before returning hits', () => {
+        const payload = navigationPayload([
+            menuItem({
+                id: 1,
+                page: { id: 10, keyword: 'about', url: '/about', title: 'About us' },
+            }),
+        ]);
+        payload.search.min_chars = 4;
+
+        expect(searchMenuPagesInPayload(payload, 'abo')).toHaveLength(0);
+        expect(searchMenuPagesInPayload(payload, 'about')).toHaveLength(1);
+    });
+});
+
+describe('page ref lookup', () => {
+    it('finds resolved page metadata across menu trees', () => {
+        const payload = navigationPayload([
+            menuItem({
+                id: 1,
+                page: { id: 42, keyword: 'team', url: '/team', title: 'Team', has_content: false },
+            }),
+        ]);
+        const ref = findPageRefInNavigationPayload(payload, 42);
+        expect(ref?.keyword).toBe('team');
+        expect(ref?.has_content).toBe(false);
+    });
+});
+
+describe('legacy nav-render exports', () => {
+    it('does not export removed web/mobile nav render option lists', async () => {
+        const mod = await import('../../index');
+        expect('WEB_NAV_RENDER_OPTIONS' in mod).toBe(false);
+        expect('MOBILE_NAV_RENDER_OPTIONS' in mod).toBe(false);
+        expect('TWebNavRender' in mod).toBe(false);
+        expect('TMobileNavRender' in mod).toBe(false);
+    });
+});
+
+describe('bottom tab active state', () => {
+    it('marks the nearest ancestor tab active for nested paths', () => {
+        const tabs = [
+            menuItem({
+                id: 1,
+                page: { id: 10, keyword: 'team', url: '/team', title: 'Team' },
+                children: [
+                    menuItem({
+                        id: 2,
+                        page: { id: 11, keyword: 'alice', url: '/team/alice', title: 'Alice' },
+                    }),
+                ],
+            }),
+        ];
+        expect(findNearestBottomTabMenuItemForPage(tabs, 11)?.page?.keyword).toBe('team');
+        expect(isBottomTabMenuItemActive(tabs[0], '/alice')).toBe(true);
+        expect(isBottomTabMenuItemActive(tabs[0], '/team')).toBe(true);
+        expect(isBottomTabMenuItemActive(tabs[0], '/other')).toBe(false);
     });
 });
