@@ -9,6 +9,18 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.21.0
+
+**Menu-builder navigation contract (breaking cleanup)** — replaces the page-level
+`web_nav_render` / `mobile_nav_render` model with first-class menu payloads and
+web header presets. The `navigation` module now exports `TWebHeaderPreset`,
+`INavigationPayload`, menu-tree helpers (`flattenMenuItems`,
+`isPageOnMobileMenu`, `isPageOnWebMenu`, `searchMenuPagesInPayload`),
+mobile branch navigation (`resolveMobileSegmentGroup` with self-segment support
+when a tab page has content), and `isOnAnyMobileMenuFromPayload`. The legacy
+`TWebNavRender` / `TMobileNavRender` types remain exported only for archived
+consumers; new work must use menu-builder contracts.
+
 ## v1.20.0
 
 **CMS-in-CMS modal contract (sizing + form/list actions)** — additive contracts
