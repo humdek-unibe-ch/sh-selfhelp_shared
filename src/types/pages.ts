@@ -80,6 +80,28 @@ export interface IPageContent {
     url: string | null;
     parent_page_id: number | null;
     is_headless: boolean;
+    /**
+     * When true, the web frontend renders this page's content inside a modal
+     * overlay (the page title becomes the modal header, with a close button)
+     * instead of a full page. Used to open CMS-in-CMS create/edit/detail pages
+     * from a list. Web-only — the mobile app renders the page as a normal
+     * screen. Mirrors the `open_in_modal` page property field.
+     */
+    open_in_modal?: boolean;
+    /**
+     * Optional modal width applied when `open_in_modal` is true (web only). A CSS
+     * length (e.g. `'80%'`, `'640px'`) or `'auto'` (fit content, capped at 90% of
+     * the viewport). `null`/absent means the frontend default (80%). Mirrors the
+     * `modal_width` page property field.
+     */
+    modal_width?: string | null;
+    /**
+     * Optional modal height applied when `open_in_modal` is true (web only). A CSS
+     * length (e.g. `'80%'`, `'600px'`) or `'auto'` (fit content, capped at 90% of
+     * the viewport). `null`/absent means the frontend default (80%). Mirrors the
+     * `modal_height` page property field.
+     */
+    modal_height?: string | null;
     nav_position: number | null;
     footer_position: number | null;
     title?: string | null;

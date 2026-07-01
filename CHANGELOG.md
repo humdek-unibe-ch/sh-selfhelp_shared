@@ -9,6 +9,18 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.20.0
+
+**CMS-in-CMS modal contract (sizing + form/list actions)** — additive contracts
+for the open-in-modal UX. `IPageContent` (`src/types/pages.ts`) gains the
+optional `modal_width` and `modal_height` fields (a CSS length such as `'80%'` /
+`'640px'`, or `'auto'`; `null`/absent means the frontend default of 80% and the
+web modal caps `auto` at 90% of the viewport). The form/list style contracts
+(`src/types/styles/forms.ts`) carry the modal-action fields consumed by the web
+renderers: `close_modal_on_save` + `redirect_on_save` (form-log / form-record)
+and `add_url` + `edit_url` (show-user-input). All additions are optional/new, so
+`^1.x` consumers are unaffected.
+
 ## v1.19.0
 
 **Navigation rendering + page icons contract (navigation pages)** — additive

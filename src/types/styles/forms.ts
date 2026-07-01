@@ -42,6 +42,16 @@ export interface IFormStyle extends IStyleWithSpacing {
     confirm_submit?: IContentField<string>;
     /** Message shown in the confirmation dialog before submit. */
     confirm_message?: IContentField<string>;
+    /**
+     * When '1', a successful submit closes the surrounding web modal (only has
+     * an effect when the form's page is opened with `open_in_modal`). Web-only.
+     */
+    close_modal_on_save?: IContentField<string>;
+    /**
+     * Optional URL to navigate to after a successful submit (the parent list is
+     * refreshed). Empty = stay / close the modal. Web-only.
+     */
+    redirect_on_save?: IContentField<string>;
     // RF-21: button knobs are portable to the mobile custom form (not a 1:1
     // component map). Promoted web_* -> shared_* so both renderers read them.
     buttons_size?: IContentField<string>;
@@ -488,6 +498,18 @@ export interface IShowUserInputStyle extends IBaseStyle {
     csv_export?: IContentField<string>;
     delete_entry?: IContentField<string>;
     fields_map?: IContentField<string>;
+    /**
+     * Optional URL of a create form. When set, the web table shows an "Add new"
+     * button above it (e.g. opens the create form modal). Web-only.
+     */
+    add_url?: IContentField<string>;
+    /**
+     * Optional URL template for opening a row's detail (e.g.
+     * `/cms/team/{record_id}`). When set, each row gets an open/view action
+     * (eye icon) with the single-brace `{record_id}` placeholder substituted by
+     * the renderer at click time. Web-only.
+     */
+    edit_url?: IContentField<string>;
     delete_modal_title?: IContentField<string>;
     delete_modal_body?: IContentField<string>;
     spacing?: IContentField<string>;
