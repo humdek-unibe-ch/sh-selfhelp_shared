@@ -9,6 +9,15 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.21.3
+
+**Publish fix (patch)** — rebuild `dist/` so the published tarball includes the
+root exports consumers already import from `@selfhelp/shared`: `ENDPOINTS`,
+`API_VERSION_PREFIX`, `transformPageData`, navigation menu helpers
+(`getNavigationItemHref`, `resolveWebBranchNavGroup`, `resolveHolderRedirectPath`,
+…), and related types. The v1.21.2 npm artifact shipped a stale build missing
+those symbols even though the source and changelog were already present.
+
 ## v1.21.2
 
 **Menu-builder navigation depth and accessibility (patch)** — additive helpers for
