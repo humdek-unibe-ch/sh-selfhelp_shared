@@ -48,6 +48,14 @@ export const ENDPOINTS = {
         RESOLVE: (path: string): string =>
             `${API_VERSION_PREFIX}/pages/resolve?path=${encodeURIComponent(path)}`,
     },
+    NAVIGATION: {
+        GET: `${API_VERSION_PREFIX}/navigation`,
+        LAST_VISITED: `${API_VERSION_PREFIX}/navigation/last-visited`,
+    },
+    SEARCH: {
+        CONTENT: `${API_VERSION_PREFIX}/search`,
+        PAGES: `${API_VERSION_PREFIX}/search/pages`,
+    },
     LANGUAGES: `${API_VERSION_PREFIX}/languages`,
     FORMS: {
         SUBMIT: `${API_VERSION_PREFIX}/forms/submit`,
