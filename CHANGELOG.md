@@ -9,6 +9,17 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.21.1
+
+**Menu-builder navigation helpers (patch)** — additive navigation utilities for
+mobile bottom tabs and cross-menu page lookup. `findPageRefInNavigationPayload`
+resolves `INavigationResolvedPageRef` metadata from any public menu tree;
+`findNearestBottomTabMenuItemForPage` and `isBottomTabMenuItemActive` drive
+nested bottom-tab active state (ancestor tab stays active for descendant paths).
+`searchMenuPagesInPayload` now honours `payload.search.min_chars` before
+returning hits. Regression tests assert legacy `TWebNavRender` /
+`TMobileNavRender` option lists are not re-exported from the package root.
+
 ## v1.21.0
 
 **Menu-builder navigation contract (breaking cleanup)** — replaces the page-level
