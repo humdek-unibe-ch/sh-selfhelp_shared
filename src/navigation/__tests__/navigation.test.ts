@@ -31,6 +31,7 @@ import {
     resolveWebBranchNavGroup,
 } from '../branchNav';
 import { searchMenuPagesInPayload } from '../menuSearch';
+import { clampMenuItemsAtDepth, resolveMenuMaxDepth } from '../menuDepth';
 
 function menuItem(partial: Partial<INavigationMenuItem>): INavigationMenuItem {
     return {
@@ -220,6 +221,29 @@ describe('page ref lookup', () => {
         const ref = findPageRefInNavigationPayload(payload, 42);
         expect(ref?.keyword).toBe('team');
         expect(ref?.has_content).toBe(false);
+    });
+});
+
+describe('menu depth helpers', () => {
+    it('treats null/zero max depth as unlimited', () => {
+        expect(resolveMenuMaxDepth(null)).toBeNull();
+        expect(resolveMenuMaxDepth(0)).toBeNull();
+        expect(resolveMenuMaxDepth(2)).toBe(2);
+    });
+
+    it('strips nested children beyond max depth', () => {
+        const nested = menuItem({
+            id: 1,
+            children: [
+                menuItem({
+                    id: 2,
+                    children: [menuItem({ id: 3 })],
+                }),
+            ],
+        });
+        const clamped = clampMenuItemsAtDepth([nested], 1);
+        expect(clamped[0]?.children?.length).toBe(1);
+        expect(clamped[0]?.children?.[0]?.children?.length).toBe(0);
     });
 });
 

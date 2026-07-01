@@ -12,3 +12,4 @@ export * from './menuVisibility';
 export * from './mobileIcons';
 export * from './startup';
 export * from './menuSearch';
+export * from './menuDepth';

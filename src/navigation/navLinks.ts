@@ -8,6 +8,15 @@ export function getNavigationItemLabel(item: INavigationMenuItem): string {
     return item.label || item.page?.title || item.page?.keyword || '';
 }
 
+export function getNavigationItemAriaLabel(item: INavigationMenuItem): string | undefined {
+    const aria = item.aria_label?.trim();
+    if (aria) {
+        return aria;
+    }
+    const label = getNavigationItemLabel(item);
+    return label || undefined;
+}
+
 export function getNavigationItemHref(item: INavigationMenuItem): string {
     if (item.item_type === 'external_url' && item.external_url) {
         return item.external_url;

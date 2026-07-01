@@ -54,6 +54,7 @@ export interface INavigationMenu {
     preset?: TWebHeaderPreset | string | null;
     max_depth?: number | null;
     item_limit?: number | null;
+    config?: Record<string, unknown> | null;
     items: INavigationMenuItem[];
 }
 
