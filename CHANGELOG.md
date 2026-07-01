@@ -9,6 +9,16 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.21.2
+
+**Menu-builder navigation depth and accessibility (patch)** — additive helpers for
+menu depth limits and item labelling. `resolveMenuMaxDepth` and
+`clampMenuItemsAtDepth` normalise `INavigationMenu.max_depth` (null/0 = unlimited)
+and strip nested children beyond the configured depth for dropdown/mega renderers.
+`getNavigationItemAriaLabel` resolves `aria_label` with a fallback to the visible
+label. `INavigationMenu` gains optional `config` for menu-level presentation
+settings from the backend payload.
+
 ## v1.21.1
 
 **Menu-builder navigation helpers (patch)** — additive navigation utilities for
