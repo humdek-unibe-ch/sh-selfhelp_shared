@@ -9,10 +9,6 @@ export function getNavigationItemLabel(item: INavigationMenuItem): string {
 }
 
 export function getNavigationItemAriaLabel(item: INavigationMenuItem): string | undefined {
-    const aria = item.aria_label?.trim();
-    if (aria) {
-        return aria;
-    }
     const label = getNavigationItemLabel(item);
     return label || undefined;
 }

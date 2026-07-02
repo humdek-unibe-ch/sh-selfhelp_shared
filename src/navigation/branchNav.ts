@@ -28,8 +28,8 @@ function toSegment(item: INavigationMenuItem): IBranchNavSegment | null {
         keyword: item.page.keyword,
         url: item.page.url,
         label: itemLabel(item),
-        icon: item.icon ?? item.page.icon,
-        mobile_icon: item.page.mobile_icon,
+        icon: item.icon ?? null,
+        mobile_icon: item.mobile_icon ?? null,
     };
 }
 

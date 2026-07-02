@@ -12,8 +12,6 @@ export type TNavigationMenuKey =
 
 export type TNavigationMenuItemType = 'page' | 'external_url' | 'group';
 
-export type TNavigationChildSource = 'manual' | 'page_children' | 'manual_plus_suggestions';
-
 export type TNavigationSearchMode = 'off' | 'menu_pages' | 'searchable_pages' | 'content_index';
 
 export type TNavigationStartMode = 'fixed_page' | 'last_visited_then_fixed_page';
@@ -25,25 +23,20 @@ export interface INavigationResolvedPageRef {
     keyword: string;
     url: string | null;
     title: string | null;
-    icon?: string | null;
-    mobile_icon?: string | null;
     has_content?: boolean;
     section_count?: number;
 }
 
 export interface INavigationMenuItem {
-    id: number | string;
+    id: number;
     item_type: TNavigationMenuItemType;
     label: string;
-    description?: string | null;
-    aria_label?: string | null;
     icon?: string | null;
+    mobile_icon?: string | null;
     position: number;
     external_url?: string | null;
     page?: INavigationResolvedPageRef | null;
-    is_virtual?: boolean;
     is_active?: boolean;
-    child_source?: TNavigationChildSource;
     children?: INavigationMenuItem[];
 }
 

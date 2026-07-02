@@ -9,6 +9,15 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v1.21.4
+
+**Menu-builder payload slimming (patch)** — align shared navigation types with the
+backend menu-builder contract. `INavigationMenuItem` drops virtual/exclusion
+fields (`is_virtual`, `child_source`, `description`, `aria_label`) and keeps
+item-level `icon` / `mobile_icon`; page refs no longer carry icons.
+`getNavigationItemAriaLabel` falls back to the visible label only.
+`TNavigationChildSource` is removed. Menu item ids are numeric only.
+
 ## v1.21.3
 
 **Publish fix (patch)** — rebuild `dist/` so the published tarball includes the
