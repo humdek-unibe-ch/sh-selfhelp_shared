@@ -9,6 +9,40 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v2.0.0
+
+**Strict navigation contract (breaking)** — one final menu model with no legacy
+compatibility paths.
+
+- `INavigationMenuItem` is strict: every key is always present (`null` for
+  absent values, never a missing key). Items gain `description`, `aria_label`,
+  and `layer` (`'top' | null` — top header row assignment for `web_header`
+  root items). `INavigationMenu` drops the free-form `config` object; the
+  footer layout is a preset (`columns` / `inline`) on `preset`, typed via the
+  new `TWebFooterPreset`.
+- New `headerLayers` module: `splitHeaderLayers` / `mergeHeaderLayers`
+  implement the double-header row split and the deterministic single-preset
+  merge (main row first, then top row). `isDoubleWebHeaderPreset` moves the
+  double-preset check into the package.
+- New `footerPreset` module: `WEB_FOOTER_PRESET_OPTIONS`,
+  `resolveWebFooterPreset`, `flattenFooterItems` (render-time flatten for the
+  `inline` preset), `footerColumnItems`, `footerStandaloneItems`,
+  `footerGroupLinks`.
+- New `activeTrail` module: `isMenuItemActiveOnWeb` /
+  `isMenuItemActiveOnMobile` / `expandedIdsForActiveTrail` /
+  `getNavigationItemMobileHref` — the single active-state implementation for
+  the web burger drawer, mobile drawer, and mobile bottom tabs.
+- New `navigationBundle` module: the `selfhelp/navigation-bundle` **v2.0**
+  TypeScript contract (menus without `config`, items with `layer`,
+  translations with `aria_label`). v1.0 bundles are not accepted anywhere.
+- **Child-page navigation presentation:** `TNavigationChildrenNavMode`
+  (`'sidebar' | 'pills' | 'none'`) on menus (`children_nav` +
+  `show_breadcrumbs`) and items (`children_nav` override). The `branchNav`
+  module is rebuilt around `resolveWebBranchNavContext`: it resolves the
+  effective mode (item override → menu default → `sidebar`), the branch
+  segments, the breadcrumb trail (`IBreadcrumbEntry`), and the prev/next
+  pager from one navigation payload (`IBranchNavContext`).
+
 ## v1.21.4
 
 **Menu-builder payload slimming (patch)** — align shared navigation types with the
