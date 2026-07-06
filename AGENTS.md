@@ -64,6 +64,14 @@ These rules apply to every documentation change in active SelfHelp2 repositories
 - Runtime helpers should stay small and deterministic.
 - Prefer mirroring backend behavior over inventing new client behavior.
 
+## Navigation Contract Rules
+
+This package is the typed anchor for the cross-repo navigation contract (backend `GET /navigation` ⇄ web/mobile renderers). Backend reference: `sh-selfhelp_backend/docs/developer/29-navigation-menu-builder.md`.
+
+- **Types** (`src/types/navigation.ts` area): `INavigationPayload` (menus + `settings` + `branding`), `INavigationMenu` (`key`, `platform`, `surface`, `preset`, `max_depth`, `item_limit`, `children_nav`, `show_breadcrumbs`, `show_pager`), `INavigationMenuItem` (strict — every key always present, `null` for absent: `label`, `description`, `aria_label`, `icon`, `mobile_icon`, `layer`, `children_nav`, `show_pager`, `page`, `children`), `INavigationBranding`, plus the `selfhelp/navigation-bundle` v2.0 types. The backend emits strict shapes; never make these fields optional to paper over a payload gap — fix the backend.
+- **Helpers** (`src/navigation/`): `headerLayers` (split/merge `layer: 'top'` items for double vs single header presets), `menuDepth` (`resolveMenuMaxDepth`, `clampMenuItemsAtDepth` — depth-index clamp; menus support three item levels), `branchNav` (effective children-nav mode `sidebar`/`pills`/`none`, branch group, breadcrumb trail, prev/next pager with `show_pager` menu default + per-item override), item label/href/aria resolution, `resolveAssetUrl`. Renderers must use these helpers instead of re-implementing traversal.
+- **Change protocol:** any navigation payload/bundle change lands here in the same wave as the backend schema change and the web/mobile renderer updates, with a version bump and updated tests (`src/navigation/**.test.ts`). The backend JSON schema (`get_navigation.json`) and these types must stay identical in shape.
+
 ## Coding Style
 
 - Keep the existing TypeScript style: 4-space indentation, semicolons, single quotes.
