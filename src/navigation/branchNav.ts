@@ -186,6 +186,8 @@ export interface IBranchNavContext {
     mode: TNavigationChildrenNavMode;
     /** Menu-level toggle for the breadcrumb trail. */
     showBreadcrumbs: boolean;
+    /** Prev/next pager — parent-item override, else menu default, else on. */
+    showPager: boolean;
     /** Label of the branch parent (page or group), used as the sidebar heading. */
     heading: string | null;
     /** Branch parent as a navigable segment when the parent is a page. */
@@ -232,6 +234,13 @@ function resolveModeForBranch(
     menu: INavigationMenu,
 ): TNavigationChildrenNavMode {
     return branchParent?.children_nav ?? menu.children_nav ?? 'sidebar';
+}
+
+function resolvePagerForBranch(
+    branchParent: INavigationMenuItem | null,
+    menu: INavigationMenu,
+): boolean {
+    return branchParent?.show_pager ?? menu.show_pager ?? true;
 }
 
 /**
@@ -291,6 +300,7 @@ export function resolveWebBranchNavContext(
         return {
             mode: resolveModeForBranch(branchParent, menu),
             showBreadcrumbs: menu.show_breadcrumbs ?? false,
+            showPager: resolvePagerForBranch(branchParent, menu),
             heading: branchParent ? itemLabel(branchParent) : null,
             parent: branchParent ? toSegment(branchParent) : null,
             segments,

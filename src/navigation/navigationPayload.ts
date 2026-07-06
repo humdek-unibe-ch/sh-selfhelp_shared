@@ -57,6 +57,8 @@ export interface INavigationMenuItem {
     layer: TNavigationHeaderLayer | null;
     /** Per-parent-item override of the menu's `children_nav` default (web menus only). */
     children_nav: TNavigationChildrenNavMode | null;
+    /** Per-parent-item override of the menu's `show_pager` default; `null` = inherit. */
+    show_pager?: boolean | null;
     external_url: string | null;
     page: INavigationResolvedPageRef | null;
     is_active: boolean;
@@ -75,6 +77,8 @@ export interface INavigationMenu {
     children_nav: TNavigationChildrenNavMode | null;
     /** Breadcrumb trail above nested web pages; always `false` on mobile menus. */
     show_breadcrumbs: boolean;
+    /** Prev/next pager on nested web pages; always `false` on mobile menus. */
+    show_pager?: boolean;
     items: INavigationMenuItem[];
 }
 
@@ -98,8 +102,21 @@ export interface INavigationSearchConfig {
     field_policy: string;
 }
 
+/**
+ * Global branding block shared by the web header and the mobile drawer:
+ * `logo_url` = public path of the logo asset (null = text fallback),
+ * `logo_alt` = accessible alt / brand text, `link_url` = logo click target
+ * (null = home).
+ */
+export interface INavigationBranding {
+    logo_url: string | null;
+    logo_alt: string | null;
+    link_url: string | null;
+}
+
 export interface INavigationPayload {
     menus: Record<TNavigationMenuKey, INavigationMenu>;
     startup: INavigationStartupConfig;
     search: INavigationSearchConfig;
+    branding?: INavigationBranding;
 }

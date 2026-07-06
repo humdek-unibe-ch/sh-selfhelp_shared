@@ -255,6 +255,23 @@ describe('web branch nav context (sidebar + breadcrumbs + pager)', () => {
         expect(fallback?.mode).toBe('pills');
     });
 
+    it('resolves the pager toggle: parent override, else menu default, else on', () => {
+        // No menu value + no override → default on.
+        const payload = navigationPayload([branchParent]);
+        expect(resolveWebBranchNavContext(payload, 101)?.showPager).toBe(true);
+
+        // Menu-level off applies to branches without an override.
+        const menuOffPayload = navigationPayload([branchParent]);
+        menuOffPayload.menus.web_header.show_pager = false;
+        expect(resolveWebBranchNavContext(menuOffPayload, 101)?.showPager).toBe(false);
+
+        // Parent override wins over the menu default.
+        const overridden = { ...branchParent, show_pager: true };
+        const overridePayload = navigationPayload([overridden]);
+        overridePayload.menus.web_header.show_pager = false;
+        expect(resolveWebBranchNavContext(overridePayload, 101)?.showPager).toBe(true);
+    });
+
     it('surfaces grandchild breadcrumbs through the full path', () => {
         const deepTree = menuItem({
             id: 30,
