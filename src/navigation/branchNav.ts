@@ -2,7 +2,12 @@
 SPDX-FileCopyrightText: 2026 Humdek, University of Bern
 SPDX-License-Identifier: MPL-2.0
  */
-import type { INavigationMenuItem, INavigationPayload } from './navigationPayload';
+import type {
+    INavigationMenu,
+    INavigationMenuItem,
+    INavigationPayload,
+    TNavigationChildrenNavMode,
+} from './navigationPayload';
 import { collectPageIdsFromMenuItems } from './menuMembership';
 import { pageUrlToMobileRoute } from './mobileRoute';
 
@@ -106,9 +111,9 @@ export function resolveBranchNavGroup(
         }
         const located = findParentItem([root], currentPageId);
         if (located) {
-            const directChildren = menuVisibleChildItems(
-                located.parent ?? { id: 0, item_type: 'group', label: '', position: 0, children: located.siblings },
-            );
+            const directChildren = located.parent
+                ? menuVisibleChildItems(located.parent)
+                : located.siblings.filter((sibling) => sibling.page != null && sibling.is_active !== false);
             if (located.parent && located.parent.page?.id === currentPageId && directChildren.length > 0) {
                 const segments = directChildren.map(toSegment).filter((s): s is IBranchNavSegment => s != null);
                 return segments.length > 0 ? segments : null;
@@ -161,6 +166,140 @@ export function resolveWebBranchNavGroup(
     currentPageId: number,
 ): IBranchNavSegment[] | null {
     return resolveBranchNavGroup(payload, currentPageId, ['web_header', 'web_footer']);
+}
+
+/** One breadcrumb step; group items produce unlinked crumbs (`pageId === null`). */
+export interface IBreadcrumbEntry {
+    label: string;
+    pageId: number | null;
+    keyword: string | null;
+    url: string | null;
+}
+
+/**
+ * Everything a web renderer needs to present the branch of the current page:
+ * resolved presentation mode, the sidebar group, breadcrumbs, and the
+ * prev/next pager. `null` when the page is a top-level leaf (no branch UI).
+ */
+export interface IBranchNavContext {
+    /** `sidebar` | `pills` | `none` — parent-item override, else menu default, else `sidebar`. */
+    mode: TNavigationChildrenNavMode;
+    /** Menu-level toggle for the breadcrumb trail. */
+    showBreadcrumbs: boolean;
+    /** Label of the branch parent (page or group), used as the sidebar heading. */
+    heading: string | null;
+    /** Branch parent as a navigable segment when the parent is a page. */
+    parent: IBranchNavSegment | null;
+    /** Ordered current-level group: children of the branch parent. */
+    segments: IBranchNavSegment[];
+    /** Menu path root → current page (current page is the last entry). */
+    breadcrumbs: IBreadcrumbEntry[];
+    /** Neighbours of the current page inside `segments`. */
+    pager: { prev: IBranchNavSegment | null; next: IBranchNavSegment | null };
+}
+
+function findMenuItemPath(
+    items: INavigationMenuItem[],
+    pageId: number,
+    trail: INavigationMenuItem[] = [],
+): INavigationMenuItem[] | null {
+    for (const item of items) {
+        const nextTrail = [...trail, item];
+        if (item.page?.id === pageId) {
+            return nextTrail;
+        }
+        if (item.children?.length) {
+            const found = findMenuItemPath(item.children, pageId, nextTrail);
+            if (found) {
+                return found;
+            }
+        }
+    }
+    return null;
+}
+
+function toBreadcrumb(item: INavigationMenuItem): IBreadcrumbEntry {
+    return {
+        label: itemLabel(item),
+        pageId: item.page?.id ?? null,
+        keyword: item.page?.keyword ?? null,
+        url: item.page?.url ?? null,
+    };
+}
+
+function resolveModeForBranch(
+    branchParent: INavigationMenuItem | null,
+    menu: INavigationMenu,
+): TNavigationChildrenNavMode {
+    return branchParent?.children_nav ?? menu.children_nav ?? 'sidebar';
+}
+
+/**
+ * Resolve the full branch-navigation context of a web page: which presentation
+ * to use (menu default + per-parent override), the sidebar group, breadcrumbs,
+ * and prev/next neighbours.
+ *
+ * - Page with menu-visible children → the page is the branch parent, its
+ *   children are the group (no pager: the parent is the overview).
+ * - Nested page → the parent item owns the branch, the siblings are the group,
+ *   the pager walks the group.
+ * - Top-level leaf → `null` (no generated branch UI).
+ */
+export function resolveWebBranchNavContext(
+    payload: INavigationPayload,
+    currentPageId: number,
+): IBranchNavContext | null {
+    for (const key of ['web_header', 'web_footer'] as const) {
+        const menu = payload.menus[key];
+        if (!menu?.items?.length) {
+            continue;
+        }
+        const path = findMenuItemPath(menu.items, currentPageId);
+        if (!path) {
+            continue;
+        }
+
+        const currentItem = path[path.length - 1];
+        const ownChildren = menuVisibleChildItems(currentItem);
+
+        let branchParent: INavigationMenuItem | null = null;
+        let group: INavigationMenuItem[];
+        if (ownChildren.length > 0) {
+            branchParent = currentItem;
+            group = ownChildren;
+        } else if (path.length >= 2) {
+            branchParent = path[path.length - 2];
+            group = menuVisibleChildItems(branchParent);
+        } else {
+            // Top-level leaf: the header already covers this level.
+            return null;
+        }
+
+        const segments = group
+            .map(toSegment)
+            .filter((segment): segment is IBranchNavSegment => segment != null);
+        if (segments.length === 0) {
+            return null;
+        }
+
+        const currentIndex = segments.findIndex((segment) => segment.pageId === currentPageId);
+        const pager = {
+            prev: currentIndex > 0 ? segments[currentIndex - 1] : null,
+            next: currentIndex >= 0 && currentIndex < segments.length - 1 ? segments[currentIndex + 1] : null,
+        };
+
+        return {
+            mode: resolveModeForBranch(branchParent, menu),
+            showBreadcrumbs: menu.show_breadcrumbs ?? false,
+            heading: branchParent ? itemLabel(branchParent) : null,
+            parent: branchParent ? toSegment(branchParent) : null,
+            segments,
+            breadcrumbs: path.map(toBreadcrumb),
+            pager,
+        };
+    }
+
+    return null;
 }
 
 export type TMobilePagePresentation = 'route' | 'modal';

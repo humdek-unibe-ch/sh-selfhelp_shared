@@ -130,6 +130,12 @@ export interface IEntryRecordStyle extends IBaseStyle {
 
 export interface IEntryRecordDeleteStyle extends IBaseStyle {
     style_name: 'entry-record-delete';
+    /** Delete button text (catalog field; the generic `label` field is not linked to this style). */
+    label_delete?: IContentField<string>;
+    confirmation_title?: IContentField<string>;
+    confirmation_message?: IContentField<string>;
+    confirmation_continue?: IContentField<string>;
+    confirmation_cancel?: IContentField<string>;
 }
 
 export interface ILoopStyle extends IBaseStyle {

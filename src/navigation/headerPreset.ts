@@ -36,12 +36,19 @@ export const WEB_HEADER_PRESET_OPTIONS: readonly IWebHeaderPresetOption[] = [
     { value: 'dropdown', label: 'Dropdown', description: 'Default — nested dropdown menus.' },
     { value: 'mega-menu', label: 'Mega menu', description: 'Rich sections with descriptions and icons.' },
     { value: 'tabs', label: 'Tabs', description: 'Top-level sections as tabs.' },
-    { value: 'double-dropdown', label: 'Double header (dropdown)', description: 'Utility row plus main dropdown nav.' },
-    { value: 'double-mega-menu', label: 'Double header (mega menu)', description: 'Utility row plus mega menu.' },
+    { value: 'double-dropdown', label: 'Double header (dropdown)', description: 'Top row with flat links and utilities above the main dropdown nav.' },
+    { value: 'double-mega-menu', label: 'Double header (mega menu)', description: 'Top row with flat links and utilities above the mega menu.' },
 ] as const;
+
+const DOUBLE_WEB_HEADER_PRESETS: readonly TWebHeaderPreset[] = ['double-dropdown', 'double-mega-menu'];
 
 export function isWebHeaderPreset(value: unknown): value is TWebHeaderPreset {
     return typeof value === 'string' && (WEB_HEADER_PRESET_VALUES as readonly string[]).includes(value);
+}
+
+/** True for presets that render the two-row (top layer + main layer) header. */
+export function isDoubleWebHeaderPreset(value: unknown): boolean {
+    return isWebHeaderPreset(value) && (DOUBLE_WEB_HEADER_PRESETS as readonly string[]).includes(value);
 }
 
 export function resolveWebHeaderPreset(
