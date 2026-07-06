@@ -9,6 +9,20 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v2.1.0
+
+**Pager toggle + global branding (additive).**
+
+- `INavigationMenu.show_pager?: boolean` (menu default for the prev/next pager
+  on nested web pages) and `INavigationMenuItem.show_pager?: boolean | null`
+  (per-parent-item override; `null` = inherit). `IBranchNavContext` gains the
+  resolved `showPager` (parent override → menu default → `true`), so renderers
+  can show the sidebar without the pager and vice versa.
+- New `INavigationBranding` block on `INavigationPayload.branding`:
+  `logo_url` (public asset path; `null` = text fallback), `logo_alt`
+  (accessible brand text), `link_url` (logo click target; `null` = home).
+  Shared by the web header and the mobile drawer.
+
 ## v2.0.0
 
 **Strict navigation contract (breaking)** — one final menu model with no legacy
