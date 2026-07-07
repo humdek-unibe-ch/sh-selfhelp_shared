@@ -4,6 +4,7 @@ SPDX-License-Identifier: MPL-2.0
 */
 import { describe, it, expect } from 'vitest';
 import type { INavigationMenuItem, INavigationPayload } from '../navigationPayload';
+import { resolveBrandingPresentation } from '../navigationPayload';
 import {
     getNavigationItemHref,
     getNavigationItemLabel,
@@ -253,6 +254,25 @@ describe('web branch nav context (sidebar + breadcrumbs + pager)', () => {
         fallbackPayload.menus.web_header.children_nav = 'pills';
         const fallback = resolveWebBranchNavContext(fallbackPayload, 101);
         expect(fallback?.mode).toBe('pills');
+    });
+
+    it('resolves branding presentation with defaults and text fallback', () => {
+        // Older backends: no size/variant → md + logo-and-name, but no logo image degrades to name-only.
+        const legacy = resolveBrandingPresentation({ logo_url: null, logo_alt: 'Site', link_url: null });
+        expect(legacy).toMatchObject({ size: 'md', variant: 'name-only', showLogo: false, showName: true });
+
+        // Full block: xl logo-only shows just the image at 56px.
+        const logoOnly = resolveBrandingPresentation({
+            logo_url: '/assets/logo.svg',
+            logo_alt: 'Site',
+            link_url: '/home',
+            logo_size: 'xl',
+            logo_variant: 'logo-only',
+        });
+        expect(logoOnly).toMatchObject({ size: 'xl', variant: 'logo-only', logoHeight: 56, showLogo: true, showName: false });
+
+        // Missing branding entirely → safe text fallback.
+        expect(resolveBrandingPresentation(undefined).variant).toBe('name-only');
     });
 
     it('resolves the pager toggle: parent override, else menu default, else on', () => {

@@ -102,16 +102,58 @@ export interface INavigationSearchConfig {
     field_policy: string;
 }
 
+/** Brand block size step; maps to logo heights 24/32/44/56px on web. */
+export type TNavigationBrandingSize = 'sm' | 'md' | 'lg' | 'xl';
+
+/** Brand block layout: image + site name, image alone, or text alone. */
+export type TNavigationBrandingVariant = 'logo-and-name' | 'logo-only' | 'name-only';
+
 /**
  * Global branding block shared by the web header and the mobile drawer:
  * `logo_url` = public path of the logo asset (null = text fallback),
  * `logo_alt` = accessible alt / brand text, `link_url` = logo click target
- * (null = home).
+ * (null = home), `logo_size` + `logo_variant` = presentation options
+ * (default `md` / `logo-and-name` when omitted by older backends).
  */
 export interface INavigationBranding {
     logo_url: string | null;
     logo_alt: string | null;
     link_url: string | null;
+    logo_size?: TNavigationBrandingSize;
+    logo_variant?: TNavigationBrandingVariant;
+}
+
+/** Logo pixel heights per brand size step (shared by web header + mobile drawer). */
+export const NAVIGATION_BRANDING_LOGO_HEIGHTS: Record<TNavigationBrandingSize, number> = {
+    sm: 24,
+    md: 32,
+    lg: 44,
+    xl: 56,
+};
+
+/**
+ * Resolve the branding presentation with cross-platform defaults: older
+ * backends omit `logo_size` / `logo_variant`, and a missing logo image
+ * degrades `logo-and-name` / `logo-only` to the text fallback.
+ */
+export function resolveBrandingPresentation(branding?: INavigationBranding | null): {
+    size: TNavigationBrandingSize;
+    variant: TNavigationBrandingVariant;
+    logoHeight: number;
+    showLogo: boolean;
+    showName: boolean;
+} {
+    const size: TNavigationBrandingSize = branding?.logo_size ?? 'md';
+    const requestedVariant: TNavigationBrandingVariant = branding?.logo_variant ?? 'logo-and-name';
+    const hasLogo = Boolean(branding?.logo_url);
+    const variant: TNavigationBrandingVariant = hasLogo ? requestedVariant : 'name-only';
+    return {
+        size,
+        variant,
+        logoHeight: NAVIGATION_BRANDING_LOGO_HEIGHTS[size],
+        showLogo: variant !== 'name-only',
+        showName: variant !== 'logo-only',
+    };
 }
 
 export interface INavigationPayload {
