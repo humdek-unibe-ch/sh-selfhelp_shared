@@ -9,6 +9,39 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v3.0.0
+
+**BREAKING: `show-user-input` renamed to `entry-table`.**
+
+The built-in admin CRUD grid style is now `entry-table` (backend migration
+renames the `styles` row in lockstep; sections keep their `id_styles` FK, so
+no content migration is needed).
+
+- `IShowUserInputStyle` -> `IEntryTableStyle` (`style_name: 'entry-table'`),
+  `IShowUserInputEntry` -> `IEntryTableEntry`. No aliases are kept — consumers
+  must update imports and dispatcher keys.
+- `IEntryTableEntry` gains `_can_edit?: boolean` (server-computed per-row edit
+  permission, mirroring `_can_delete`; same rule as `updateForm`: own record
+  always editable, foreign records need the table UPDATE permission on a
+  shared section).
+- `STYLE_REGISTRY`: key `show-user-input` -> `entry-table` (description now
+  reflects the built-in add / edit / delete + CSV grid).
+- `IFormRecordStyle` gains optional `load_record_from` + `own_entries_only`
+  fields (record edit mode: prefill a specific record addressed by a route
+  parameter, e.g. `/admin/team/{record_id}`).
+
+## v2.2.0
+
+**Branding presentation options (additive).**
+
+- `INavigationBranding` gains optional `logo_size` (`sm|md|lg|xl`) and
+  `logo_variant` (`logo-and-name|logo-only|name-only`) mirroring the new
+  `navigation_settings` columns.
+- New `resolveBrandingPresentation(branding?)` helper +
+  `NAVIGATION_BRANDING_LOGO_HEIGHTS` map (24/32/44/56px) so the web header and
+  the mobile drawer resolve identical defaults, including the text fallback
+  when no logo asset is configured.
+
 ## v2.1.0
 
 **Pager toggle + global branding (additive).**

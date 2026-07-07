@@ -71,6 +71,21 @@ export interface IFormRecordStyle extends IFormStyle {
     style_name: 'form-record';
     btn_update_label?: IContentField<string>;
     btn_update_color?: IContentField<string>;
+    /**
+     * Record edit mode: names the public route parameter that carries the
+     * target record id (e.g. 'record_id' on a `/cms/team/{record_id}` page).
+     * When set, the record context comes ONLY from the URL — param present:
+     * the backend prefills that record into `section_data` (permission-gated);
+     * param absent: the form stays blank (create mode). When empty, the form
+     * falls back to the user's own latest record (diary mode).
+     */
+    load_record_from?: IContentField<string>;
+    /**
+     * '1' (default): the form only ever loads/updates the user's own records.
+     * '0': shared editing — foreign records can be loaded/updated by users
+     * holding UPDATE data access on the form's table (admins always pass).
+     */
+    own_entries_only?: IContentField<string>;
 }
 
 export interface IInputStyle extends IBaseStyle {
@@ -472,15 +487,24 @@ export interface IProgressSectionStyle extends IBaseStyle {
     tooltip_label?: IContentField<string>;
     web_tooltip_position?: IContentField<string>;}
 
-export interface IShowUserInputEntry {
+export interface IEntryTableEntry {
     record_id: number;
     id_users: number;
+    /** Per-row delete permission (backend rule `canDeleteOwnedRecord`). */
     _can_delete?: boolean;
+    /** Per-row edit permission (backend rule `canUpdateOwnedRecord`). */
+    _can_edit?: boolean;
     [key: string]: unknown;
 }
 
-export interface IShowUserInputStyle extends IBaseStyle {
-    style_name: 'show-user-input';
+/**
+ * The built-in admin CRUD grid (renamed from `show-user-input` in the
+ * CMS-in-CMS polish wave): a data table over a form's records with search /
+ * sort / pagination / CSV, an "Add new" button, a per-row edit action and a
+ * permission-gated per-row delete.
+ */
+export interface IEntryTableStyle extends IBaseStyle {
+    style_name: 'entry-table';
     /** Optional auto-styled heading rendered above the entries when set. */
     title?: IContentField<string>;
     /** Message shown when there are no entries to display (default "No entries found."). */
@@ -504,10 +528,10 @@ export interface IShowUserInputStyle extends IBaseStyle {
      */
     add_url?: IContentField<string>;
     /**
-     * Optional URL template for opening a row's detail (e.g.
-     * `/cms/team/{record_id}`). When set, each row gets an open/view action
-     * (eye icon) with the single-brace `{record_id}` placeholder substituted by
-     * the renderer at click time. Web-only.
+     * Optional URL template for opening a row's edit form (e.g.
+     * `/cms/team/{record_id}`). When set, each row with `_can_edit` gets an
+     * edit action with the single-brace `{record_id}` placeholder substituted
+     * by the renderer at click time. Web-only.
      */
     edit_url?: IContentField<string>;
     delete_modal_title?: IContentField<string>;
@@ -521,10 +545,10 @@ export interface IShowUserInputStyle extends IBaseStyle {
     web_table_sticky_header?: IContentField<string>;
     web_table_caption_side?: IContentField<string>;
     /**
-     * show-user-input rows, each keyed by the immutable data-column `field_key`
+     * entry-table rows, each keyed by the immutable data-column `field_key`
      * (issue #56 v2). Header labels come from {@link field_labels}, not the keys.
      */
-    entries?: IShowUserInputEntry[];
+    entries?: IEntryTableEntry[];
     /**
      * Header map `field_key => display_name` for {@link entries} (issue #56 v2).
      * Lets the table show the human column label while rows stay keyed by the

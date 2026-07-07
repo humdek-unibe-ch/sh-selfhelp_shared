@@ -39,7 +39,7 @@ describe('style render-target targeting', () => {
     it('defaults the eight established system/data styles to both', () => {
         for (const name of [
             'no-access', 'missing', 'not-found', 'version',
-            'ref-container', 'data-container', 'show-user-input', 'timeline-item',
+            'ref-container', 'data-container', 'entry-table', 'timeline-item',
         ]) {
             expect(getStylePlatforms(name)).toEqual(['web', 'mobile']);
         }
@@ -156,7 +156,7 @@ describe('core catalog parity (90 established styles)', () => {
 
     const PREVIOUSLY_MISSING = [
         'data-container', 'timeline-item', 'version', 'no-access',
-        'missing', 'not-found', 'ref-container', 'show-user-input',
+        'missing', 'not-found', 'ref-container', 'entry-table',
     ];
 
     const DEFERRED_SPECULATIVE = [

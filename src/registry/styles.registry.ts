@@ -225,7 +225,7 @@ export const BASE_STYLE_REGISTRY = {
     version: { description: 'Build/version diagnostic surface', category: 'auth', canHaveChildren: false },
     'ref-container': { description: 'Renders content referenced from another section', category: 'layout', canHaveChildren: true },
     'data-container': { description: 'Data-scoped container (renders subtree against a data scope)', category: 'layout', canHaveChildren: true },
-    'show-user-input': { description: 'Displays previously submitted user input as a list/card view', category: 'forms', canHaveChildren: false },
+    'entry-table': { description: 'Built-in admin CRUD grid over a form\'s records (search/sort/paginate/CSV, add / edit / delete actions)', category: 'forms', canHaveChildren: false },
 } as const satisfies Record<string, IStyleRegistryEntry>;
 
 /**
