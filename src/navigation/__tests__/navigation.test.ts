@@ -3,8 +3,11 @@ SPDX-FileCopyrightText: 2026 Humdek, University of Bern
 SPDX-License-Identifier: MPL-2.0
 */
 import { describe, it, expect } from 'vitest';
-import type { INavigationMenuItem, INavigationPayload } from '../navigationPayload';
-import { resolveBrandingPresentation } from '../navigationPayload';
+import {
+    resolveBrandingPresentation,
+    type INavigationMenuItem,
+    type INavigationPayload,
+} from '../navigationPayload';
 import {
     getNavigationItemHref,
     getNavigationItemLabel,
