@@ -10,7 +10,7 @@ import {
     getNavigationItemLabel,
     flattenNavigationMenuItems,
 } from '../navLinks';
-import { pageUrlToMobileRoute } from '../mobileRoute';
+import { buildPublicPathFromRoute, pageUrlToMobileRoute } from '../mobileRoute';
 import {
     DEFAULT_WEB_HEADER_PRESET,
     isDoubleWebHeaderPreset,
@@ -97,6 +97,13 @@ describe('navLinks', () => {
 });
 
 describe('mobileRoute', () => {
+    it('builds a concrete public path from a parameterized URL template', () => {
+        expect(
+            buildPublicPathFromRoute('/team-members/{record_id}', { record_id: '5' }),
+        ).toBe('/team-members/5');
+        expect(buildPublicPathFromRoute('/team-members/{record_id}', {})).toBeNull();
+    });
+
     it('maps canonical urls to expo keyword routes', () => {
         expect(pageUrlToMobileRoute('/', 'home')).toBe('/index');
         expect(pageUrlToMobileRoute('/about', 'about')).toBe('/about');

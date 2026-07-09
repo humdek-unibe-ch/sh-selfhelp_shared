@@ -116,6 +116,12 @@ export interface IPreviewNavigatedMessage {
 export interface IPreviewNavigateCommand {
     type: typeof PREVIEW_BRIDGE_MESSAGE.NAVIGATE;
     keyword: string | null;
+    /**
+     * Full public path when keyword alone is insufficient (parameterized routes
+     * such as `/team-members/5`). The mobile frame resolves this via
+     * `GET /pages/resolve` instead of routing by keyword only.
+     */
+    path?: string | null;
 }
 
 /**
@@ -177,7 +183,12 @@ export function isPreviewBridgeMessage(value: unknown): value is TPreviewBridgeM
                 typeof record.href === 'string'
             );
         case PREVIEW_BRIDGE_MESSAGE.NAVIGATE:
-            return typeof record.keyword === 'string' || record.keyword === null;
+            return (
+                (typeof record.keyword === 'string' || record.keyword === null) &&
+                (record.path === undefined ||
+                    record.path === null ||
+                    typeof record.path === 'string')
+            );
         case PREVIEW_BRIDGE_MESSAGE.SET_PREFERENCES:
             return isPreviewPreferences(record.preferences);
         case PREVIEW_BRIDGE_MESSAGE.PREFERENCES_CHANGED:
