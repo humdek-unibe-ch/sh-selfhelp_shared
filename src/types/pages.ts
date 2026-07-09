@@ -74,6 +74,12 @@ export interface IPageContent {
     parent_page_id: number | null;
     is_headless: boolean;
     /**
+     * CMS-in-CMS surface: `public` website pages vs `cms` admin-only snippets
+     * (entry-table / form). `cms` pages must not render on the public slug route;
+     * Host Admin hosts them under `/admin/cms-apps/.../content`.
+     */
+    page_surface?: 'public' | 'cms';
+    /**
      * When true, the web frontend renders this page's content inside a modal
      * overlay (the page title becomes the modal header, with a close button)
      * instead of a full page. Used to open CMS-in-CMS create/edit/detail pages

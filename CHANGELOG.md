@@ -30,6 +30,14 @@ no content migration is needed).
   fields (record edit mode: prefill a specific record addressed by a route
   parameter, e.g. `/admin/team/{record_id}`).
 
+**Additive: first-class CMS apps contract.**
+
+- New `ICmsApp` / `ICmsAppDetail` / `ICmsAppSummary`, `ICmsAppPage`
+  (`ICmsAppAssignedPage` alias), and `TCmsAppRole` plus
+  `CMS_APP_ROLES` / `CMS_APP_PRIMARY_ROLES` for Host Admin CMS app shells.
+- `PERMISSIONS` gains `ADMIN_CMS_APP_READ|CREATE|UPDATE|DELETE`
+  (`admin.cms_app.*`) — separate from `admin.page.*`.
+
 ## v2.2.0
 
 **Branding presentation options (additive).**

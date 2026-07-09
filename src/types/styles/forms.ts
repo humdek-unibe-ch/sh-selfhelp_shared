@@ -536,6 +536,12 @@ export interface IEntryTableStyle extends IBaseStyle {
     edit_url?: IContentField<string>;
     delete_modal_title?: IContentField<string>;
     delete_modal_body?: IContentField<string>;
+    /**
+     * When `1`, the web table shows a language selector above the grid and
+     * reloads translatable cell values for the chosen locale (CMS app lists).
+     * Default off.
+     */
+    show_language_preview?: IContentField<string>;
     spacing?: IContentField<string>;
     web_table_striped?: IContentField<string>;
     web_table_highlight_on_hover?: IContentField<string>;
