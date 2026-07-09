@@ -122,10 +122,21 @@ export interface IListItemStyle extends IStyleWithSpacing {
 export interface IEntryListStyle extends IBaseStyle {
     style_name: 'entry-list';
     line_clamp?: IContentField<TMantineLineClamp>;
+    data_table?: IContentField<string>;
+    own_entries_only?: IContentField<string>;
+    filter?: IContentField<string>;
+    scope?: IContentField<string>;
+    load_as_table?: IContentField<string>;
+    selected_columns?: IContentField<string>;
 }
 
 export interface IEntryRecordStyle extends IBaseStyle {
     style_name: 'entry-record';
+    data_table?: IContentField<string>;
+    own_entries_only?: IContentField<string>;
+    filter?: IContentField<string>;
+    scope?: IContentField<string>;
+    url_param?: IContentField<string>;
 }
 
 export interface IEntryRecordDeleteStyle extends IBaseStyle {
