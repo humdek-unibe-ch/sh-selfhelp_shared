@@ -179,6 +179,8 @@ export interface ISelectStyle extends IBaseStyle {
     value?: IContentField<string>;
     placeholder?: IContentField<string>;
     options?: IContentField<string>;
+    /** Translatable map: `code -> label` for active language. */
+    option_labels?: IContentField<string>;
     is_multiple?: IContentField<string>;
     max?: IContentField<string>;
     // RF-17: searchable/clearable are portable behaviour (was the stale
@@ -206,6 +208,8 @@ export interface IRadioStyle extends IStyleWithSpacing {
     size?: IContentField<TSharedSize>;
     color?: IContentField<TMantineColor>;
     radio_options?: IContentField<string>;
+    /** Translatable map: `code -> label` for active language. */
+    option_labels?: IContentField<string>;
     web_radio_label_position?: IContentField<string>;
     web_radio_variant?: IContentField<string>;
     web_radio_card?: IContentField<string>;
@@ -332,6 +336,8 @@ export interface IComboboxStyle extends IStyleWithSpacing {
     style_name: 'combobox';
     placeholder?: IContentField<string>;
     combobox_options?: IContentField<string>;
+    /** Translatable map: `code -> label` for active language. */
+    option_labels?: IContentField<string>;
     disabled?: IContentField<string>;    label?: IContentField<string>;
     description?: IContentField<string>;
     name?: IContentField<string>;
@@ -430,6 +436,8 @@ export interface INumberInputStyle extends IStyleWithSpacing {
 export interface ISegmentedControlStyle extends IStyleWithSpacing {
     style_name: 'segmented-control';
     segmented_control_data?: IContentField<string>;
+    /** Translatable map: `code -> label` for active language. */
+    option_labels?: IContentField<string>;
     orientation?: IContentField<string>;
     size?: IContentField<TSharedSize>;
     radius?: IContentField<TSharedRadius>;
