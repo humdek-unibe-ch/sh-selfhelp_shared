@@ -24,6 +24,9 @@ no content migration is needed).
   permission, mirroring `_can_delete`; same rule as `updateForm`: own record
   always editable, foreign records need the table UPDATE permission on a
   shared section).
+- `IEntryListStyle` / `IEntryRecordStyle` gain legacy field-based binding
+  properties: `data_table`, `own_entries_only`, `filter`, `scope`; plus
+  `load_as_table` / `selected_columns` (list) and `url_param` (record).
 - `STYLE_REGISTRY`: key `show-user-input` -> `entry-table` (description now
   reflects the built-in add / edit / delete + CSV grid).
 - `IFormRecordStyle` gains optional `load_record_from` + `own_entries_only`
@@ -37,6 +40,17 @@ no content migration is needed).
   `CMS_APP_ROLES` / `CMS_APP_PRIMARY_ROLES` for Host Admin CMS app shells.
 - `PERMISSIONS` gains `ADMIN_CMS_APP_READ|CREATE|UPDATE|DELETE`
   (`admin.cms_app.*`) — separate from `admin.page.*`.
+
+**Additive: user-owned option labels.**
+
+- New option catalog/label types and `parseOptionCatalog`,
+  `parseOptionLabels`, `resolveOptions`, `resolveOptionLabel`,
+  `parseOptionCodes`, and `resolveOptionValueLabels` helpers.
+- Legacy `{value,text}` / `{value,label}` catalogs retain their display labels;
+  resolution follows active language, fallback language, legacy label, then code.
+- `OPTION_STYLE_CONFIGS` is the shared select/radio/combobox/segmented-control
+  registry used by web/mobile renderers and the multilingual admin editor.
+- Form style contracts gain translatable `option_labels`.
 
 ## v2.2.0
 

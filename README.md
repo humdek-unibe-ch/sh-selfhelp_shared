@@ -11,6 +11,7 @@ The shared TypeScript foundation for the SelfHelp ecosystem. It is the single so
 - API request/response contracts
 - shared theme tokens and a Tailwind preset
 - condition and interpolation helpers that mirror backend behavior
+- user-owned option catalog parsing and translated-label resolution
 - CMS class allow-listing and asset URL utilities
 
 ## Install
@@ -28,7 +29,7 @@ For local development against sibling repositories you can use a file dependency
 ## Quick usage
 
 ```ts
-import { ENDPOINTS, replaceCalcedValues, resolveAssetUrl } from '@selfhelp/shared';
+import { ENDPOINTS, replaceCalcedValues, resolveAssetUrl, resolveOptions } from '@selfhelp/shared';
 import type { IPageContent, IUserDataResponse } from '@selfhelp/shared';
 
 import { STYLE_REGISTRY } from '@selfhelp/shared/registry';
