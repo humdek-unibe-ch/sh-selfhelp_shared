@@ -41,12 +41,12 @@ export const ENDPOINTS = {
             `${API_VERSION_PREFIX}/pages/by-keyword/${encodeURIComponent(keyword)}`,
         BY_ID: (pageId: number): string => `${API_VERSION_PREFIX}/pages/${pageId}`,
         /**
-         * DB-driven public path resolution (issue #30): maps a full public URL
-         * path (e.g. `/reset/42/abc`, `/team/7`) to a page payload + route
-         * params. `path` is sent URL-encoded as a query parameter.
+         * Static resolve route (no query). Always pair with
+         * {@link buildPagesResolveUrl} / {@link buildPagesResolvePath} so
+         * `path`, `language_id`, and `preview` are encoded identically across
+         * SSR, browser, and mobile.
          */
-        RESOLVE: (path: string): string =>
-            `${API_VERSION_PREFIX}/pages/resolve?path=${encodeURIComponent(path)}`,
+        RESOLVE_ROUTE: `${API_VERSION_PREFIX}/pages/resolve`,
     },
     NAVIGATION: {
         GET: `${API_VERSION_PREFIX}/navigation`,
