@@ -10,3 +10,5 @@ coverage/
 .tsbuildinfo
 
 AGENTS.local.md
+# npm pack artifacts (local consumer installs)
+*.tgz
