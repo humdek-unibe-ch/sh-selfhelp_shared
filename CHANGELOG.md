@@ -9,14 +9,16 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
-## v3.0.1
 
-- `IEntryRecordStyle`: replace author `filter` with `load_record_from` (same
-  route-param contract as `IEntryRecordFormStyle`). Pairs with core `0.1.36`.
+## v1.21.5
 
-## v3.0.0
+Single publish of the DB-routing / CMS-apps / navigation / entry-binding wave
+(previously staged as v2.0.0–v3.0.1 on this branch). Pairs with core `0.1.36`,
+frontend `0.1.63`, and mobile consumers of this package.
 
-**BREAKING: `show-user-input` renamed to `entry-table`.**
+### Entry table rename (breaking)
+
+**`show-user-input` renamed to `entry-table`.**
 
 The built-in admin CRUD grid style is now `entry-table` (backend migration
 renames the `styles` row in lockstep; sections keep their `id_styles` FK, so
@@ -29,16 +31,23 @@ no content migration is needed).
   permission, mirroring `_can_delete`; same rule as `updateForm`: own record
   always editable, foreign records need the table UPDATE permission on a
   shared section).
-- `IEntryListStyle` / `IEntryRecordStyle` gain legacy field-based binding
-  properties: `data_table`, `own_entries_only`, `filter`, `scope`; plus
-  `load_as_table` / `selected_columns` (list) and `url_param` (record).
-- `STYLE_REGISTRY`: key `show-user-input` -> `entry-table` (description now
-  reflects the built-in add / edit / delete + CSV grid).
-- `IFormRecordStyle` gains optional `load_record_from` + `own_entries_only`
-  fields (record edit mode: prefill a specific record addressed by a route
-  parameter, e.g. `/admin/team/{record_id}`).
+- `STYLE_REGISTRY`: key `show-user-input` -> `entry-table`.
+- `fields_map` / `fields_map_labels` helpers: `parseFieldsMapCatalog`,
+  `parseFieldsMapLabels`, `serializeFieldsMapCatalog`, `serializeFieldsMapLabels`,
+  and `FIELDS_MAP_STYLE_CONFIG`.
 
-**Additive: first-class CMS apps contract.**
+### Entry list / record / form binding
+
+- `IEntryListStyle` / `IEntryRecordStyle` gain field-based binding:
+  `data_table`, `own_entries_only`, `filter`, `scope`; plus `load_as_table` /
+  `selected_columns` (list).
+- `IEntryRecordStyle` uses `load_record_from` (route-param name, same contract
+  as `IEntryRecordFormStyle`) — not author `filter` / `url_param`.
+- New `IEntryRecordFormStyle` (`style_name: 'entry-record-form'`) with
+  `load_record_from` for dual-route create/edit.
+- `IFormRecordStyle` gains optional `load_record_from` + `own_entries_only`.
+
+### CMS apps contract
 
 - New `ICmsApp` / `ICmsAppDetail` / `ICmsAppSummary`, `ICmsAppPage`
   (`ICmsAppAssignedPage` alias), and `TCmsAppRole` plus
@@ -46,7 +55,7 @@ no content migration is needed).
 - `PERMISSIONS` gains `ADMIN_CMS_APP_READ|CREATE|UPDATE|DELETE`
   (`admin.cms_app.*`) — separate from `admin.page.*`.
 
-**Additive: user-owned option labels.**
+### User-owned option labels
 
 - New option catalog/label types and `parseOptionCatalog`,
   `parseOptionLabels`, `resolveOptions`, `resolveOptionLabel`,
@@ -56,66 +65,23 @@ no content migration is needed).
 - `OPTION_STYLE_CONFIGS` is the shared select/radio/combobox/segmented-control
   registry used by web/mobile renderers and the multilingual admin editor.
 - Form style contracts gain translatable `option_labels`.
+- Mobile adapter types support disabled select options.
 
-## v2.2.0
+### Navigation (strict contract)
 
-**Branding presentation options (additive).**
-
-- `INavigationBranding` gains optional `logo_size` (`sm|md|lg|xl`) and
-  `logo_variant` (`logo-and-name|logo-only|name-only`) mirroring the new
-  `navigation_settings` columns.
-- New `resolveBrandingPresentation(branding?)` helper +
-  `NAVIGATION_BRANDING_LOGO_HEIGHTS` map (24/32/44/56px) so the web header and
-  the mobile drawer resolve identical defaults, including the text fallback
-  when no logo asset is configured.
-
-## v2.1.0
-
-**Pager toggle + global branding (additive).**
-
-- `INavigationMenu.show_pager?: boolean` (menu default for the prev/next pager
-  on nested web pages) and `INavigationMenuItem.show_pager?: boolean | null`
-  (per-parent-item override; `null` = inherit). `IBranchNavContext` gains the
-  resolved `showPager` (parent override → menu default → `true`), so renderers
-  can show the sidebar without the pager and vice versa.
-- New `INavigationBranding` block on `INavigationPayload.branding`:
-  `logo_url` (public asset path; `null` = text fallback), `logo_alt`
-  (accessible brand text), `link_url` (logo click target; `null` = home).
-  Shared by the web header and the mobile drawer.
-
-## v2.0.0
-
-**Strict navigation contract (breaking)** — one final menu model with no legacy
-compatibility paths.
-
-- `INavigationMenuItem` is strict: every key is always present (`null` for
-  absent values, never a missing key). Items gain `description`, `aria_label`,
-  and `layer` (`'top' | null` — top header row assignment for `web_header`
-  root items). `INavigationMenu` drops the free-form `config` object; the
-  footer layout is a preset (`columns` / `inline`) on `preset`, typed via the
-  new `TWebFooterPreset`.
-- New `headerLayers` module: `splitHeaderLayers` / `mergeHeaderLayers`
-  implement the double-header row split and the deterministic single-preset
-  merge (main row first, then top row). `isDoubleWebHeaderPreset` moves the
-  double-preset check into the package.
-- New `footerPreset` module: `WEB_FOOTER_PRESET_OPTIONS`,
-  `resolveWebFooterPreset`, `flattenFooterItems` (render-time flatten for the
-  `inline` preset), `footerColumnItems`, `footerStandaloneItems`,
-  `footerGroupLinks`.
-- New `activeTrail` module: `isMenuItemActiveOnWeb` /
-  `isMenuItemActiveOnMobile` / `expandedIdsForActiveTrail` /
-  `getNavigationItemMobileHref` — the single active-state implementation for
-  the web burger drawer, mobile drawer, and mobile bottom tabs.
-- New `navigationBundle` module: the `selfhelp/navigation-bundle` **v2.0**
-  TypeScript contract (menus without `config`, items with `layer`,
-  translations with `aria_label`). v1.0 bundles are not accepted anywhere.
-- **Child-page navigation presentation:** `TNavigationChildrenNavMode`
-  (`'sidebar' | 'pills' | 'none'`) on menus (`children_nav` +
-  `show_breadcrumbs`) and items (`children_nav` override). The `branchNav`
-  module is rebuilt around `resolveWebBranchNavContext`: it resolves the
-  effective mode (item override → menu default → `sidebar`), the branch
-  segments, the breadcrumb trail (`IBreadcrumbEntry`), and the prev/next
-  pager from one navigation payload (`IBranchNavContext`).
+- Strict `INavigationMenuItem` (every key always present). Items gain
+  `description`, `aria_label`, and `layer` (`'top' | null`).
+- `INavigationMenu` drops free-form `config`; footer layout is a preset
+  (`columns` / `inline`) on `preset` (`TWebFooterPreset`).
+- Modules: `headerLayers`, `footerPreset`, `activeTrail`, `navigationBundle`
+  (`selfhelp/navigation-bundle` **v2.0**), `branchNav` /
+  `resolveWebBranchNavContext`, `TNavigationChildrenNavMode`.
+- `INavigationMenu.show_pager` / item override; `IBranchNavContext.showPager`.
+- `INavigationBranding` on `INavigationPayload.branding` (`logo_url`,
+  `logo_alt`, `link_url`) plus `logo_size` / `logo_variant` and
+  `resolveBrandingPresentation` / `NAVIGATION_BRANDING_LOGO_HEIGHTS`.
+- Path-based mobile preview navigation commands; DB-driven public routing
+  types (`GET /pages/resolve` metadata).
 
 ## v1.21.4
 
