@@ -52,8 +52,18 @@ jobs:
       # Node 22 ships npm 10.x; npm Trusted Publishing (OIDC) requires
       # npm >= 11.5.1. Upgrade so `npm publish` performs the OIDC token
       # exchange instead of expecting a stored auth token.
+      #
+      # npm 12.0.0's published tarball omits the bundled `sigstore` module
+      # that libnpmpublish still requires for provenance (Trusted Publishing
+      # enables provenance by default) — upstream npm/cli#9722. Until a
+      # patched 12.x ships, drop sigstore into npm's own node_modules so
+      # libnpmpublish's require() resolves it.
       - name: Upgrade npm (OIDC-capable)
-        run: npm install -g npm@latest
+        run: |
+          npm install -g npm@latest
+          NPM_HOME="$(npm root -g)/npm"
+          npm install --no-save --prefix "$NPM_HOME" sigstore@^5
+          node -e "require(process.argv[1]); console.log('sigstore ok')" "$NPM_HOME/node_modules/sigstore"
 
       - name: Install dependencies
         run: npm ci
