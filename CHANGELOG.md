@@ -10,6 +10,29 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
+## v1.21.6
+
+Unreleased wave cleanup (pairs with core `0.1.36`, frontend `0.1.63`, mobile
+`supports.core >=0.1.36`).
+
+### Canonical public page resolve helper
+
+- `buildPagesResolveUrl` / `buildPagesResolvePath` / `buildPagesResolveQuery` /
+  `normalizePagesResolvePath` — single encoding for `path`, `language_id`, and
+  `preview` used by frontend SSR, frontend browser client, and mobile.
+- `ENDPOINTS.PAGES.RESOLVE_ROUTE` is the static `/cms-api/v1/pages/resolve`
+  path; the old `ENDPOINTS.PAGES.RESOLVE(path)` builder is removed (no alias).
+
+### Form-record prefill
+
+- `parseFormRecordPrefill` + `flattenFormRecordPrefillValues` — shared
+  `section_data` → form prefill map (web + mobile).
+
+### Preview bridge
+
+- `IPreviewNavigatedMessage.path` — optional public CMS path so the shell can
+  re-resolve parameterized routes via `/pages/resolve`.
+
 ## v1.21.5
 
 Single publish of the DB-routing / CMS-apps / navigation / entry-binding wave
