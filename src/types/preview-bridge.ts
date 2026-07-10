@@ -105,6 +105,12 @@ export interface IPreviewNavigatedMessage {
     keyword: string | null;
     /** Full in-frame href, for diagnostics / the toolbar URL display. */
     href: string;
+    /**
+     * Public CMS path when the frame resolved a parameterized route
+     * (`/team-members/5`). The shell re-resolves via `/pages/resolve` so
+     * `route_params` stay in sync. Optional for static keyword pages.
+     */
+    path?: string | null;
     locale?: string | null;
 }
 
@@ -180,7 +186,10 @@ export function isPreviewBridgeMessage(value: unknown): value is TPreviewBridgeM
             return (
                 (record.source === 'web' || record.source === 'mobile') &&
                 (typeof record.keyword === 'string' || record.keyword === null) &&
-                typeof record.href === 'string'
+                typeof record.href === 'string' &&
+                (record.path === undefined ||
+                    record.path === null ||
+                    typeof record.path === 'string')
             );
         case PREVIEW_BRIDGE_MESSAGE.NAVIGATE:
             return (
