@@ -145,13 +145,13 @@ describe('style placement targeting', () => {
 });
 
 /**
- * Catalog parity (mobile rendering plan, milestone one). The core registry must
- * be the established 90-style backend catalog: the eight previously-missing
- * system/data/reference styles are present, and the sixteen deferred
- * speculative styles are absent. Drift here means the shared contract and the
- * backend catalog have diverged.
+ * Catalog parity (mobile rendering plan, milestone one + entry-record-form).
+ * The core registry must match the established backend catalog (91 styles):
+ * the eight previously-missing system/data/reference styles are present, and
+ * the sixteen deferred speculative styles are absent. Drift here means the
+ * shared contract and the backend catalog have diverged.
  */
-describe('core catalog parity (90 established styles)', () => {
+describe('core catalog parity (91 established styles)', () => {
     const CORE_NAMES = Object.keys(BASE_STYLE_REGISTRY);
 
     const PREVIOUSLY_MISSING = [
@@ -165,8 +165,9 @@ describe('core catalog parity (90 established styles)', () => {
         'input-otp', 'search-field', 'fab-button', 'biometric-login-button',
     ];
 
-    it('contains exactly the 90 established core styles', () => {
-        expect(CORE_NAMES).toHaveLength(90);
+    it('contains exactly the 91 established core styles', () => {
+        expect(CORE_NAMES).toHaveLength(91);
+        expect(CORE_NAMES).toContain('entry-record-form');
     });
 
     it('includes every previously-missing established style', () => {

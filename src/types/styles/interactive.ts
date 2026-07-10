@@ -177,6 +177,6 @@ export interface INotificationStyle extends IStyleWithSpacing {
     radius?: IContentField<TSharedRadius>;}
 
 // NOTE: `fab-button` and `biometric-login-button` are deferred (mobile rendering
-// plan, milestone-one scope). They are NOT part of the established 90-style
+// plan, milestone-one scope). They are NOT part of the established 91-style
 // catalog and were removed from the registry, union and interfaces. Reintroduce
 // only with a concrete CMS authoring use case, fields, render target, and tests.
