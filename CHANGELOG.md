@@ -10,10 +10,33 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
+## v1.21.7
+
+Additive page-content contract for the unreleased wave (pairs with core
+`0.1.36`, frontend `0.1.63`, mobile `supports.core >=0.1.36`). Published as a
+**new patch** because `1.21.6` is already immutable on npm.
+
+- `IPageContent.should_fallback?: boolean` — when `true`, the web frontend
+  redirects to the static `/auth/*` fallback for system pages missing their
+  functional section. Emitted by core `>=0.1.36` only for the fallback-check
+  keyword set. Absence means the page does not participate in static fallback;
+  consumers must not infer fallback from empty `sections`.
+
 ## v1.21.6
 
 Unreleased wave cleanup (pairs with core `0.1.36`, frontend `0.1.63`, mobile
-`supports.core >=0.1.36`).
+`supports.core >=0.1.36`). Pin consumers to **`1.21.7`** (or at least
+`1.21.6` for resolve/prefill helpers; `should_fallback` typing requires
+`1.21.7`).
+
+### Release tag warning (manual admin)
+
+Do **not** use shared `2.x` / `3.x` tags or npm versions from this feature-branch
+history for this release. The wave was republished on the `1.21.x` line
+(`1.21.5` catalog, `1.21.6` cleanup). Review and remove any local/remote
+`v2.*` / `v3.*` tags that may still exist from staging commits
+(`v2.0.0`, `v2.1.0`, `v2.2.0`, `v3.0.0`, `v3.0.1`) before publishing — do not
+delete tags from automation; handle them manually in the shared repository.
 
 ### Canonical public page resolve helper
 
