@@ -40,6 +40,21 @@ export const ENDPOINTS = {
         BY_KEYWORD: (keyword: string): string =>
             `${API_VERSION_PREFIX}/pages/by-keyword/${encodeURIComponent(keyword)}`,
         BY_ID: (pageId: number): string => `${API_VERSION_PREFIX}/pages/${pageId}`,
+        /**
+         * Static resolve route (no query). Always pair with
+         * {@link buildPagesResolveUrl} / {@link buildPagesResolvePath} so
+         * `path`, `language_id`, and `preview` are encoded identically across
+         * SSR, browser, and mobile.
+         */
+        RESOLVE_ROUTE: `${API_VERSION_PREFIX}/pages/resolve`,
+    },
+    NAVIGATION: {
+        GET: `${API_VERSION_PREFIX}/navigation`,
+        LAST_VISITED: `${API_VERSION_PREFIX}/navigation/last-visited`,
+    },
+    SEARCH: {
+        CONTENT: `${API_VERSION_PREFIX}/search`,
+        PAGES: `${API_VERSION_PREFIX}/search/pages`,
     },
     LANGUAGES: `${API_VERSION_PREFIX}/languages`,
     FORMS: {

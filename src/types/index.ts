@@ -14,6 +14,7 @@ export * from './styles/composite';
 export * from './styles/unknown';
 export * from './pages';
 export * from './auth';
+export * from './cms-app';
 export * from './api';
 export * from './preview-bridge';
 export * from './distribution';

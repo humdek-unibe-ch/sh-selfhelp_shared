@@ -5,20 +5,7 @@ SPDX-License-Identifier: MPL-2.0
 /**
  * Backend → frontend page-shape transformer.
  *
- * The Symfony backend projects pages with canonical `snake_case` keys
- * (`nav_position`, `footer_position`, `id_pages`, `id_parent_page`,
- * `id_page_types`, `id_page_access_types`). The web and mobile apps
- * prefer camelCase (`navPosition`, `footerPosition`) at the type-system
- * level. This helper bridges the two so consumers don't have to know
- * about the snake-case wire format.
- *
- * It is the single source of truth for the conversion. Web frontend
- * and mobile both import it from `@selfhelp/shared`.
- *
- * NOTE: Pre-release breaking-change cutover (`db_naming_cutover_*`)
- * removed all legacy aliases (`parent`, `id_type`,
- * `id_pageAccessTypes`). The backend is the single source of canonical
- * keys; the transformer no longer accepts the legacy shapes.
+ * Menu membership is no longer projected on pages. Use `GET /navigation` for menus.
  */
 
 import type { IPageItem } from '../types/pages';
@@ -31,14 +18,12 @@ interface IRawPage {
     id_parent_page?: number | null;
     parent_page_id?: number | null;
     is_headless?: number | boolean | null;
-    nav_position?: number | null;
-    navPosition?: number | null;
-    footer_position?: number | null;
-    footerPosition?: number | null;
     is_system?: number | boolean | null;
     is_open_access?: number | boolean | null;
     title?: string | null;
     description?: string | null;
+    icon?: string | null;
+    mobile_icon?: string | null;
     id_users?: number;
     acl_select?: 0 | 1;
     acl_insert?: 0 | 1;
@@ -67,15 +52,11 @@ export function transformPageData(apiPage: IRawPage): IPageItem {
         url: apiPage.url ?? null,
         parent_page_id: parentPageId,
         is_headless: toBool(apiPage.is_headless),
-        navPosition:
-            apiPage.navPosition !== undefined ? apiPage.navPosition : (apiPage.nav_position ?? null),
-        footerPosition:
-            apiPage.footerPosition !== undefined
-                ? apiPage.footerPosition
-                : (apiPage.footer_position ?? null),
         is_system: apiPage.is_system !== undefined ? toBool(apiPage.is_system) : undefined,
         title: apiPage.title ?? null,
         description: apiPage.description ?? null,
+        icon: apiPage.icon ?? null,
+        mobile_icon: apiPage.mobile_icon ?? null,
         children: apiPage.children?.map(transformPageData) ?? [],
 
         id_users: apiPage.id_users,

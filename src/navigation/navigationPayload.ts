@@ -1,0 +1,164 @@
+/*
+SPDX-FileCopyrightText: 2026 Humdek, University of Bern
+SPDX-License-Identifier: MPL-2.0
+*/
+import type { TWebHeaderPreset } from './headerPreset';
+import type { TWebFooterPreset } from './footerPreset';
+
+export type TNavigationMenuKey =
+    | 'web_header'
+    | 'web_footer'
+    | 'mobile_drawer'
+    | 'mobile_bottom_tabs';
+
+export type TNavigationMenuItemType = 'page' | 'external_url' | 'group';
+
+/** Header row assignment for `web_header` root items (`null` = main row). */
+export type TNavigationHeaderLayer = 'top';
+
+/**
+ * How a web page presents its menu branch (children/siblings):
+ * `sidebar` = left sidebar + prev/next pager, `pills` = compact pill strip,
+ * `none` = only the page content. Menu-level default (NULL resolves to
+ * `sidebar`), overridable per parent item. Mobile menus have native
+ * presentation and always carry `null`.
+ */
+export type TNavigationChildrenNavMode = 'sidebar' | 'pills' | 'none';
+
+export type TNavigationSearchMode = 'off' | 'menu_pages' | 'searchable_pages' | 'content_index';
+
+export type TNavigationStartMode = 'fixed_page' | 'last_visited_then_fixed_page';
+
+export type TNavigationMobileStartSource = 'same_as_web' | 'custom_mobile_pages';
+
+export interface INavigationResolvedPageRef {
+    id: number;
+    keyword: string;
+    url: string | null;
+    title: string | null;
+    has_content?: boolean;
+    section_count?: number;
+}
+
+/**
+ * Resolved public menu item (`GET /navigation`). Strict contract: every key is
+ * always present; absence of a value is expressed as `null`, never a missing key.
+ */
+export interface INavigationMenuItem {
+    id: number;
+    item_type: TNavigationMenuItemType;
+    label: string;
+    description: string | null;
+    aria_label: string | null;
+    icon: string | null;
+    mobile_icon: string | null;
+    position: number;
+    /** Only meaningful on `web_header` root items; `null` everywhere else. */
+    layer: TNavigationHeaderLayer | null;
+    /** Per-parent-item override of the menu's `children_nav` default (web menus only). */
+    children_nav: TNavigationChildrenNavMode | null;
+    /** Per-parent-item override of the menu's `show_pager` default; `null` = inherit. */
+    show_pager?: boolean | null;
+    external_url: string | null;
+    page: INavigationResolvedPageRef | null;
+    is_active: boolean;
+    children: INavigationMenuItem[];
+}
+
+export interface INavigationMenu {
+    key: TNavigationMenuKey;
+    platform: 'web' | 'mobile';
+    surface: 'header' | 'footer' | 'drawer' | 'bottom_tabs';
+    /** Header presets for `web_header`, footer presets for `web_footer`, `null` for mobile menus. */
+    preset: TWebHeaderPreset | TWebFooterPreset | null;
+    max_depth: number | null;
+    item_limit: number | null;
+    /** Resolved branch presentation default; `sidebar`/`pills`/`none` on web menus, `null` on mobile menus. */
+    children_nav: TNavigationChildrenNavMode | null;
+    /** Breadcrumb trail above nested web pages; always `false` on mobile menus. */
+    show_breadcrumbs: boolean;
+    /** Prev/next pager on nested web pages; always `false` on mobile menus. */
+    show_pager?: boolean;
+    items: INavigationMenuItem[];
+}
+
+export interface INavigationStartupConfig {
+    web_guest_start_page: INavigationResolvedPageRef | null;
+    web_user_start_page: INavigationResolvedPageRef | null;
+    web_user_start_mode: TNavigationStartMode;
+    web_user_last_visited_page?: INavigationResolvedPageRef | null;
+    mobile_guest_start_page: INavigationResolvedPageRef | null;
+    mobile_user_start_page: INavigationResolvedPageRef | null;
+    mobile_user_start_mode: TNavigationStartMode;
+    mobile_user_last_visited_page?: INavigationResolvedPageRef | null;
+    mobile_start_page_source: TNavigationMobileStartSource;
+}
+
+export interface INavigationSearchConfig {
+    mode: TNavigationSearchMode;
+    min_chars: number;
+    result_limit: number;
+    default_visibility: string;
+    field_policy: string;
+}
+
+/** Brand block size step; maps to logo heights 24/32/44/56px on web. */
+export type TNavigationBrandingSize = 'sm' | 'md' | 'lg' | 'xl';
+
+/** Brand block layout: image + site name, image alone, or text alone. */
+export type TNavigationBrandingVariant = 'logo-and-name' | 'logo-only' | 'name-only';
+
+/**
+ * Global branding block shared by the web header and the mobile drawer:
+ * `logo_url` = public path of the logo asset (null = text fallback),
+ * `logo_alt` = accessible alt / brand text, `link_url` = logo click target
+ * (null = home), `logo_size` + `logo_variant` = presentation options
+ * (default `md` / `logo-and-name` when omitted by older backends).
+ */
+export interface INavigationBranding {
+    logo_url: string | null;
+    logo_alt: string | null;
+    link_url: string | null;
+    logo_size?: TNavigationBrandingSize;
+    logo_variant?: TNavigationBrandingVariant;
+}
+
+/** Logo pixel heights per brand size step (shared by web header + mobile drawer). */
+export const NAVIGATION_BRANDING_LOGO_HEIGHTS: Record<TNavigationBrandingSize, number> = {
+    sm: 24,
+    md: 32,
+    lg: 44,
+    xl: 56,
+};
+
+/**
+ * Resolve the branding presentation with cross-platform defaults: older
+ * backends omit `logo_size` / `logo_variant`, and a missing logo image
+ * degrades `logo-and-name` / `logo-only` to the text fallback.
+ */
+export function resolveBrandingPresentation(branding?: INavigationBranding | null): {
+    size: TNavigationBrandingSize;
+    variant: TNavigationBrandingVariant;
+    logoHeight: number;
+    showLogo: boolean;
+    showName: boolean;
+} {
+    const size: TNavigationBrandingSize = branding?.logo_size ?? 'md';
+    const requestedVariant: TNavigationBrandingVariant = branding?.logo_variant ?? 'logo-and-name';
+    const hasLogo = Boolean(branding?.logo_url);
+    const variant: TNavigationBrandingVariant = hasLogo ? requestedVariant : 'name-only';
+    return {
+        size,
+        variant,
+        logoHeight: NAVIGATION_BRANDING_LOGO_HEIGHTS[size],
+        showLogo: variant !== 'name-only',
+        showName: variant !== 'logo-only',
+    };
+}
+
+export interface INavigationPayload {
+    menus: Record<TNavigationMenuKey, INavigationMenu>;
+    startup: INavigationStartupConfig;
+    search: INavigationSearchConfig;
+    branding?: INavigationBranding;
+}

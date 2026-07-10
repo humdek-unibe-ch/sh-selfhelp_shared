@@ -23,7 +23,7 @@ export type TMobileSelectPresentation = 'bottom-sheet' | 'dialog' | 'popover';
 export type TMobileFieldVariant = 'primary' | 'secondary';
 
 export interface IFormStyle extends IStyleWithSpacing {
-    style_name: 'form-log' | 'form-record';
+    style_name: 'form-log' | 'form-record' | 'entry-record-form';
     /** Optional auto-styled heading rendered above the form when set. */
     title?: IContentField<string>;
     /** Optional sub-heading rendered below the title when set. */
@@ -42,6 +42,16 @@ export interface IFormStyle extends IStyleWithSpacing {
     confirm_submit?: IContentField<string>;
     /** Message shown in the confirmation dialog before submit. */
     confirm_message?: IContentField<string>;
+    /**
+     * When '1', a successful submit closes the surrounding web modal (only has
+     * an effect when the form's page is opened with `open_in_modal`). Web-only.
+     */
+    close_modal_on_save?: IContentField<string>;
+    /**
+     * Optional URL to navigate to after a successful submit (the parent list is
+     * refreshed). Empty = stay / close the modal. Web-only.
+     */
+    redirect_on_save?: IContentField<string>;
     // RF-21: button knobs are portable to the mobile custom form (not a 1:1
     // component map). Promoted web_* -> shared_* so both renderers read them.
     buttons_size?: IContentField<string>;
@@ -59,8 +69,30 @@ export interface IFormLogStyle extends IFormStyle {
 
 export interface IFormRecordStyle extends IFormStyle {
     style_name: 'form-record';
+    /** Human-readable table name slug (runtime table is owned by section id). */
+    name?: IContentField<string>;
     btn_update_label?: IContentField<string>;
     btn_update_color?: IContentField<string>;
+    /**
+     * '1' (default): the form only ever loads/updates the user's own records.
+     * '0': shared editing — foreign records can be loaded/updated by users
+     * holding UPDATE data access on the form's table (admins always pass).
+     */
+    own_entries_only?: IContentField<string>;
+}
+
+export interface IEntryRecordFormStyle extends IFormStyle {
+    style_name: 'entry-record-form';
+    btn_update_label?: IContentField<string>;
+    btn_update_color?: IContentField<string>;
+    /** Numeric data_tables.id or empty to use this section's owned table. */
+    data_table?: IContentField<string>;
+    /**
+     * Route parameter carrying the record id (e.g. record_id on /cms/team/{record_id}).
+     * When present the form loads that record; when absent the form stays empty (create).
+     */
+    load_record_from?: IContentField<string>;
+    own_entries_only?: IContentField<string>;
 }
 
 export interface IInputStyle extends IBaseStyle {
@@ -154,6 +186,8 @@ export interface ISelectStyle extends IBaseStyle {
     value?: IContentField<string>;
     placeholder?: IContentField<string>;
     options?: IContentField<string>;
+    /** Translatable map: `code -> label` for active language. */
+    option_labels?: IContentField<string>;
     is_multiple?: IContentField<string>;
     max?: IContentField<string>;
     // RF-17: searchable/clearable are portable behaviour (was the stale
@@ -181,6 +215,8 @@ export interface IRadioStyle extends IStyleWithSpacing {
     size?: IContentField<TSharedSize>;
     color?: IContentField<TMantineColor>;
     radio_options?: IContentField<string>;
+    /** Translatable map: `code -> label` for active language. */
+    option_labels?: IContentField<string>;
     web_radio_label_position?: IContentField<string>;
     web_radio_variant?: IContentField<string>;
     web_radio_card?: IContentField<string>;
@@ -307,6 +343,8 @@ export interface IComboboxStyle extends IStyleWithSpacing {
     style_name: 'combobox';
     placeholder?: IContentField<string>;
     combobox_options?: IContentField<string>;
+    /** Translatable map: `code -> label` for active language. */
+    option_labels?: IContentField<string>;
     disabled?: IContentField<string>;    label?: IContentField<string>;
     description?: IContentField<string>;
     name?: IContentField<string>;
@@ -405,6 +443,8 @@ export interface INumberInputStyle extends IStyleWithSpacing {
 export interface ISegmentedControlStyle extends IStyleWithSpacing {
     style_name: 'segmented-control';
     segmented_control_data?: IContentField<string>;
+    /** Translatable map: `code -> label` for active language. */
+    option_labels?: IContentField<string>;
     orientation?: IContentField<string>;
     size?: IContentField<TSharedSize>;
     radius?: IContentField<TSharedRadius>;
@@ -462,15 +502,24 @@ export interface IProgressSectionStyle extends IBaseStyle {
     tooltip_label?: IContentField<string>;
     web_tooltip_position?: IContentField<string>;}
 
-export interface IShowUserInputEntry {
+export interface IEntryTableEntry {
     record_id: number;
     id_users: number;
+    /** Per-row delete permission (backend rule `canDeleteOwnedRecord`). */
     _can_delete?: boolean;
+    /** Per-row edit permission (backend rule `canUpdateOwnedRecord`). */
+    _can_edit?: boolean;
     [key: string]: unknown;
 }
 
-export interface IShowUserInputStyle extends IBaseStyle {
-    style_name: 'show-user-input';
+/**
+ * The built-in admin CRUD grid (renamed from `show-user-input` in the
+ * CMS-in-CMS polish wave): a data table over a form's records with search /
+ * sort / pagination / CSV, an "Add new" button, a per-row edit action and a
+ * permission-gated per-row delete.
+ */
+export interface IEntryTableStyle extends IBaseStyle {
+    style_name: 'entry-table';
     /** Optional auto-styled heading rendered above the entries when set. */
     title?: IContentField<string>;
     /** Message shown when there are no entries to display (default "No entries found."). */
@@ -488,8 +537,28 @@ export interface IShowUserInputStyle extends IBaseStyle {
     csv_export?: IContentField<string>;
     delete_entry?: IContentField<string>;
     fields_map?: IContentField<string>;
+    /** Per-language header labels keyed by field_key. */
+    fields_map_labels?: IContentField<string>;
+    /**
+     * Optional URL of a create form. When set, the web table shows an "Add new"
+     * button above it (e.g. opens the create form modal). Web-only.
+     */
+    add_url?: IContentField<string>;
+    /**
+     * Optional URL template for opening a row's edit form (e.g.
+     * `/cms/team/{record_id}`). When set, each row with `_can_edit` gets an
+     * edit action with the single-brace `{record_id}` placeholder substituted
+     * by the renderer at click time. Web-only.
+     */
+    edit_url?: IContentField<string>;
     delete_modal_title?: IContentField<string>;
     delete_modal_body?: IContentField<string>;
+    /**
+     * When `1`, the web table shows a language selector above the grid and
+     * reloads translatable cell values for the chosen locale (CMS app lists).
+     * Default off.
+     */
+    show_language_preview?: IContentField<string>;
     spacing?: IContentField<string>;
     web_table_striped?: IContentField<string>;
     web_table_highlight_on_hover?: IContentField<string>;
@@ -499,10 +568,10 @@ export interface IShowUserInputStyle extends IBaseStyle {
     web_table_sticky_header?: IContentField<string>;
     web_table_caption_side?: IContentField<string>;
     /**
-     * show-user-input rows, each keyed by the immutable data-column `field_key`
+     * entry-table rows, each keyed by the immutable data-column `field_key`
      * (issue #56 v2). Header labels come from {@link field_labels}, not the keys.
      */
-    entries?: IShowUserInputEntry[];
+    entries?: IEntryTableEntry[];
     /**
      * Header map `field_key => display_name` for {@link entries} (issue #56 v2).
      * Lets the table show the human column label while rows stay keyed by the

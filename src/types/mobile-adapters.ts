@@ -146,6 +146,7 @@ export interface IMobileCheckboxProps extends IMobileAdapterBaseProps {
 export interface IMobileSelectOption {
     value: string;
     label: string;
+    disabled?: boolean;
 }
 
 export interface IMobileSelectProps extends IMobileAdapterBaseProps {

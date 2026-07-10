@@ -64,13 +64,21 @@ These rules apply to every documentation change in active SelfHelp2 repositories
 - Runtime helpers should stay small and deterministic.
 - Prefer mirroring backend behavior over inventing new client behavior.
 
+## Navigation Contract Rules
+
+This package is the typed anchor for the cross-repo navigation contract (backend `GET /navigation` ⇄ web/mobile renderers). Backend reference: `sh-selfhelp_backend/docs/developer/29-navigation-menu-builder.md`.
+
+- **Types** (`src/types/navigation.ts` area): `INavigationPayload` (menus + `settings` + `branding`), `INavigationMenu` (`key`, `platform`, `surface`, `preset`, `max_depth`, `item_limit`, `children_nav`, `show_breadcrumbs`, `show_pager`), `INavigationMenuItem` (strict — every key always present, `null` for absent: `label`, `description`, `aria_label`, `icon`, `mobile_icon`, `layer`, `children_nav`, `show_pager`, `page`, `children`), `INavigationBranding`, plus the `selfhelp/navigation-bundle` v2.0 types. The backend emits strict shapes; never make these fields optional to paper over a payload gap — fix the backend.
+- **Helpers** (`src/navigation/`): `headerLayers` (split/merge `layer: 'top'` items for double vs single header presets), `menuDepth` (`resolveMenuMaxDepth`, `clampMenuItemsAtDepth` — depth-index clamp; menus support three item levels), `branchNav` (effective children-nav mode `sidebar`/`pills`/`none`, branch group, breadcrumb trail, prev/next pager with `show_pager` menu default + per-item override), item label/href/aria resolution, `resolveAssetUrl`. Renderers must use these helpers instead of re-implementing traversal.
+- **Change protocol:** any navigation payload/bundle change lands here in the same wave as the backend schema change and the web/mobile renderer updates, with a version bump and updated tests (`src/navigation/**.test.ts`). The backend JSON schema (`get_navigation.json`) and these types must stay identical in shape.
+
 ## Coding Style
 
 - Keep the existing TypeScript style: 4-space indentation, semicolons, single quotes.
 - Use `I...` names for interfaces and `T...` names for type aliases.
 - Use `IContentField<T>` for CMS field values.
 - Use literal `style_name` values in style interfaces.
-- Style names are **kebab-case** (e.g. `reset-password`, `two-factor-auth`, `entry-list`, `entry-record`, `entry-record-delete`, `no-access`, `not-found`, `show-user-input`). The legacy camelCase forms (`resetPassword`, `twoFactorAuth`, `entryList`, `entryRecord`, `entryRecordDelete`, …) were renamed to kebab-case in v1.8.0; new styles must be registered kebab-case and the backend seeds/DB, this package, the frontend, and the mobile renderers must stay in lockstep.
+- Style names are **kebab-case** (e.g. `reset-password`, `two-factor-auth`, `entry-list`, `entry-record`, `entry-record-delete`, `entry-table`, `no-access`, `not-found`). The legacy camelCase forms (`resetPassword`, `twoFactorAuth`, `entryList`, `entryRecord`, `entryRecordDelete`, …) were renamed to kebab-case in v1.8.0; `show-user-input` was renamed to `entry-table` in the v1.21.5 wave. New styles must be registered kebab-case and the backend seeds/DB, this package, the frontend, and the mobile renderers must stay in lockstep.
 - Use the current cross-platform field taxonomy: no prefix means both platforms for content, behaviour, data, and portable presentation (`label`, `value`, `size`, `radius`, `color`, `variant`, `spacing`, `align`, …); `web_*` and `mobile_*` are platform-specific. Do not reintroduce `mantine_*`, `heroui_*`, or general `shared_*` names. The only reserved `shared_*` exceptions are `shared_height`, `shared_width`, and `shared_icon`, whose bare names collide with page-type fields in the backend's globally unique field catalog.
 - Use `'0' | '1'` string unions where existing CMS boolean-like fields use strings.
 - Keep optional backend fields optional unless the backend guarantees them.

@@ -122,14 +122,35 @@ export interface IListItemStyle extends IStyleWithSpacing {
 export interface IEntryListStyle extends IBaseStyle {
     style_name: 'entry-list';
     line_clamp?: IContentField<TMantineLineClamp>;
+    data_table?: IContentField<string>;
+    own_entries_only?: IContentField<string>;
+    filter?: IContentField<string>;
+    scope?: IContentField<string>;
+    load_as_table?: IContentField<string>;
+    selected_columns?: IContentField<string>;
 }
 
 export interface IEntryRecordStyle extends IBaseStyle {
     style_name: 'entry-record';
+    data_table?: IContentField<string>;
+    own_entries_only?: IContentField<string>;
+    /**
+     * Route parameter carrying the record id (same contract as
+     * `entry-record-form.load_record_from`, e.g. `record_id` on
+     * `/team-members/{record_id}`). The holder loads that single row.
+     */
+    load_record_from?: IContentField<string>;
+    scope?: IContentField<string>;
 }
 
 export interface IEntryRecordDeleteStyle extends IBaseStyle {
     style_name: 'entry-record-delete';
+    /** Delete button text (catalog field; the generic `label` field is not linked to this style). */
+    label_delete?: IContentField<string>;
+    confirmation_title?: IContentField<string>;
+    confirmation_message?: IContentField<string>;
+    confirmation_continue?: IContentField<string>;
+    confirmation_cancel?: IContentField<string>;
 }
 
 export interface ILoopStyle extends IBaseStyle {

@@ -105,6 +105,12 @@ export interface IPreviewNavigatedMessage {
     keyword: string | null;
     /** Full in-frame href, for diagnostics / the toolbar URL display. */
     href: string;
+    /**
+     * Public CMS path when the frame resolved a parameterized route
+     * (`/team-members/5`). The shell re-resolves via `/pages/resolve` so
+     * `route_params` stay in sync. Optional for static keyword pages.
+     */
+    path?: string | null;
     locale?: string | null;
 }
 
@@ -116,6 +122,12 @@ export interface IPreviewNavigatedMessage {
 export interface IPreviewNavigateCommand {
     type: typeof PREVIEW_BRIDGE_MESSAGE.NAVIGATE;
     keyword: string | null;
+    /**
+     * Full public path when keyword alone is insufficient (parameterized routes
+     * such as `/team-members/5`). The mobile frame resolves this via
+     * `GET /pages/resolve` instead of routing by keyword only.
+     */
+    path?: string | null;
 }
 
 /**
@@ -174,10 +186,18 @@ export function isPreviewBridgeMessage(value: unknown): value is TPreviewBridgeM
             return (
                 (record.source === 'web' || record.source === 'mobile') &&
                 (typeof record.keyword === 'string' || record.keyword === null) &&
-                typeof record.href === 'string'
+                typeof record.href === 'string' &&
+                (record.path === undefined ||
+                    record.path === null ||
+                    typeof record.path === 'string')
             );
         case PREVIEW_BRIDGE_MESSAGE.NAVIGATE:
-            return typeof record.keyword === 'string' || record.keyword === null;
+            return (
+                (typeof record.keyword === 'string' || record.keyword === null) &&
+                (record.path === undefined ||
+                    record.path === null ||
+                    typeof record.path === 'string')
+            );
         case PREVIEW_BRIDGE_MESSAGE.SET_PREFERENCES:
             return isPreviewPreferences(record.preferences);
         case PREVIEW_BRIDGE_MESSAGE.PREFERENCES_CHANGED:

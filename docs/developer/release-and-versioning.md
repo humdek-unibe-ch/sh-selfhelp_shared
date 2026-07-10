@@ -3,10 +3,25 @@
 Audience: Maintainers of the shared package.
 Status: active.
 Applies to: `@selfhelp/shared`.
-Last verified: 2026-06-08.
+Last verified: 2026-07-10.
 Source of truth: `package.json` (`version`, `scripts`, `publishConfig`), `.github/workflows/publish.yml`, `LICENSE`, `header.txt`, and `license-check-and-add-config.json`.
 
-`@selfhelp/shared` is published to npm under public access. The first stable release was `1.0.0`; the package is currently at `1.3.0`. The `@selfhelp/shared` semver is the anchor for cross-repo compatibility (see the backend `docs/developer/cross-repo-compatibility-matrix.md`).
+`@selfhelp/shared` is published to npm under public access. The `@selfhelp/shared` semver is the anchor for typed contracts across frontend/mobile (see the backend `docs/developer/cross-repo-compatibility-matrix.md`). Registry pairing of core ↔ frontend ↔ mobile-preview uses each repo's `release-manifest.json` `supports.*` ranges — not shared SemVer alone.
+
+## Current wave pin
+
+Supported unreleased wave (DB routing / CMS apps / entry binding cleanup):
+
+| Package | Version / floor |
+| --- | --- |
+| `@selfhelp/shared` | `1.21.7` (`1.21.5` catalog; `1.21.6` resolve/prefill; `1.21.7` adds `should_fallback`) |
+| core (backend) | `0.1.36` |
+| frontend | `0.1.63` (`supports.core >=0.1.36`) |
+| mobile-preview | package may stay `0.1.33`; **`supports.core >=0.1.36`** is authoritative |
+
+### Do not use staged 2.x / 3.x tags
+
+Feature-branch history briefly staged shared as `2.0.0`–`3.0.1` before republishing on `1.21.x`. Those `v2.*` / `v3.*` tags must **not** be used for this release. Review and delete them manually if they exist locally or on the remote; do not automate tag deletion from CI or agent runs.
 
 ## Versioning policy
 

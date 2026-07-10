@@ -53,6 +53,13 @@ describe('isPreviewBridgeMessage', () => {
         expect(
             isPreviewBridgeMessage({ type: PREVIEW_BRIDGE_MESSAGE.NAVIGATE, keyword: null }),
         ).toBe(true);
+        expect(
+            isPreviewBridgeMessage({
+                type: PREVIEW_BRIDGE_MESSAGE.NAVIGATE,
+                keyword: 'team-members-record',
+                path: '/team-members/5',
+            }),
+        ).toBe(true);
     });
 
     it('accepts a shell->frame set-preferences command (theme + locale)', () => {

@@ -182,6 +182,7 @@ export const BASE_STYLE_REGISTRY = {
     // ===== forms =====
     'form-log': { description: 'Append-only form (one row per submit)', category: 'forms', canHaveChildren: true },
     'form-record': { description: 'Per-user record form', category: 'forms', canHaveChildren: true },
+    'entry-record-form': { description: 'Route-aware create/edit form', category: 'forms', canHaveChildren: true },
     input: { description: 'Plain HTML input', category: 'forms', canHaveChildren: false },
     'text-input': { description: 'Mantine TextInput', category: 'forms', canHaveChildren: false },
     textarea: { description: 'Mantine Textarea', category: 'forms', canHaveChildren: false },
@@ -225,7 +226,7 @@ export const BASE_STYLE_REGISTRY = {
     version: { description: 'Build/version diagnostic surface', category: 'auth', canHaveChildren: false },
     'ref-container': { description: 'Renders content referenced from another section', category: 'layout', canHaveChildren: true },
     'data-container': { description: 'Data-scoped container (renders subtree against a data scope)', category: 'layout', canHaveChildren: true },
-    'show-user-input': { description: 'Displays previously submitted user input as a list/card view', category: 'forms', canHaveChildren: false },
+    'entry-table': { description: 'Built-in admin CRUD grid over a form\'s records (search/sort/paginate/CSV, add / edit / delete actions)', category: 'forms', canHaveChildren: false },
 } as const satisfies Record<string, IStyleRegistryEntry>;
 
 /**

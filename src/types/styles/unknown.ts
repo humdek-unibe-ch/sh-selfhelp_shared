@@ -87,7 +87,7 @@ import type {
     IProgressStyle,
     IProgressRootStyle,
     IProgressSectionStyle,
-    IShowUserInputStyle,
+    IEntryTableStyle,
 } from './forms';
 import type {
     IAccordionStyle,
@@ -208,7 +208,7 @@ export type TStyle =
     | IVersionStyle
     | IRefContainerStyle
     | IDataContainerStyle
-    | IShowUserInputStyle;
+    | IEntryTableStyle;
 
 /**
  * Discriminator — name of every supported style. Derived from the

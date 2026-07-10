@@ -9,6 +9,226 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+
+## v1.21.7
+
+Additive page-content contract for the unreleased wave (pairs with core
+`0.1.36`, frontend `0.1.63`, mobile `supports.core >=0.1.36`). Published as a
+**new patch** because `1.21.6` is already immutable on npm.
+
+- `IPageContent.should_fallback?: boolean` — when `true`, the web frontend
+  redirects to the static `/auth/*` fallback for system pages missing their
+  functional section. Emitted by core `>=0.1.36` only for the fallback-check
+  keyword set. Absence means the page does not participate in static fallback;
+  consumers must not infer fallback from empty `sections`.
+
+## v1.21.6
+
+Unreleased wave cleanup (pairs with core `0.1.36`, frontend `0.1.63`, mobile
+`supports.core >=0.1.36`). Pin consumers to **`1.21.7`** (or at least
+`1.21.6` for resolve/prefill helpers; `should_fallback` typing requires
+`1.21.7`).
+
+### Release tag warning (manual admin)
+
+Do **not** use shared `2.x` / `3.x` tags or npm versions from this feature-branch
+history for this release. The wave was republished on the `1.21.x` line
+(`1.21.5` catalog, `1.21.6` cleanup). Review and remove any local/remote
+`v2.*` / `v3.*` tags that may still exist from staging commits
+(`v2.0.0`, `v2.1.0`, `v2.2.0`, `v3.0.0`, `v3.0.1`) before publishing — do not
+delete tags from automation; handle them manually in the shared repository.
+
+### Canonical public page resolve helper
+
+- `buildPagesResolveUrl` / `buildPagesResolvePath` / `buildPagesResolveQuery` /
+  `normalizePagesResolvePath` — single encoding for `path`, `language_id`, and
+  `preview` used by frontend SSR, frontend browser client, and mobile.
+- `ENDPOINTS.PAGES.RESOLVE_ROUTE` is the static `/cms-api/v1/pages/resolve`
+  path; the old `ENDPOINTS.PAGES.RESOLVE(path)` builder is removed (no alias).
+
+### Form-record prefill
+
+- `parseFormRecordPrefill` + `flattenFormRecordPrefillValues` — shared
+  `section_data` → form prefill map (web + mobile).
+
+### Preview bridge
+
+- `IPreviewNavigatedMessage.path` — optional public CMS path so the shell can
+  re-resolve parameterized routes via `/pages/resolve`.
+
+## v1.21.5
+
+Single publish of the DB-routing / CMS-apps / navigation / entry-binding wave
+(previously staged as v2.0.0–v3.0.1 on this branch). Pairs with core `0.1.36`,
+frontend `0.1.63`, and mobile consumers of this package.
+
+### Entry table rename (breaking)
+
+**`show-user-input` renamed to `entry-table`.**
+
+The built-in admin CRUD grid style is now `entry-table` (backend migration
+renames the `styles` row in lockstep; sections keep their `id_styles` FK, so
+no content migration is needed).
+
+- `IShowUserInputStyle` -> `IEntryTableStyle` (`style_name: 'entry-table'`),
+  `IShowUserInputEntry` -> `IEntryTableEntry`. No aliases are kept — consumers
+  must update imports and dispatcher keys.
+- `IEntryTableEntry` gains `_can_edit?: boolean` (server-computed per-row edit
+  permission, mirroring `_can_delete`; same rule as `updateForm`: own record
+  always editable, foreign records need the table UPDATE permission on a
+  shared section).
+- `STYLE_REGISTRY`: key `show-user-input` -> `entry-table`.
+- `fields_map` / `fields_map_labels` helpers: `parseFieldsMapCatalog`,
+  `parseFieldsMapLabels`, `serializeFieldsMapCatalog`, `serializeFieldsMapLabels`,
+  and `FIELDS_MAP_STYLE_CONFIG`.
+
+### Entry list / record / form binding
+
+- `IEntryListStyle` / `IEntryRecordStyle` gain field-based binding:
+  `data_table`, `own_entries_only`, `filter`, `scope`; plus `load_as_table` /
+  `selected_columns` (list).
+- `IEntryRecordStyle` uses `load_record_from` (route-param name, same contract
+  as `IEntryRecordFormStyle`) — not author `filter` / `url_param`.
+- New `IEntryRecordFormStyle` (`style_name: 'entry-record-form'`) with
+  `load_record_from` for dual-route create/edit.
+- `IFormRecordStyle` gains optional `load_record_from` + `own_entries_only`.
+
+### CMS apps contract
+
+- New `ICmsApp` / `ICmsAppDetail` / `ICmsAppSummary`, `ICmsAppPage`
+  (`ICmsAppAssignedPage` alias), and `TCmsAppRole` plus
+  `CMS_APP_ROLES` / `CMS_APP_PRIMARY_ROLES` for Host Admin CMS app shells.
+- `PERMISSIONS` gains `ADMIN_CMS_APP_READ|CREATE|UPDATE|DELETE`
+  (`admin.cms_app.*`) — separate from `admin.page.*`.
+
+### User-owned option labels
+
+- New option catalog/label types and `parseOptionCatalog`,
+  `parseOptionLabels`, `resolveOptions`, `resolveOptionLabel`,
+  `parseOptionCodes`, and `resolveOptionValueLabels` helpers.
+- Legacy `{value,text}` / `{value,label}` catalogs retain their display labels;
+  resolution follows active language, fallback language, legacy label, then code.
+- `OPTION_STYLE_CONFIGS` is the shared select/radio/combobox/segmented-control
+  registry used by web/mobile renderers and the multilingual admin editor.
+- Form style contracts gain translatable `option_labels`.
+- Mobile adapter types support disabled select options.
+
+### Navigation (strict contract)
+
+- Strict `INavigationMenuItem` (every key always present). Items gain
+  `description`, `aria_label`, and `layer` (`'top' | null`).
+- `INavigationMenu` drops free-form `config`; footer layout is a preset
+  (`columns` / `inline`) on `preset` (`TWebFooterPreset`).
+- Modules: `headerLayers`, `footerPreset`, `activeTrail`, `navigationBundle`
+  (`selfhelp/navigation-bundle` **v2.0**), `branchNav` /
+  `resolveWebBranchNavContext`, `TNavigationChildrenNavMode`.
+- `INavigationMenu.show_pager` / item override; `IBranchNavContext.showPager`.
+- `INavigationBranding` on `INavigationPayload.branding` (`logo_url`,
+  `logo_alt`, `link_url`) plus `logo_size` / `logo_variant` and
+  `resolveBrandingPresentation` / `NAVIGATION_BRANDING_LOGO_HEIGHTS`.
+- Path-based mobile preview navigation commands; DB-driven public routing
+  types (`GET /pages/resolve` metadata).
+
+## v1.21.4
+
+**Menu-builder payload slimming (patch)** — align shared navigation types with the
+backend menu-builder contract. `INavigationMenuItem` drops virtual/exclusion
+fields (`is_virtual`, `child_source`, `description`, `aria_label`) and keeps
+item-level `icon` / `mobile_icon`; page refs no longer carry icons.
+`getNavigationItemAriaLabel` falls back to the visible label only.
+`TNavigationChildSource` is removed. Menu item ids are numeric only.
+
+## v1.21.3
+
+**Publish fix (patch)** — rebuild `dist/` so the published tarball includes the
+root exports consumers already import from `@selfhelp/shared`: `ENDPOINTS`,
+`API_VERSION_PREFIX`, `transformPageData`, navigation menu helpers
+(`getNavigationItemHref`, `resolveWebBranchNavGroup`, `resolveHolderRedirectPath`,
+…), and related types. The v1.21.2 npm artifact shipped a stale build missing
+those symbols even though the source and changelog were already present.
+
+## v1.21.2
+
+**Menu-builder navigation depth and accessibility (patch)** — additive helpers for
+menu depth limits and item labelling. `resolveMenuMaxDepth` and
+`clampMenuItemsAtDepth` normalise `INavigationMenu.max_depth` (null/0 = unlimited)
+and strip nested children beyond the configured depth for dropdown/mega renderers.
+`getNavigationItemAriaLabel` resolves `aria_label` with a fallback to the visible
+label. `INavigationMenu` gains optional `config` for menu-level presentation
+settings from the backend payload.
+
+## v1.21.1
+
+**Menu-builder navigation helpers (patch)** — additive navigation utilities for
+mobile bottom tabs and cross-menu page lookup. `findPageRefInNavigationPayload`
+resolves `INavigationResolvedPageRef` metadata from any public menu tree;
+`findNearestBottomTabMenuItemForPage` and `isBottomTabMenuItemActive` drive
+nested bottom-tab active state (ancestor tab stays active for descendant paths).
+`searchMenuPagesInPayload` now honours `payload.search.min_chars` before
+returning hits. Regression tests assert legacy `TWebNavRender` /
+`TMobileNavRender` option lists are not re-exported from the package root.
+
+## v1.21.0
+
+**Menu-builder navigation contract (breaking cleanup)** — replaces the page-level
+`web_nav_render` / `mobile_nav_render` model with first-class menu payloads and
+web header presets. The `navigation` module now exports `TWebHeaderPreset`,
+`INavigationPayload`, menu-tree helpers (`flattenMenuItems`,
+`isPageOnMobileMenu`, `isPageOnWebMenu`, `searchMenuPagesInPayload`),
+mobile branch navigation (`resolveMobileSegmentGroup` with self-segment support
+when a tab page has content), and `isOnAnyMobileMenuFromPayload`. The legacy
+`TWebNavRender` / `TMobileNavRender` types remain exported only for archived
+consumers; new work must use menu-builder contracts.
+
+## v1.20.0
+
+**CMS-in-CMS modal contract (sizing + form/list actions)** — additive contracts
+for the open-in-modal UX. `IPageContent` (`src/types/pages.ts`) gains the
+optional `modal_width` and `modal_height` fields (a CSS length such as `'80%'` /
+`'640px'`, or `'auto'`; `null`/absent means the frontend default of 80% and the
+web modal caps `auto` at 90% of the viewport). The form/list style contracts
+(`src/types/styles/forms.ts`) carry the modal-action fields consumed by the web
+renderers: `close_modal_on_save` + `redirect_on_save` (form-log / form-record)
+and `add_url` + `edit_url` (show-user-input). All additions are optional/new, so
+`^1.x` consumers are unaffected.
+
+## v1.19.0
+
+**Navigation rendering + page icons contract (navigation pages)** — additive
+contracts for the configurable navigation-rendering model and the web/mobile
+page-icon fields. `IPageItem` and `IPageContent` (`src/types/pages.ts`) gain the
+optional `icon`, `mobile_icon`, `web_nav_render`, and `mobile_nav_render`
+fields, and `transformPageData` now passes them through. A new `navigation`
+module (`src/navigation/`) is exported from the package root with:
+
+- `TWebNavRender` (`header-dropdown | tabs | sidebar-drawer | hero-cards`) and
+  `TMobileNavRender` (`segmented-tabs | bottom-tabs | drawer | hero-cards`) plus
+  their value lists, defaults (`DEFAULT_WEB_NAV_RENDER` = `tabs`,
+  `DEFAULT_MOBILE_NAV_RENDER` = `segmented-tabs`, global defaults
+  `header-dropdown` / `bottom-tabs`), option metadata (`WEB_NAV_RENDER_OPTIONS`,
+  `MOBILE_NAV_RENDER_OPTIONS`), and `resolveWebNavRender` / `resolveMobileNavRender`.
+- The curated mobile icon set (`MOBILE_ICON_SET`, `MOBILE_ICON_NAMES`,
+  `DEFAULT_MOBILE_ICON`, `resolveMobileIcon`) — lucide names shared by the admin
+  picker and the mobile renderer so they never drift.
+- The shared menu-visibility predicate (`isMenuVisible`,
+  `getMenuVisibleChildren`, `isNavigationPage`) used by web + mobile menus and by
+  the automatic virtual-navigation decision.
+
+All additions are optional/new, so `^1.x` consumers are unaffected.
+
+## v1.18.0
+
+**DB-driven public routing types (issue #30)** — additive contracts for the new
+backend public-routing resolver. `IPageContent` (`src/types/pages.ts`) gains the
+optional route metadata `route_params` (`Record<string, string>`),
+`matched_url_pattern`, and `canonical_url`; a new `IResolvePageResponse`
+(`src/types/api/page.ts`) types the `GET /cms-api/v1/pages/resolve` payload; and
+`PAGES.RESOLVE` is added to the endpoint registry (`src/api/endpoints.ts`). The
+resolved dynamic URL params surface to interpolation as `{{route.<snake_case>}}`.
+
+All additions are optional/new, so `^1.x` consumers are unaffected. Pairs with
+core `0.1.31`, frontend `0.1.57`, and mobile `0.1.31`.
+
 ## v1.17.1
 
 **`IShowUserInputStyle.field_labels`** — adds the optional header map
