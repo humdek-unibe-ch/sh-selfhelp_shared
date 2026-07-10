@@ -9,6 +9,11 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 
 This project follows semantic versioning.
 
+## v3.0.1
+
+- `IEntryRecordStyle`: replace author `filter` with `load_record_from` (same
+  route-param contract as `IEntryRecordFormStyle`). Pairs with core `0.1.36`.
+
 ## v3.0.0
 
 **BREAKING: `show-user-input` renamed to `entry-table`.**

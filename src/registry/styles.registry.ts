@@ -182,6 +182,7 @@ export const BASE_STYLE_REGISTRY = {
     // ===== forms =====
     'form-log': { description: 'Append-only form (one row per submit)', category: 'forms', canHaveChildren: true },
     'form-record': { description: 'Per-user record form', category: 'forms', canHaveChildren: true },
+    'entry-record-form': { description: 'Route-aware create/edit form', category: 'forms', canHaveChildren: true },
     input: { description: 'Plain HTML input', category: 'forms', canHaveChildren: false },
     'text-input': { description: 'Mantine TextInput', category: 'forms', canHaveChildren: false },
     textarea: { description: 'Mantine Textarea', category: 'forms', canHaveChildren: false },

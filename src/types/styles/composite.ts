@@ -134,9 +134,13 @@ export interface IEntryRecordStyle extends IBaseStyle {
     style_name: 'entry-record';
     data_table?: IContentField<string>;
     own_entries_only?: IContentField<string>;
-    filter?: IContentField<string>;
+    /**
+     * Route parameter carrying the record id (same contract as
+     * `entry-record-form.load_record_from`, e.g. `record_id` on
+     * `/team-members/{record_id}`). The holder loads that single row.
+     */
+    load_record_from?: IContentField<string>;
     scope?: IContentField<string>;
-    url_param?: IContentField<string>;
 }
 
 export interface IEntryRecordDeleteStyle extends IBaseStyle {

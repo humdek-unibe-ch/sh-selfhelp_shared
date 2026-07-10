@@ -23,7 +23,7 @@ export type TMobileSelectPresentation = 'bottom-sheet' | 'dialog' | 'popover';
 export type TMobileFieldVariant = 'primary' | 'secondary';
 
 export interface IFormStyle extends IStyleWithSpacing {
-    style_name: 'form-log' | 'form-record';
+    style_name: 'form-log' | 'form-record' | 'entry-record-form';
     /** Optional auto-styled heading rendered above the form when set. */
     title?: IContentField<string>;
     /** Optional sub-heading rendered below the title when set. */
@@ -69,22 +69,29 @@ export interface IFormLogStyle extends IFormStyle {
 
 export interface IFormRecordStyle extends IFormStyle {
     style_name: 'form-record';
+    /** Human-readable table name slug (runtime table is owned by section id). */
+    name?: IContentField<string>;
     btn_update_label?: IContentField<string>;
     btn_update_color?: IContentField<string>;
-    /**
-     * Record edit mode: names the public route parameter that carries the
-     * target record id (e.g. 'record_id' on a `/cms/team/{record_id}` page).
-     * When set, the record context comes ONLY from the URL — param present:
-     * the backend prefills that record into `section_data` (permission-gated);
-     * param absent: the form stays blank (create mode). When empty, the form
-     * falls back to the user's own latest record (diary mode).
-     */
-    load_record_from?: IContentField<string>;
     /**
      * '1' (default): the form only ever loads/updates the user's own records.
      * '0': shared editing — foreign records can be loaded/updated by users
      * holding UPDATE data access on the form's table (admins always pass).
      */
+    own_entries_only?: IContentField<string>;
+}
+
+export interface IEntryRecordFormStyle extends IFormStyle {
+    style_name: 'entry-record-form';
+    btn_update_label?: IContentField<string>;
+    btn_update_color?: IContentField<string>;
+    /** Numeric data_tables.id or empty to use this section's owned table. */
+    data_table?: IContentField<string>;
+    /**
+     * Route parameter carrying the record id (e.g. record_id on /cms/team/{record_id}).
+     * When present the form loads that record; when absent the form stays empty (create).
+     */
+    load_record_from?: IContentField<string>;
     own_entries_only?: IContentField<string>;
 }
 
@@ -530,6 +537,8 @@ export interface IEntryTableStyle extends IBaseStyle {
     csv_export?: IContentField<string>;
     delete_entry?: IContentField<string>;
     fields_map?: IContentField<string>;
+    /** Per-language header labels keyed by field_key. */
+    fields_map_labels?: IContentField<string>;
     /**
      * Optional URL of a create form. When set, the web table shows an "Add new"
      * button above it (e.g. opens the create form modal). Web-only.
