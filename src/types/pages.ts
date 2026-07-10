@@ -114,6 +114,15 @@ export interface IPageContent {
      * exposes these to interpolation as `{{route.<name>}}`.
      */
     route_params?: Record<string, string>;
+    /**
+     * When true, the web frontend should redirect to the hardcoded static
+     * `/auth/*` fallback because this system page is missing its required
+     * functional section. Emitted by core >=0.1.36 only for the fallback-check
+     * keyword set (`login`, `profile`, `reset-password`, …). Absence means the
+     * page does not participate in static fallback — consumers must not infer
+     * fallback from empty `sections` (that was an older-backend shim).
+     */
+    should_fallback?: boolean;
     /** The `page_routes` pattern that matched (e.g. `/reset/{user_id}/{token}`). Resolve responses only. */
     matched_url_pattern?: string | null;
     /** The canonical active route pattern for the page, for canonical-link generation. Resolve responses only. */
