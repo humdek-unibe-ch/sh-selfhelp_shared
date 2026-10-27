@@ -19,6 +19,8 @@ export interface ILoginStyle extends IStyleWithSpacing {
     color?: IContentField<TMantineColor>;
     /** Label of the link that opens the registration page. */
     label_register?: IContentField<string>;
+    /** Shown on a 429 from the login rate limiter; `{minutes}` = remaining wait. */
+    alert_rate_limited?: IContentField<string>;
 }
 
 export interface IRegisterStyle extends IStyleWithSpacing {
@@ -92,6 +94,8 @@ export interface IResetPasswordStyle extends IStyleWithSpacing {
     style_name: 'reset-password';
     /** Submit/link-button colour (cross-platform, via the shared mapper). */
     color?: IContentField<TMantineColor>;
+    /** Shown on a 429 from the password-recovery limiter; `{minutes}` = remaining wait. */
+    alert_rate_limited?: IContentField<string>;
     label_pw_reset?: IContentField<string>;
     alert_success?: IContentField<string>;
     placeholder?: IContentField<string>;    reset_title?: IContentField<string>;
@@ -116,6 +120,8 @@ export interface ITwoFactorAuthStyle extends IStyleWithSpacing {
     title?: IContentField<string>;
     text_md?: IContentField<string>;
     label_expiration_2fa?: IContentField<string>;
+    /** Shown on a 429 from the 2FA rate limiter; `{minutes}` = remaining wait. */
+    alert_rate_limited?: IContentField<string>;
 }
 
 export interface IProfileStyle extends IStyleWithSpacing {

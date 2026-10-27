@@ -42,6 +42,7 @@ export default defineConfig({
                 'src/assets/**/*.ts',
                 'src/cms-classes/classify.ts',
                 'src/utils/transformPageData.ts',
+                'src/api/rateLimit.ts',
             ],
             exclude: ['**/__tests__/**', '**/index.ts'],
             thresholds: {

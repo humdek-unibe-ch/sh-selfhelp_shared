@@ -4,3 +4,4 @@ SPDX-License-Identifier: MPL-2.0
 */
 export * from './endpoints';
 export * from './pagesResolve';
+export * from './rateLimit';
