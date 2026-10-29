@@ -23,6 +23,8 @@ limiter that answers `429` with `data.retry_after`).
   (`data.retry_after`, else the `Retry-After` header), `null` otherwise.
 - `formatRateLimitMessage(template, seconds)` + `DEFAULT_RATE_LIMIT_MESSAGE` —
   fills `{minutes}` (rounded up, at least 1) so web and mobile render the same text.
+- `IFileInputStyle.files_public?` — `'1'` makes the field's uploaded files
+  readable by anyone; off by default (pairs with core `0.1.43` private form uploads).
 
 ## v1.21.7
 

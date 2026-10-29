@@ -412,6 +412,8 @@ export interface IFileInputStyle extends IStyleWithSpacing {
     web_right_icon?: IContentField<string>;
     placeholder?: IContentField<string>;
     disabled?: IContentField<string>;    is_required?: IContentField<string>;
+    /** '1' = uploaded files are readable by anyone; default private (core 0.1.43). */
+    files_public?: IContentField<string>;
     name?: IContentField<string>;
     label?: IContentField<string>;
     description?: IContentField<string>;
