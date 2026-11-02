@@ -10,6 +10,20 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
+## v1.22.0
+
+Additive auth rate-limit contract (pairs with the core login/2FA brute-force
+limiter that answers `429` with `data.retry_after`).
+
+- `ILoginStyle.alert_rate_limited?`, `ITwoFactorAuthStyle.alert_rate_limited?`
+  and `IResetPasswordStyle.alert_rate_limited?` — translatable CMS message shown
+  when sign-in or a password-reset request is rate-limited; `{minutes}` is
+  replaced with the remaining wait.
+- `getRateLimitRetryAfter(error)` — seconds to wait for an axios-style 429
+  (`data.retry_after`, else the `Retry-After` header), `null` otherwise.
+- `formatRateLimitMessage(template, seconds)` + `DEFAULT_RATE_LIMIT_MESSAGE` —
+  fills `{minutes}` (rounded up, at least 1) so web and mobile render the same text.
+
 ## v1.21.7
 
 Additive page-content contract for the unreleased wave (pairs with core
