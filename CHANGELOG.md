@@ -12,10 +12,6 @@ This project follows semantic versioning.
 
 ## v1.22.1
 
-Additive file-input contract for public form uploads (pairs with core `0.1.43`
-private form uploads). Published as a **new patch** because `1.22.0` is already
-immutable on npm.
-
 - `IFileInputStyle.files_public?` — `'1'` makes the field's uploaded files
   readable by anyone; off by default.
 
