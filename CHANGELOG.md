@@ -10,6 +10,15 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
+## v1.22.1
+
+Additive file-input contract for public form uploads (pairs with core `0.1.43`
+private form uploads). Published as a **new patch** because `1.22.0` is already
+immutable on npm.
+
+- `IFileInputStyle.files_public?` — `'1'` makes the field's uploaded files
+  readable by anyone; off by default.
+
 ## v1.22.0
 
 Additive auth rate-limit contract (pairs with the core login/2FA brute-force
@@ -23,8 +32,6 @@ limiter that answers `429` with `data.retry_after`).
   (`data.retry_after`, else the `Retry-After` header), `null` otherwise.
 - `formatRateLimitMessage(template, seconds)` + `DEFAULT_RATE_LIMIT_MESSAGE` —
   fills `{minutes}` (rounded up, at least 1) so web and mobile render the same text.
-- `IFileInputStyle.files_public?` — `'1'` makes the field's uploaded files
-  readable by anyone; off by default (pairs with core `0.1.43` private form uploads).
 
 ## v1.21.7
 
