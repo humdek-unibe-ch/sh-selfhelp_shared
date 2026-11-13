@@ -169,6 +169,12 @@ describe('system maintenance contracts', () => {
             safe_mode: false,
             maintenance_mode: false,
             installed_plugins: [{ id: 'sh2-shp-survey-js', version: '0.2.20', compatible: true }],
+            // The admin route always carries exact versions (it needs admin.system.read).
+            frameworks: [
+                { name: 'PHP', version: '8.4.1', license: 'PHP-3.01' },
+                { name: 'Redis', version: null, license: null },
+            ],
+            libraries: [{ name: 'doctrine/orm', version: '3.3.0', license: 'MIT' }],
         };
         const preflight: IUpdatePreflight = {
             preflight_id: 'pf-001',
@@ -196,6 +202,10 @@ describe('system maintenance contracts', () => {
         };
 
         expect(version.installed_plugins[0]?.compatible).toBe(true);
+        expect(version.frameworks[0]?.version).toBe('8.4.1');
+        // An unreadable server version is listed with `null`, never dropped.
+        expect(version.frameworks[1]?.version).toBeNull();
+        expect(version.libraries[0]?.license).toBe('MIT');
         expect(preflight.status).toBe('ok');
         expect(status.progress_percent).toBe(42);
     });

@@ -13,6 +13,7 @@ SPDX-License-Identifier: MPL-2.0
  * These mirror the manager's `@shm/schemas` shapes and the backend JSON schemas
  * under `config/schemas/api/v1/{responses,requests}/admin/`.
  */
+import type { IAboutItem } from '../styles/error';
 import type { IBaseApiResponse } from './envelope';
 
 const SYSTEM_PREFIX = '/cms-api/v1/admin/system';
@@ -90,6 +91,14 @@ export interface ISystemVersion {
     safe_mode: boolean;
     maintenance_mode: boolean;
     installed_plugins: ISystemInstalledPlugin[];
+    /**
+     * Server-side parts (PHP, Symfony, MySQL, Redis) with their exact versions
+     * (`version` is `null` only when the server could not read it). The route
+     * already needs `admin.system.read`, so versions are always exact here.
+     */
+    frameworks: IAboutItem[];
+    /** The backend's direct production dependencies with exact version and licence. */
+    libraries: IAboutItem[];
 }
 export type ISystemVersionResponse = IBaseApiResponse<ISystemVersion>;
 
