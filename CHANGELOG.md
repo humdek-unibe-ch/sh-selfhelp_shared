@@ -10,6 +10,27 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
+## v1.23.0
+
+Additive "about the platform" contract (pairs with core `0.1.43`, frontend
+`0.1.70`, mobile `0.1.34`). The payloads only gain keys; nothing is renamed or
+removed. Code that builds `IVersionStyle` or `ISystemVersion` objects itself
+(tests, mocks) must add the new keys, because the backend always sends them.
+
+- `IAboutItem` (`{ name, version: string | null, license: string | null }`) and
+  `IPlatformAbout` (`{ detail, product, frameworks, plugins, libraries }`),
+  exported from the package root. `version` is `null` unless the caller may see
+  exact versions (`detail`, decided by the backend from `admin.system.read`).
+- `IVersionStyle.about: IPlatformAbout` — the block the backend fills on every
+  `version` section after the page cache is read. `IVersionStyle` also gets the
+  translatable heading fields `title`, `label_frameworks`, `label_plugins`,
+  `label_libraries`, `label_web`, `label_app`, `label_filter` and
+  `label_no_match`. The old "candidate to be removed" comment is gone: the
+  `version` style is a both-platform style.
+- `ISystemVersion.frameworks` and `ISystemVersion.libraries` (`IAboutItem[]`):
+  `GET /admin/system/version` now lists the server parts and the backend's
+  direct dependencies with exact versions.
+
 ## v1.22.1
 
 - `IFileInputStyle.files_public?` — `'1'` makes the field's uploaded files
