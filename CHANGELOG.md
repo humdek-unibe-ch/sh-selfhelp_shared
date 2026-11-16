@@ -10,6 +10,113 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
+## v1.24.0
+
+- **Form list URL mode `history`.** `TFormListMode` and `FORM_LIST_MODES` include
+  `history` so `?key.mode=history` opens a record on the history tab (with
+  `showHistory: false` refused as `history_disabled`).
+
+Entry lists with a form and read-only data views (pairs with core `0.1.44`,
+frontend `0.1.71`, mobile `0.1.35`). New styles, DTOs, endpoint helpers and URL
+helpers; three existing DTOs gain the record `version`. The server decides and
+the clients draw: nothing here lets a client evaluate access, conditions,
+filters or quick-action assignments.
+
+**CMS app media and publish (F165–F166):** column format `image`; file/image cells
+are `{ files: [{ index, name, mime?, size?, url }] }` (section-scoped URLs);
+prefill keeps that shape (`asFilesCell`); `IFormFileFieldOp` for keep/remove/
+replace; `ENDPOINTS.LISTS.CURRENT_FILE` and `ENDPOINTS.ADMIN_DATA_HISTORY.*`;
+historical files may carry `url`; admin history response aliases;
+`IEntryRecordStyle.fixed_filter`; schema-parity covers the five admin history
+contracts.
+
+- **Styles.** `'entry-form-list'` (forms, can have children: its inline form)
+  and `'data-view'` (forms, can have children: the layout of one record, see
+  below) are in `BASE_STYLE_REGISTRY`; the core catalog is now 93 styles.
+  `IEntryFormListStyle`, `IDataViewStyle` and the shared base `IFormListBaseStyle`
+  (configuration fields, `list_state`, `list_error`) join `TStyle`. A renderer map
+  keyed by every `TStyle` (web and mobile) must add both styles.
+- **Data view row templates.** `TFormListLayout` is `'table' | 'cards' | 'custom'`.
+  With `custom` the sections placed inside a `data-view` are the template of ONE
+  record: the server renders them per record into `IFormListRow.sections`
+  (`TStyle[]`, tokens, translations and conditions already resolved) and the page
+  carries no children for the view. `IFormListInfo` gains `row_css` (the classes of
+  the element that holds the records, web only) and `has_template` (a `custom`
+  layout without sections is drawn as cards); `IDataViewStyle` gains `list_row_css`.
+  Clients render `sections` like any other sections and evaluate nothing.
+- **List DTOs** (`src/types/api/form-lists.ts`, exported from the package root):
+  `IFormListState` (list, columns, controls, served state, capabilities, rows,
+  pagination, selected record), `IFormListError`, the quick-action, history,
+  version, comparison and restore requests/responses, and the two error payloads
+  `IFormStaleVersionData` (409 `stale_version`: nothing written, keep the draft)
+  and `IFormListRestoreBlockedData` (422 `restore_blocked`).
+- **Endpoints.** `ENDPOINTS.LISTS` builds the state, quick-action, history,
+  version, comparison, restore and historical-file routes. A list has no create,
+  update or delete route of its own: writes keep using `ENDPOINTS.FORMS`.
+- **URL helpers** (`src/content/formListState.ts`), the same grammar the server
+  parses (`<key>.page`, `.q`, `.sort`, `.f.<id>`, `.record`, `.mode`):
+  `parseFormListQuery` (strict, mirrors the backend parser rule for rule),
+  `encodeFormListQuery`, `formListQueryString` (keeps every foreign parameter),
+  `applyFormListUrlChange`, `nextSortOnHeaderClick`, `pickFormListQuery` (the raw
+  pairs a client forwards to `/pages/by-keyword` and `/pages/resolve`) and
+  `formListCacheKey` (API base, account or guest, language, platform, page,
+  section, the declared route of the page and the normalized list parameters;
+  the last part is always the list's own state).
+- **Route of a page in a list state request.** A record template can read
+  `{{route.record_id}}` of a page with a route, so the state of a list depends on the
+  route. `formListRouteQuery(page.route_params)` returns the `route[<name>]=<value>`
+  pairs of `GET /lists/{id}/state` (sorted, percent-encoded, at most
+  `FORM_LIST_MAX_ROUTE_PARAMS`, values up to `FORM_LIST_MAX_ROUTE_VALUE_LENGTH`
+  characters; `''` for a page without a route), and `IFormListCacheScope.route` puts
+  the route into the cache key, so `/team/3` and `/team/4` never share a list state.
+  The server does not believe the parameters: it checks them against the routes of the
+  page (`400 route_mismatch` / `invalid_route`).
+- **Form DTOs.** `IFormSubmitData.version` and `IFormUpdateData.version` are now
+  required (the backend always sends the record version); `IFormDeleteResponse.data`
+  is `IFormDeleteData` (`record_id` and `version`, the old `success` and `message`
+  stay as optional legacy keys). Code that builds submit/update results itself
+  (tests, mocks) must add `version`.
+- **Strict record versions.** `IFormUpdateRequest.expected_version` and
+  `IFormDeleteRequest.expected_version` are **required**, like
+  `IFormListQuickActionRequest.expected_version` (and the `expected_version` of a
+  real restore): core `0.1.44` refuses an interactive update, delete, quick action
+  or restore that names no record version, or one that is not a whole number of at
+  least 1, with 400 `expected_version_required` / `invalid_expected_version`
+  before anything is stored, uploaded or scheduled. The request schemas keep the
+  field optional only so the refusal can carry its reason. Code that builds these
+  requests itself (clients, tests, mocks, plugins) must send the version it last
+  received.
+- **Where the classic record styles read the version.** The page says it, next to the
+  record (core `0.1.44` builds it with the page): `IFormRecordPrefill.version`
+  (`parseFormRecordPrefill` reads `_version` from the prefilled rows of a
+  `form-record` / `entry-record-form`; `_version` is skipped in
+  `FORM_RECORD_PREFILL_SKIP_FIELDS`, so it never becomes a form field and is never
+  written back), `IEntryTableEntry._version` (rows that offer edit or delete) and
+  `IEntryRecordDeleteStyle.record_version` (digits, next to `record_id`). Read a
+  version with `asRecordVersion` (a whole number of at least 1, a number or digits);
+  an absent one means the page offered none.
+- **The page version a request acts on.** `IFormEffectiveContext` (`preview?:
+  boolean`) is part of every write request (`IFormSubmitRequest`,
+  `IFormUpdateRequest`, `IFormDeleteRequest`, `IFormListQuickActionRequest`,
+  `IFormListRestoreRequest`) and of the history and comparison queries. Send it
+  exactly when the person looks at the draft of the page; without it the
+  published version decides, also for a signed-in person. The client never
+  decides what is allowed: the server judges the request by the same inputs,
+  conditions, list properties and quick actions as the page it served.
+- **Refusals.** `IFormInvalidData`, `IFormInputError` and `TFormInputRule` describe
+  the 422 `invalid_form_data` answer (a value breaks the rules of the CURRENT
+  form; the whole write is refused, nothing is stored, uploaded or scheduled);
+  `getFormInvalidData(error)` reads it. `TFormWriteRefusalReason` lists the
+  `data.reason` values of the other write refusals (400, 401, 403, 404, 409): a
+  client branches on the reason, never on the message.
+- `scripts/check-schema-parity.mjs` checks 25 more backend contracts (51 in all):
+  every list shape, the list error, the delete result and the new requests.
+- **Fix.** `FORM_RECORD_PREFILL_SKIP_FIELDS` now also skips `id_action_trigger_types`,
+  the spelling the data store and the list engine use (only the old
+  `id_actionTriggerTypes` was skipped). A client that sends the prefilled record
+  back as the form data (the mobile app) wrote the trigger type into the form
+  and the server refused the save ("not allowed in form data").
+
 ## v1.23.0
 
 Additive "about the platform" contract (pairs with core `0.1.43`, frontend
