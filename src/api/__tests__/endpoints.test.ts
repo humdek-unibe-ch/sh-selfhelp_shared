@@ -51,6 +51,51 @@ describe('ENDPOINTS.AUTH password recovery', () => {
 });
 
 /**
+ * The list routes are served by `FormListController`; the paths are the ones
+ * `api_routes` seeds (`docs/reference/api/22-form-lists.md`).
+ */
+describe('ENDPOINTS.LISTS', () => {
+    it('builds the state, history, comparison and restore routes of a record', () => {
+        expect(ENDPOINTS.LISTS.STATE(311)).toBe(`${API_VERSION_PREFIX}/lists/311/state`);
+        expect(ENDPOINTS.LISTS.HISTORY(311, 41)).toBe(`${API_VERSION_PREFIX}/lists/311/records/41/history`);
+        expect(ENDPOINTS.LISTS.VERSION(311, 41, 3)).toBe(`${API_VERSION_PREFIX}/lists/311/records/41/versions/3`);
+        expect(ENDPOINTS.LISTS.COMPARE(311, 41)).toBe(`${API_VERSION_PREFIX}/lists/311/records/41/compare`);
+        expect(ENDPOINTS.LISTS.RESTORE(311, 41)).toBe(`${API_VERSION_PREFIX}/lists/311/records/41/restore`);
+    });
+
+    it('encodes the action id and the field key, the only free-text segments', () => {
+        expect(ENDPOINTS.LISTS.QUICK_ACTION(311, 41, 'mark_done')).toBe(`${API_VERSION_PREFIX}/lists/311/records/41/actions/mark_done`);
+        expect(ENDPOINTS.LISTS.QUICK_ACTION(311, 41, 'a/b?c')).toBe(`${API_VERSION_PREFIX}/lists/311/records/41/actions/a%2Fb%3Fc`);
+        expect(ENDPOINTS.LISTS.VERSION_FILE(311, 41, 2, 'section_9/..')).toBe(
+            `${API_VERSION_PREFIX}/lists/311/records/41/versions/2/files/section_9%2F..`,
+        );
+        expect(ENDPOINTS.LISTS.CURRENT_FILE(311, 41, 'portrait')).toBe(
+            `${API_VERSION_PREFIX}/lists/311/records/41/files/portrait`,
+        );
+    });
+});
+
+describe('ENDPOINTS.ADMIN_DATA_HISTORY', () => {
+    it('builds the data-browser history routes under admin.data', () => {
+        expect(ENDPOINTS.ADMIN_DATA_HISTORY.HISTORY('news', 9)).toBe(
+            `${API_VERSION_PREFIX}/admin/data/tables/news/records/9/history`,
+        );
+        expect(ENDPOINTS.ADMIN_DATA_HISTORY.VERSION('news', 9, 2)).toBe(
+            `${API_VERSION_PREFIX}/admin/data/tables/news/records/9/versions/2`,
+        );
+        expect(ENDPOINTS.ADMIN_DATA_HISTORY.COMPARE('a/b', 1)).toBe(
+            `${API_VERSION_PREFIX}/admin/data/tables/a%2Fb/records/1/compare`,
+        );
+        expect(ENDPOINTS.ADMIN_DATA_HISTORY.RESTORE('news', 9)).toBe(
+            `${API_VERSION_PREFIX}/admin/data/tables/news/records/9/restore`,
+        );
+        expect(ENDPOINTS.ADMIN_DATA_HISTORY.VERSION_FILE('news', 9, 2, 'doc')).toBe(
+            `${API_VERSION_PREFIX}/admin/data/tables/news/records/9/versions/2/files/doc`,
+        );
+    });
+});
+
+/**
  * Canonical resolve contract: SSR, browser, and mobile must produce the same
  * query encoding for path / language_id / preview.
  */

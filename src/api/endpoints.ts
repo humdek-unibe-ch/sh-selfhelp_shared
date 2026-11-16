@@ -62,6 +62,47 @@ export const ENDPOINTS = {
         UPDATE: `${API_VERSION_PREFIX}/forms/update`,
         DELETE: `${API_VERSION_PREFIX}/forms/delete`,
     },
+    /**
+     * `entry-form-list` / `data-view` lists. A list never has its own create,
+     * update or delete route: writes go through {@link ENDPOINTS.FORMS}. The
+     * first paint reads `list_state` from the page payload; these routes serve
+     * the interactions after it. Path segments are numeric ids, except the
+     * action id and the field key, which are encoded.
+     */
+    LISTS: {
+        STATE: (sectionId: number): string => `${API_VERSION_PREFIX}/lists/${sectionId}/state`,
+        QUICK_ACTION: (sectionId: number, recordId: number, actionId: string): string =>
+            `${API_VERSION_PREFIX}/lists/${sectionId}/records/${recordId}/actions/${encodeURIComponent(actionId)}`,
+        HISTORY: (sectionId: number, recordId: number): string =>
+            `${API_VERSION_PREFIX}/lists/${sectionId}/records/${recordId}/history`,
+        VERSION: (sectionId: number, recordId: number, version: number): string =>
+            `${API_VERSION_PREFIX}/lists/${sectionId}/records/${recordId}/versions/${version}`,
+        COMPARE: (sectionId: number, recordId: number): string =>
+            `${API_VERSION_PREFIX}/lists/${sectionId}/records/${recordId}/compare`,
+        RESTORE: (sectionId: number, recordId: number): string =>
+            `${API_VERSION_PREFIX}/lists/${sectionId}/records/${recordId}/restore`,
+        VERSION_FILE: (sectionId: number, recordId: number, version: number, fieldKey: string): string =>
+            `${API_VERSION_PREFIX}/lists/${sectionId}/records/${recordId}/versions/${version}/files/${encodeURIComponent(fieldKey)}`,
+        /** Current file of a record shown by a list / data-view / entry-record (F165). */
+        CURRENT_FILE: (sectionId: number, recordId: number, fieldKey: string): string =>
+            `${API_VERSION_PREFIX}/lists/${sectionId}/records/${recordId}/files/${encodeURIComponent(fieldKey)}`,
+    },
+    /**
+     * Admin data-browser record history (contract 6). Route permission
+     * `admin.data.read`; the controller also requires table UPDATE.
+     */
+    ADMIN_DATA_HISTORY: {
+        HISTORY: (tableName: string, recordId: number): string =>
+            `${API_VERSION_PREFIX}/admin/data/tables/${encodeURIComponent(tableName)}/records/${recordId}/history`,
+        VERSION: (tableName: string, recordId: number, version: number): string =>
+            `${API_VERSION_PREFIX}/admin/data/tables/${encodeURIComponent(tableName)}/records/${recordId}/versions/${version}`,
+        COMPARE: (tableName: string, recordId: number): string =>
+            `${API_VERSION_PREFIX}/admin/data/tables/${encodeURIComponent(tableName)}/records/${recordId}/compare`,
+        RESTORE: (tableName: string, recordId: number): string =>
+            `${API_VERSION_PREFIX}/admin/data/tables/${encodeURIComponent(tableName)}/records/${recordId}/restore`,
+        VERSION_FILE: (tableName: string, recordId: number, version: number, fieldKey: string): string =>
+            `${API_VERSION_PREFIX}/admin/data/tables/${encodeURIComponent(tableName)}/records/${recordId}/versions/${version}/files/${encodeURIComponent(fieldKey)}`,
+    },
 } as const;
 
 /** Header set the backend reads to switch page-access mode + condition platform var. */
