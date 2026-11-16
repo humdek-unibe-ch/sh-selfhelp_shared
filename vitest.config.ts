@@ -43,6 +43,8 @@ export default defineConfig({
                 'src/cms-classes/classify.ts',
                 'src/utils/transformPageData.ts',
                 'src/api/rateLimit.ts',
+                'src/api/formListErrors.ts',
+                'src/content/formListState.ts',
             ],
             exclude: ['**/__tests__/**', '**/index.ts'],
             thresholds: {

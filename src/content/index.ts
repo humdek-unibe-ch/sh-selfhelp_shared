@@ -6,3 +6,4 @@ export * from './inlineFormat';
 export * from './optionLabels';
 export * from './fieldsMapLabels';
 export * from './formRecordPrefill';
+export * from './formListState';
