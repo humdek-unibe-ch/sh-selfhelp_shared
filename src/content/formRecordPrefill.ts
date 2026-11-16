@@ -11,26 +11,52 @@
  * (`load_record_from`); this helper only reshapes that payload.
  */
 
+import type { IFormListFilesCell, IFormListFileValue } from '../types/api/form-lists';
+
 /** Per-language value for a translatable form field. */
 export interface IFormRecordPrefillTranslatedValue {
     language_id: number;
     value: string;
 }
 
-export type TFormRecordPrefillFieldValue = string | IFormRecordPrefillTranslatedValue[];
+/**
+ * A file-input prefill value (contract 4): current files with server-built URLs,
+ * never a storage key. Same shape as a list `file`/`image` cell.
+ */
+export type TFormRecordPrefillFileValue = IFormListFilesCell;
+
+export type TFormRecordPrefillFieldValue =
+    | string
+    | IFormRecordPrefillTranslatedValue[]
+    | TFormRecordPrefillFileValue;
 
 export interface IFormRecordPrefill {
     recordId: number | null;
     values: Record<string, TFormRecordPrefillFieldValue>;
+    /**
+     * The version the record had when the page was built (`_version` of its rows). Send it back
+     * as `expected_version` when saving or deleting the record: the server refuses a save
+     * without it (400) and a save based on an old one (409, the draft stays). Absent when the page
+     * offered none (a new record, or a server that does not name it).
+     */
+    version?: number;
 }
 
-/** Metadata fields that are never form inputs. */
+/**
+ * Metadata fields that are never form inputs. The trigger type is skipped under
+ * both spellings: `id_action_trigger_types` is the column the data store (and the
+ * list engine) returns, `id_actionTriggerTypes` the name older payloads used. A
+ * form that wrote it back would be refused ("not allowed in form data"). `_version`
+ * is the record's version, read into {@link IFormRecordPrefill.version}.
+ */
 export const FORM_RECORD_PREFILL_SKIP_FIELDS: ReadonlySet<string> = new Set([
     'record_id',
+    '_version',
     'entry_date',
     'id_users',
     'user_name',
     'user_code',
+    'id_action_trigger_types',
     'id_actionTriggerTypes',
     'triggerType',
     'id_languages',
@@ -66,8 +92,49 @@ function asScalarString(value: unknown): string | null {
     if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
         return String(value);
     }
-    // Nested objects/arrays are not form field values — skip.
+    // Nested objects/arrays are not plain text field values — skip (files use asFilesCell).
     return null;
+}
+
+/** Narrow a prefill cell to `{ files: [...] }` when the server sent contract-4 file metadata. */
+export function asFilesCell(value: unknown): TFormRecordPrefillFileValue | null {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+        return null;
+    }
+    const files = (value as { files?: unknown }).files;
+    if (!Array.isArray(files)) {
+        return null;
+    }
+    const out: IFormListFileValue[] = [];
+    for (const entry of files) {
+        if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+            continue;
+        }
+        const file = entry as Record<string, unknown>;
+        const index = typeof file.index === 'number' ? file.index : Number(file.index);
+        const name = typeof file.name === 'string' ? file.name : null;
+        const url = typeof file.url === 'string' ? file.url : null;
+        if (!Number.isFinite(index) || name === null || url === null) {
+            continue;
+        }
+        const mime = typeof file.mime === 'string' ? file.mime : file.mime === null ? null : undefined;
+        const size =
+            typeof file.size === 'number'
+                ? file.size
+                : file.size === null
+                  ? null
+                  : typeof file.size === 'string' && Number.isFinite(Number(file.size))
+                    ? Number(file.size)
+                    : undefined;
+        out.push({
+            index: Math.trunc(index),
+            name,
+            url,
+            ...(mime !== undefined ? { mime } : {}),
+            ...(size !== undefined ? { size } : {}),
+        });
+    }
+    return { files: out };
 }
 
 /**
@@ -86,6 +153,7 @@ export function parseFormRecordPrefill(section: IFormRecordPrefillSection): IFor
     }
 
     const recordGroups: Record<number, Record<string, TFormRecordPrefillFieldValue>> = {};
+    const recordVersions: Record<number, number> = {};
 
     for (const row of sectionDataArray) {
         if (!row || typeof row !== 'object' || Array.isArray(row)) {
@@ -107,6 +175,12 @@ export function parseFormRecordPrefill(section: IFormRecordPrefillSection): IFor
             recordGroups[recordId] = {};
         }
 
+        // Every row of a record (one per language) names the same version.
+        const version = asRecordVersion(record._version);
+        if (version !== null && recordVersions[recordId] === undefined) {
+            recordVersions[recordId] = version;
+        }
+
         const languageId =
             typeof record.id_languages === 'number'
                 ? record.id_languages
@@ -116,6 +190,13 @@ export function parseFormRecordPrefill(section: IFormRecordPrefillSection): IFor
 
         for (const [fieldName, fieldValue] of Object.entries(record)) {
             if (FORM_RECORD_PREFILL_SKIP_FIELDS.has(fieldName)) {
+                continue;
+            }
+            const filesCell = asFilesCell(fieldValue);
+            if (filesCell !== null) {
+                if (languageId === 1 || !recordGroups[recordId][fieldName]) {
+                    recordGroups[recordId][fieldName] = filesCell;
+                }
                 continue;
             }
             const value = asScalarString(fieldValue);
@@ -132,7 +213,11 @@ export function parseFormRecordPrefill(section: IFormRecordPrefillSection): IFor
                     }
                 } else if (typeof languageId === 'number') {
                     const current = recordGroups[recordId][fieldName];
-                    if (typeof current === 'string' || !current) {
+                    if (typeof current === 'string' || Array.isArray(current) === false || !current) {
+                        if (typeof current === 'object' && current !== null && 'files' in current) {
+                            // Keep an existing file cell; do not overwrite with text.
+                            continue;
+                        }
                         recordGroups[recordId][fieldName] = [{ language_id: languageId, value }];
                     } else {
                         const langValues = current;
@@ -156,7 +241,21 @@ export function parseFormRecordPrefill(section: IFormRecordPrefillSection): IFor
     }
 
     const id = Number(firstRecordId);
-    return { recordId: id, values: recordGroups[id] ?? {} };
+    const version = recordVersions[id];
+    return version === undefined
+        ? { recordId: id, values: recordGroups[id] ?? {} }
+        : { recordId: id, values: recordGroups[id] ?? {}, version };
+}
+
+/** A record version as the page offers it: a whole number of at least 1, as a number or as digits. */
+export function asRecordVersion(value: unknown): number | null {
+    const candidate =
+        typeof value === 'number'
+            ? value
+            : typeof value === 'string' && /^[1-9]\d*$/.test(value.trim())
+              ? Number(value.trim())
+              : Number.NaN;
+    return Number.isSafeInteger(candidate) && candidate >= 1 ? candidate : null;
 }
 
 /**
@@ -172,6 +271,10 @@ export function flattenFormRecordPrefillValues(
     for (const [key, value] of Object.entries(values)) {
         if (typeof value === 'string') {
             out[key] = value;
+            continue;
+        }
+        if (value && typeof value === 'object' && !Array.isArray(value) && 'files' in value) {
+            // File cells stay structured; callers that need plain strings omit them.
             continue;
         }
         if (!Array.isArray(value) || value.length === 0) {
