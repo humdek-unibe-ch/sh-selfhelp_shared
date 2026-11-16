@@ -3,7 +3,7 @@
 Audience: Maintainers of the shared package.
 Status: active.
 Applies to: `@selfhelp/shared`.
-Last verified: 2026-06-03.
+Last verified: 2026-11-13.
 Source of truth: `package.json` scripts, `vitest.config.ts`, and `scripts/check-schema-parity.mjs`.
 
 ## Commands
@@ -28,6 +28,9 @@ Source of truth: `package.json` scripts, `vitest.config.ts`, and `scripts/check-
   - `src/assets/**/*.ts`
   - `src/cms-classes/classify.ts`
   - `src/utils/transformPageData.ts`
+  - `src/api/rateLimit.ts`
+  - `src/api/formListErrors.ts` (recognizes the 409 `stale_version`, the 422 `restore_blocked`, the 422 `invalid_form_data` and any list or write refusal by `data.reason`)
+  - `src/content/formListState.ts` (the URL grammar of entry lists and data views; its tests reuse the vectors of the backend `FormListUrlStateParserTest`, so a drift between the server parser and the client helper fails here)
 - Excluded: `**/__tests__/**` and `**/index.ts`. Type-only and data/registry modules are intentionally out of scope because line coverage on declarations is noise.
 
 Every helper in the `include` list is imported by a test in this repo. When you add a new runtime helper to that scope, add its test in the same change so the bundle stays at or above the threshold.

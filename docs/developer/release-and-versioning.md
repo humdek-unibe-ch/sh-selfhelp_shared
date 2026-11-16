@@ -3,21 +3,23 @@
 Audience: Maintainers of the shared package.
 Status: active.
 Applies to: `@selfhelp/shared`.
-Last verified: 2026-07-10.
+Last verified: 2026-11-14.
 Source of truth: `package.json` (`version`, `scripts`, `publishConfig`), `.github/workflows/publish.yml`, `LICENSE`, `header.txt`, and `license-check-and-add-config.json`.
 
 `@selfhelp/shared` is published to npm under public access. The `@selfhelp/shared` semver is the anchor for typed contracts across frontend/mobile (see the backend `docs/developer/cross-repo-compatibility-matrix.md`). Registry pairing of core ↔ frontend ↔ mobile-preview uses each repo's `release-manifest.json` `supports.*` ranges — not shared SemVer alone.
 
 ## Current wave pin
 
-Supported unreleased wave (DB routing / CMS apps / entry binding cleanup):
+Supported unreleased wave (entry lists with a form, data views and the global data query engine), allocated after the about-the-platform wave (`1.23.0` / core `0.1.43` / frontend `0.1.70` / mobile `0.1.34`):
 
 | Package | Version / floor |
 | --- | --- |
-| `@selfhelp/shared` | `1.21.7` (`1.21.5` catalog; `1.21.6` resolve/prefill; `1.21.7` adds `should_fallback`) |
-| core (backend) | `0.1.36` |
-| frontend | `0.1.63` (`supports.core >=0.1.36`) |
-| mobile-preview | package may stay `0.1.33`; **`supports.core >=0.1.36`** is authoritative |
+| `@selfhelp/shared` | `1.24.0` (list styles, list DTOs and URL helpers, `ENDPOINTS.LISTS`, record `version` on form results) |
+| core (backend) | `0.1.44` |
+| frontend | `0.1.71` (`supports.core >=0.1.44`) |
+| mobile | `0.1.35` (`supports.core >=0.1.44`) |
+
+The consumers already name `1.24.0`: the `@selfhelp/shared` dependency in the frontend and mobile `package.json` (and the mobile `overrides` entry), both lockfiles and the mobile `config/appLibraries.generated.json`. Until `1.24.0` is on npm, a registry-backed `npm ci` in them fails with a 404 for that version, and the consumers are verified against the local packed artifact described in [Verify an unreleased build in the consumers](#verify-an-unreleased-build-in-the-consumers-local-packed-artifact). Order of the release: publish shared (steps 1–5 below), then commit the consumers, then tag them.
 
 ### Do not use staged 2.x / 3.x tags
 
@@ -89,6 +91,29 @@ is configured), an authenticated maintainer can still run:
 cd sh-selfhelp_shared
 npm publish   # prepublishOnly rebuilds dist/ first
 ```
+
+## Verify an unreleased build in the consumers (local packed artifact)
+
+Use this whenever a consumer needs a shared build that is not on npm yet (a contract wave in preparation). Never copy files into a consumer's `node_modules` by hand: that cannot be reproduced and records nothing. CI does the same in the backend `ecosystem-compat.yml` (`npm pack`, then `npm install --no-save <tarball>` in the consumer).
+
+1. Build and pack the shared repository into a directory **outside** the repositories (`ARTIFACTS` below), so no tarball is committed by accident:
+   ```bash
+   cd sh-selfhelp_shared
+   npm ci                      # only when node_modules is missing or out of date
+   npm run build
+   npm pack --json --pack-destination "$ARTIFACTS" > "$ARTIFACTS/pack.json"
+   ```
+   Record `filename`, `integrity` and `shasum` of `pack.json` with the verification result. The same source, built and packed again, gives the same `integrity`.
+2. Install the tarball into each consumer without touching its checked-in metadata:
+   ```bash
+   cd sh-selfhelp_frontend      # and again in sh-selfhelp_mobile
+   npm install --no-save --no-audit --no-fund "$ARTIFACTS/selfhelp-shared-1.24.0.tgz"
+   ```
+   `--no-save` leaves `package.json` and `package-lock.json` as they are (they already pin the version). In a checkout without `node_modules` the same command installs every other dependency from the lockfile. The mobile `overrides` entry for shared is `"$@selfhelp/shared"` (it follows the direct dependency): a literal version there makes npm refuse the tarball with `EOVERRIDE`. npm records the tarball (path and `integrity`) in `node_modules/.package-lock.json`; check that its `node_modules/@selfhelp/shared` entry carries the `integrity` of step 1 and that `npm ls @selfhelp/shared` shows the version.
+3. In the mobile app, regenerate the app-library inventory after the install: `npm run generate:app-libraries` (it names the installed version; `npm run check:app-libraries` and `appLibraries.test.mjs` fail while the committed list names another one).
+4. Run the consumer checks of the change (type-check, lint, the focused tests).
+
+Registry prerequisite: the pins name the new version, so `npm ci` (CI of the consumers, Docker builds, a fresh clone) fails with a 404 until the version is published. That is expected before the release; it is not a defect of the pins. The `ecosystem-compat.yml` consumer jobs run `npm ci` before they override shared with the tarball, so they cannot test a consumer ref that already pins an unpublished version: publish first, or run the steps above locally. After the publication, `npm install --save-exact @selfhelp/shared@1.24.0` in each consumer is expected to change nothing but the registry `integrity` of the lock entry (the entry of the previous version has none either).
 
 ## Pre-publish checks
 
