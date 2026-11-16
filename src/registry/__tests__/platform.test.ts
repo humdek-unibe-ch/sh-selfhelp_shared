@@ -146,12 +146,13 @@ describe('style placement targeting', () => {
 
 /**
  * Catalog parity (mobile rendering plan, milestone one + entry-record-form).
- * The core registry must match the established backend catalog (91 styles):
- * the eight previously-missing system/data/reference styles are present, and
- * the sixteen deferred speculative styles are absent. Drift here means the
+ * The core registry must match the established backend catalog (93 styles):
+ * the eight previously-missing system/data/reference styles are present, the
+ * two list styles (`entry-form-list`, `data-view`) are present, and the
+ * sixteen deferred speculative styles are absent. Drift here means the
  * shared contract and the backend catalog have diverged.
  */
-describe('core catalog parity (91 established styles)', () => {
+describe('core catalog parity (93 established styles)', () => {
     const CORE_NAMES = Object.keys(BASE_STYLE_REGISTRY);
 
     const PREVIOUSLY_MISSING = [
@@ -165,9 +166,17 @@ describe('core catalog parity (91 established styles)', () => {
         'input-otp', 'search-field', 'fab-button', 'biometric-login-button',
     ];
 
-    it('contains exactly the 91 established core styles', () => {
-        expect(CORE_NAMES).toHaveLength(91);
+    it('contains exactly the 93 established core styles', () => {
+        expect(CORE_NAMES).toHaveLength(93);
         expect(CORE_NAMES).toContain('entry-record-form');
+    });
+
+    it('registers the list styles as forms-category styles on both platforms', () => {
+        expect(BASE_STYLE_REGISTRY['entry-form-list']).toMatchObject({ category: 'forms', canHaveChildren: true });
+        expect(BASE_STYLE_REGISTRY['data-view']).toMatchObject({ category: 'forms', canHaveChildren: true });
+        for (const name of ['entry-form-list', 'data-view']) {
+            expect(getStylePlatforms(name)).toEqual(['web', 'mobile']);
+        }
     });
 
     it('includes every previously-missing established style', () => {

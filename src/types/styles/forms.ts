@@ -8,6 +8,12 @@ import type {
     TSharedSize,
     TSharedRadius,
 } from '../mantine/common';
+import type {
+    IFormListError,
+    IFormListState,
+    TFormListLayout,
+    TFormListPresentation,
+} from '../api/form-lists';
 
 export type TMantineTextInputVariant = 'default' | 'filled' | 'unstyled';
 export type TMantineTextareaAutosize = '0' | '1';
@@ -511,6 +517,12 @@ export interface IEntryTableEntry {
     _can_delete?: boolean;
     /** Per-row edit permission (backend rule `canUpdateOwnedRecord`). */
     _can_edit?: boolean;
+    /**
+     * The version the record has when the page is built (present on rows that offer delete
+     * or edit). Send it back as `expected_version`: a delete without it is refused (400), one
+     * based on an old version is refused (409) and the record stays.
+     */
+    _version?: number;
     [key: string]: unknown;
 }
 
@@ -581,4 +593,76 @@ export interface IEntryTableStyle extends IBaseStyle {
      * `fields_map` still overrides individual headers when set.
      */
     field_labels?: Record<string, string>;
+}
+
+/**
+ * Fields and server-added state both list styles share. The configuration
+ * fields hold what the author set; the JSON fields (`list_columns`, `list_sort`,
+ * `list_controls`, `list_fixed_filter`, `quick_actions`) are JSON documents the
+ * server validates when the section is saved or imported, so a renderer never
+ * parses them: it draws `list_state`.
+ */
+export interface IFormListBaseStyle extends IStyleWithSpacing {
+    /**
+     * The server-rendered state of the list for this visitor and URL, added by the
+     * page endpoints after the page cache. Absent when {@link list_error} is set.
+     */
+    list_state?: IFormListState;
+    /** Why the list has no state (sign in, not allowed, invalid parameter, bad configuration). The page is still served. */
+    list_error?: IFormListError;
+    /** Optional auto-styled heading rendered above the list when set. */
+    title?: IContentField<string>;
+    /** The list's name in the URL (`<key>.page`, `<key>.q`, ...); unique on a page. */
+    list_key?: IContentField<string>;
+    /** Numeric `data_tables.id`, or empty: the table of the inline form. Required for a data view. */
+    data_table?: IContentField<string>;
+    list_layout?: IContentField<TFormListLayout>;
+    /** Rows per page, 1 to 100. */
+    page_size?: IContentField<string>;
+    /** JSON: up to 30 columns `{field, label, sortable, searchable, format}`. */
+    list_columns?: IContentField<string>;
+    /** JSON: up to 3 default sort keys `{field, direction}`. */
+    list_sort?: IContentField<string>;
+    /** JSON: up to 12 visitor controls (search-adjacent filters). */
+    list_controls?: IContentField<string>;
+    /** JSON: the author's dataset filter; every read and write of the list honours it. */
+    list_fixed_filter?: IContentField<string>;
+    /** '1' (default on `entry-form-list`): the list shows and changes the visitor's own records only. */
+    own_entries_only?: IContentField<string>;
+    label_empty?: IContentField<string>;
+    label_search?: IContentField<string>;
+}
+
+/**
+ * Entry List with Form: a server-rendered list of records with create, view,
+ * edit, delete and quick actions, over the generic data store. Its child
+ * sections include the inline form that creates and edits records.
+ */
+export interface IEntryFormListStyle extends IFormListBaseStyle {
+    style_name: 'entry-form-list';
+    form_presentation?: IContentField<TFormListPresentation>;
+    /** JSON: up to 8 server-defined quick actions `{id, label, confirm, set, when}`. */
+    quick_actions?: IContentField<string>;
+    allow_create?: IContentField<string>;
+    allow_update?: IContentField<string>;
+    allow_delete?: IContentField<string>;
+    /** '1' offers versions, comparison and restore of a record. */
+    show_history?: IContentField<string>;
+    label_add?: IContentField<string>;
+    label_confirm_delete?: IContentField<string>;
+}
+
+/**
+ * Data View: the read-only sibling of {@link IEntryFormListStyle}. It shows a
+ * table, cards or your own layout of records and never writes; a forged write is
+ * refused. With the `custom` layout its child sections are the template of ONE
+ * record: the server renders them per record into `list_state.rows[].sections`, so
+ * the page itself carries no children for it.
+ */
+export interface IDataViewStyle extends IFormListBaseStyle {
+    style_name: 'data-view';
+    /** A site path containing `{record_id}` exactly once; a row links there. */
+    detail_url?: IContentField<string>;
+    /** Classes of the element that holds the records of the `custom` layout (for example a grid); web only. */
+    list_row_css?: IContentField<string>;
 }

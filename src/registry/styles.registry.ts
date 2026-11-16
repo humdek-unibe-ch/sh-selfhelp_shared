@@ -227,6 +227,8 @@ export const BASE_STYLE_REGISTRY = {
     'ref-container': { description: 'Renders content referenced from another section', category: 'layout', canHaveChildren: true },
     'data-container': { description: 'Data-scoped container (renders subtree against a data scope)', category: 'layout', canHaveChildren: true },
     'entry-table': { description: 'Built-in admin CRUD grid over a form\'s records (search/sort/paginate/CSV, add / edit / delete actions)', category: 'forms', canHaveChildren: false },
+    'entry-form-list': { description: 'Entry list with form: server-rendered list of records with create / view / edit / delete, quick actions and history', category: 'forms', canHaveChildren: true },
+    'data-view': { description: 'Read-only server-rendered table, cards or your own layout (sections placed inside, drawn once per record) of records of a data table', category: 'forms', canHaveChildren: true },
 } as const satisfies Record<string, IStyleRegistryEntry>;
 
 /**

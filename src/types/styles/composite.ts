@@ -140,11 +140,24 @@ export interface IEntryRecordStyle extends IBaseStyle {
      * `/team-members/{record_id}`). The holder loads that single row.
      */
     load_record_from?: IContentField<string>;
+    /**
+     * Typed JSON fixed filter (same shape as a list's `list_fixed_filter`).
+     * Bounds which record this detail may show; a record outside it is treated
+     * like a missing record (F166).
+     */
+    fixed_filter?: IContentField<string>;
     scope?: IContentField<string>;
 }
 
 export interface IEntryRecordDeleteStyle extends IBaseStyle {
     style_name: 'entry-record-delete';
+    /** The record this button deletes: injected by the server from the enclosing record (not a CMS field). */
+    record_id?: IContentField<string>;
+    /**
+     * The version that record has when the page is built, as digits (injected next to `record_id`;
+     * absent when the record no longer exists). Send it back as `expected_version`.
+     */
+    record_version?: IContentField<string>;
     /** Delete button text (catalog field; the generic `label` field is not linked to this style). */
     label_delete?: IContentField<string>;
     confirmation_title?: IContentField<string>;
