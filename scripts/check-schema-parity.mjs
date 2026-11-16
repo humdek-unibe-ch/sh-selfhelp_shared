@@ -212,6 +212,163 @@ const RESPONSE_SCHEMA_MAPPING = [
         label: 'mobile preview exchange data (IMobilePreviewExchangeData)',
         requiredPath: ['properties', 'data', 'required'],
     },
+    {
+        // Soft delete of a record (form or list): carries the new record version.
+        schemaFile: 'responses/frontend/form_deleted.json',
+        sourceFile: 'src/types/api/forms.ts',
+        label: 'form delete data (IFormDeleteData)',
+        requiredPath: ['allOf', 1, 'properties', 'data', 'required'],
+    },
+    // -- entry-form-list / data-view (docs/reference/api/22-form-lists.md) --------
+    // The list state is embedded in the page payload (`list_state`) and served by
+    // GET /lists/{section_id}/state; one common schema describes both. Nested
+    // objects get their own entry so a renamed required field is caught per shape.
+    {
+        schemaFile: 'common/_form_list_state.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list state (IFormListState)',
+        requiredPath: ['required'],
+    },
+    {
+        schemaFile: 'common/_form_list_state.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list info (IFormListInfo)',
+        requiredPath: ['properties', 'list', 'required'],
+    },
+    {
+        schemaFile: 'common/_form_list_state.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list column (IFormListColumn)',
+        requiredPath: ['properties', 'columns', 'items', 'required'],
+    },
+    {
+        schemaFile: 'common/_form_list_state.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list control (IFormListControl)',
+        requiredPath: ['properties', 'controls', 'items', 'required'],
+    },
+    {
+        schemaFile: 'common/_form_list_state.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list control option (IFormListControlOption)',
+        requiredPath: ['properties', 'controls', 'items', 'properties', 'options', 'items', 'required'],
+    },
+    {
+        schemaFile: 'common/_form_list_state.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list served state (IFormListServedState)',
+        requiredPath: ['properties', 'state', 'required'],
+    },
+    {
+        schemaFile: 'common/_form_list_state.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list sort (IFormListSort)',
+        requiredPath: ['properties', 'state', 'properties', 'sort', 'items', 'required'],
+    },
+    {
+        schemaFile: 'common/_form_list_state.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list capabilities (IFormListCapabilities)',
+        requiredPath: ['properties', 'capabilities', 'required'],
+    },
+    {
+        schemaFile: 'common/_form_list_state.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list quick action info (IFormListQuickActionInfo)',
+        requiredPath: ['properties', 'capabilities', 'properties', 'quick_actions', 'items', 'required'],
+    },
+    {
+        schemaFile: 'common/_form_list_state.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list row (IFormListRow)',
+        requiredPath: ['properties', 'rows', 'items', 'required'],
+    },
+    {
+        schemaFile: 'common/_form_list_state.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list pagination (IFormListPagination)',
+        requiredPath: ['properties', 'pagination', 'required'],
+    },
+    {
+        schemaFile: 'common/_form_list_state.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list selected record (IFormListSelected)',
+        requiredPath: ['properties', 'selected', 'required'],
+    },
+    {
+        // Why a list on a page has no state (`list_error`); the page is still served.
+        schemaFile: 'common/_form_list_error.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list error (IFormListError)',
+        requiredPath: ['required'],
+    },
+    {
+        schemaFile: 'responses/frontend/form_list_history.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list history data (IFormListHistoryData)',
+        requiredPath: ['allOf', 1, 'properties', 'data', 'required'],
+    },
+    {
+        schemaFile: 'responses/frontend/form_list_version.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list version data (IFormListVersionData)',
+        requiredPath: ['allOf', 1, 'properties', 'data', 'required'],
+    },
+    {
+        schemaFile: 'responses/frontend/form_list_version.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list version revision (revision + changes)',
+        requiredPath: ['allOf', 1, 'properties', 'data', 'properties', 'revision', 'required'],
+    },
+    {
+        schemaFile: 'responses/frontend/form_list_version.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list version state (version + fields)',
+        requiredPath: ['allOf', 1, 'properties', 'data', 'properties', 'state', 'required'],
+    },
+    {
+        schemaFile: 'responses/frontend/form_list_compare.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list compare data (IFormListCompareData)',
+        requiredPath: ['allOf', 1, 'properties', 'data', 'required'],
+    },
+    {
+        // The restore answer is a preview (`dry_run: true`) or a result; both carry `dry_run`.
+        schemaFile: 'responses/frontend/form_list_restore.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list restore data (TFormListRestoreData)',
+        requiredPath: ['allOf', 1, 'properties', 'data', 'required'],
+    },
+    {
+        schemaFile: 'responses/frontend/form_list_action.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list quick action data (IFormListQuickActionData)',
+        requiredPath: ['allOf', 1, 'properties', 'data', 'required'],
+    },
+    {
+        schemaFile: 'responses/admin/data/record_history.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'admin data record history (IAdminDataRecordHistoryResponse)',
+        requiredPath: ['allOf', 1, 'properties', 'data', 'required'],
+    },
+    {
+        schemaFile: 'responses/admin/data/record_version.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'admin data record version (IAdminDataRecordVersionResponse)',
+        requiredPath: ['allOf', 1, 'properties', 'data', 'required'],
+    },
+    {
+        schemaFile: 'responses/admin/data/record_compare.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'admin data record compare (IAdminDataRecordCompareResponse)',
+        requiredPath: ['allOf', 1, 'properties', 'data', 'required'],
+    },
+    {
+        schemaFile: 'responses/admin/data/record_restore.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'admin data record restore (IAdminDataRecordRestoreResponse)',
+        requiredPath: ['allOf', 1, 'properties', 'data', 'required'],
+    },
 ];
 
 /**
@@ -270,6 +427,39 @@ const REQUEST_SCHEMA_MAPPING = [
         schemaFile: 'requests/frontend/mobile_preview_exchange.json',
         sourceFile: 'src/types/api/mobile-preview.ts',
         label: 'mobile preview exchange request (IMobilePreviewExchangeRequest)',
+        requiredPath: ['required'],
+    },
+    {
+        // Record delete: the schema declares `expected_version` optional ONLY so the server's
+        // refusal (400 expected_version_required) can carry its reason; the TS type requires it.
+        schemaFile: 'requests/frontend/delete_form.json',
+        sourceFile: 'src/types/api/forms.ts',
+        label: 'form delete request (IFormDeleteRequest)',
+        requiredPath: ['required'],
+    },
+    {
+        // Record update: same as the delete above for `expected_version`; `preview` is optional on both sides.
+        schemaFile: 'requests/frontend/update_form.json',
+        sourceFile: 'src/types/api/forms.ts',
+        label: 'form update request (IFormUpdateRequest)',
+        requiredPath: ['required'],
+    },
+    {
+        schemaFile: 'requests/frontend/list_quick_action.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list quick action request (IFormListQuickActionRequest)',
+        requiredPath: ['required'],
+    },
+    {
+        schemaFile: 'requests/frontend/list_restore.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'form list restore request (IFormListRestoreRequest)',
+        requiredPath: ['required'],
+    },
+    {
+        schemaFile: 'requests/admin/data/record_restore.json',
+        sourceFile: 'src/types/api/form-lists.ts',
+        label: 'admin data record restore request (IAdminDataRecordRestoreRequest)',
         requiredPath: ['required'],
     },
 ];
