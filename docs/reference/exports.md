@@ -2,8 +2,8 @@
 
 Audience: Developers consuming the shared package.
 Status: active.
-Applies to: `@selfhelp/shared`.
-Last verified: 2026-11-13.
+Applies to: `@selfhelp/shared` 1.25.0.
+Last verified: 2026-11-17.
 Source of truth: `package.json` `exports`, `src/index.ts`, and the modules under `src/`.
 
 `@selfhelp/shared` is the single source of truth shared by `sh-selfhelp_frontend` and `sh-selfhelp_mobile` for CMS/page/style types, API contracts, theme tokens, and small runtime helpers that mirror backend behavior.
@@ -15,7 +15,7 @@ The package exposes one root export plus typed subpath exports (from `package.js
 | Import specifier | Provides |
 | --- | --- |
 | `@selfhelp/shared` | Aggregated root surface (re-exports every module below). |
-| `@selfhelp/shared/registry` | The typed `STYLE_REGISTRY`. |
+| `@selfhelp/shared/registry` | The typed `STYLE_REGISTRY` and `FORM_SECTION_STYLE_NAMES`. |
 | `@selfhelp/shared/theme` | Theme token tables. |
 | `@selfhelp/shared/tailwind` | Tailwind preset export. |
 | `@selfhelp/shared/plugin-sdk` | Plugin runtime-shim specifier contract. |
@@ -63,12 +63,24 @@ import type { IPageContent, IUserDataResponse } from '@selfhelp/shared';
 Subpath imports:
 
 ```ts
-import { STYLE_REGISTRY } from '@selfhelp/shared/registry';
+import { FORM_SECTION_STYLE_NAMES, STYLE_REGISTRY } from '@selfhelp/shared/registry';
 import { THEME_TOKENS } from '@selfhelp/shared/theme';
 import tailwindPreset from '@selfhelp/shared/tailwind';
 ```
 
+`FORM_SECTION_STYLE_NAMES` is the closed list of styles that act as a form
+(`form-record`, `form-log`, `entry-record-form`, `entry-form-list`). The CMS
+add-section dialog hides them when the parent is an `entry-form-list` (the list
+is already the form). The same constant is available from the package root.
+
 ## Entry lists and data views
+
+An `entry-form-list` **is** the form: it carries the form fields (`name`,
+submit labels, alerts, button knobs) and its input children are the form body.
+`list.form_section_id` is the list's own section id when it owns its table, and
+`null` when `data_table` names another table (read-only override: delete and
+quick actions only) or for a `data-view`. Nested form styles below a list are
+refused by the backend.
 
 The `entry-form-list` and `data-view` styles render a list the **server** prepared
 for the current visitor and URL: the page payload carries `list_state` (or
