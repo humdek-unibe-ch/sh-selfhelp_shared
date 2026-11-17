@@ -10,6 +10,26 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
+## v1.25.0
+
+Minor: Entry List with Form is its own form (pairs with core `0.1.45`, frontend
+`0.1.72`, mobile `0.1.37`).
+
+- **`FORM_SECTION_STYLE_NAMES`.** Exported from the registry entry point and the
+  package root: `['form-record', 'form-log', 'entry-record-form', 'entry-form-list']`
+  as const, plus `TFormSectionStyleName`. The CMS add-section dialog uses it to
+  hide these styles below an `entry-form-list`.
+- **`IEntryFormListStyle` form fields.** The list carries the same form knobs as
+  a form-record (`name`, save/update/cancel labels and colours, alerts,
+  confirm, button layout, `redirect_at_end`) via `TEntryFormListFormFields`
+  (`Pick` of `IFormRecordStyle`), so types cannot drift. Put the inputs
+  directly inside the list; a nested form style is refused by the backend.
+- **`data_table` on a list.** Empty: the list owns its table (created on first
+  submit). Set to another table: read-only override (delete and quick actions
+  only). Documented on `IFormListBaseStyle` and in `form_section_id` (own list
+  id when the list writes; `null` for a foreign table or a data view).
+- **Registry description** of `entry-form-list` updated to match.
+
 ## v1.24.0
 
 - **Form list URL mode `history`.** `TFormListMode` and `FORM_LIST_MODES` include
