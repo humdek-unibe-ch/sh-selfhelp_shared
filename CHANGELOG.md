@@ -20,6 +20,11 @@ This project follows semantic versioning.
   `IPluginManifestStyleField`, `IPluginManifestStyleGroup`,
   `IPluginManifestFieldType`, `IPluginManifestField`. Additive; needs a minor
   version bump at release (the manifest JSON Schema changed).
+- **Plugin styles can close their popup.** New `IPluginStyleProps` (the props
+  the host passes to a plugin style component) with `pageModal:
+  IPluginPageModal` (`inModal`, `closeModal()`), so a plugin closes the popup
+  its page is shown in the way the core form does with `close_modal_on_save`.
+  Additive.
 
 ## v1.24.0
 

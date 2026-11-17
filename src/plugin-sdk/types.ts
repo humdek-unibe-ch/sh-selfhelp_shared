@@ -41,6 +41,33 @@ export interface IStyleDefinition extends Omit<IStyleRegistryEntry, 'category'> 
 }
 
 /**
+ * The popup a page is shown in, as the host sees it. Outside a popup
+ * `inModal` is false and `closeModal()` does nothing, so a plugin can call
+ * it unconditionally (for example after a save, like the core form's
+ * `close_modal_on_save`).
+ */
+export interface IPluginPageModal {
+    inModal: boolean;
+    closeModal: () => void;
+}
+
+/**
+ * Props the host passes to a plugin style component (the `component` of an
+ * {@link IStyleDefinition}). `style` is the section as the page payload
+ * carries it (fields keyed by name).
+ */
+export interface IPluginStyleProps {
+    style: Record<string, unknown>;
+    styleProps: Record<string, string>;
+    cssClass: string;
+    parentActive?: number;
+    childIndex?: number;
+    parentColor?: string;
+    /** The popup the page is shown in; a no-op outside one. */
+    pageModal: IPluginPageModal;
+}
+
+/**
  * Props passed by the host's section-field editor to a plugin-supplied
  * field renderer. The host owns the surrounding label / help tooltip /
  * type badge; the plugin only owns the actual input control.
