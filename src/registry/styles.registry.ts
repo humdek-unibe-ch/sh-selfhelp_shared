@@ -227,9 +227,30 @@ export const BASE_STYLE_REGISTRY = {
     'ref-container': { description: 'Renders content referenced from another section', category: 'layout', canHaveChildren: true },
     'data-container': { description: 'Data-scoped container (renders subtree against a data scope)', category: 'layout', canHaveChildren: true },
     'entry-table': { description: 'Built-in admin CRUD grid over a form\'s records (search/sort/paginate/CSV, add / edit / delete actions)', category: 'forms', canHaveChildren: false },
-    'entry-form-list': { description: 'Entry list with form: server-rendered list of records with create / view / edit / delete, quick actions and history', category: 'forms', canHaveChildren: true },
+    'entry-form-list': {
+        description:
+            'Entry List with Form: a list of records that is also the form that creates and edits them (put the inputs directly inside it); supports search, sort, filters, paging, quick actions and history',
+        category: 'forms',
+        canHaveChildren: true,
+    },
     'data-view': { description: 'Read-only server-rendered table, cards or your own layout (sections placed inside, drawn once per record) of records of a data table', category: 'forms', canHaveChildren: true },
 } as const satisfies Record<string, IStyleRegistryEntry>;
+
+/**
+ * Style names that act as a form section: standalone forms plus
+ * `entry-form-list` (the list is the form). Used by the CMS add-section
+ * dialog to hide these styles below an `entry-form-list`, and by clients
+ * that need the same closed set the backend refuses to nest.
+ */
+export const FORM_SECTION_STYLE_NAMES = [
+    'form-record',
+    'form-log',
+    'entry-record-form',
+    'entry-form-list',
+] as const;
+
+/** One of {@link FORM_SECTION_STYLE_NAMES}. */
+export type TFormSectionStyleName = (typeof FORM_SECTION_STYLE_NAMES)[number];
 
 /**
  * Backward-compatible alias for the core registry. Pre-plugin code
