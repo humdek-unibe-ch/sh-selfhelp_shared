@@ -163,6 +163,17 @@ export interface IPluginManifestPermission {
     defaultRoles?: string[];
 }
 
+/** A field linked to a plugin style, with its editor metadata. */
+export interface IPluginManifestStyleField {
+    /** A field of the plugin (`fields`) or a core field such as `own_entries_only`. */
+    name: string;
+    title?: string;
+    help?: string;
+    default?: string | null;
+    hidden?: boolean;
+    disabled?: boolean;
+}
+
 export interface IPluginManifestStyle {
     /** Style name (used as `style_name` discriminator). */
     name: string;
@@ -170,6 +181,37 @@ export interface IPluginManifestStyle {
     canHaveChildren: boolean;
     /** Optional capability requirement (e.g. `frontendStyles`). */
     capability?: IPluginManifestCapability;
+    /** Style group name; required when the installer creates the style. */
+    group?: string;
+    /** Earlier names of this style; the installer renames the row in place. */
+    renamedFrom?: string[];
+    /** When present, the installer makes the style's field links match this list. */
+    fields?: IPluginManifestStyleField[];
+}
+
+/** Style group written into `style_groups` by the host installer (rule 7.8). */
+export interface IPluginManifestStyleGroup {
+    name: string;
+    description?: string;
+    position?: number;
+}
+
+/** Field type (editor control) written into `field_types`; kebab-case name. */
+export interface IPluginManifestFieldType {
+    name: string;
+    position?: number;
+}
+
+/** Plugin-owned field written into `fields`; snake_case name. */
+export interface IPluginManifestField {
+    name: string;
+    /** A core field type or one declared under `fieldTypes`. */
+    type: string;
+    /** True for participant-facing content stored per language. */
+    translatable?: boolean;
+    config?: Record<string, unknown> | null;
+    /** Earlier names of this field; the installer renames the row in place. */
+    renamedFrom?: string[];
 }
 
 export interface IPluginManifestAdminPage {
@@ -294,6 +336,15 @@ export interface IPluginManifest {
 
     /** Styles contributed to the registry. */
     styles?: IPluginManifestStyle[];
+
+    /** Style groups the host installer writes (rule 7.8). */
+    styleGroups?: IPluginManifestStyleGroup[];
+
+    /** Field types the host installer writes (rule 7.8). */
+    fieldTypes?: IPluginManifestFieldType[];
+
+    /** Plugin-owned fields the host installer writes (rule 7.8). */
+    fields?: IPluginManifestField[];
 
     /** Admin pages mounted under `/admin/plugins-host/{pluginId}/`. */
     adminPages?: IPluginManifestAdminPage[];

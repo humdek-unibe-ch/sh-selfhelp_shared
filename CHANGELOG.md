@@ -10,6 +10,17 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
+## Unreleased
+
+- **Plugin manifest: catalogue sections (rule 7.8, F112).** `IPluginManifest`
+  gains `styleGroups`, `fieldTypes` and `fields`; `IPluginManifestStyle` gains
+  `group`, `renamedFrom` and `fields` (the style's field list). The host
+  installer writes these rows, tagged with the plugin id, so a plugin migration
+  touches only the plugin's own tables. New exported types:
+  `IPluginManifestStyleField`, `IPluginManifestStyleGroup`,
+  `IPluginManifestFieldType`, `IPluginManifestField`. Additive; needs a minor
+  version bump at release (the manifest JSON Schema changed).
+
 ## v1.24.0
 
 - **Form list URL mode `history`.** `TFormListMode` and `FORM_LIST_MODES` include
