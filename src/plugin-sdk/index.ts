@@ -78,6 +78,7 @@ export type {
     IFieldRendererDefinition,
     IPluginFieldRendererProps,
     IPluginPageModal,
+    IPluginStylePage,
     IPluginStyleProps,
     IAdminPageDefinition,
     IMenuItemDefinition,

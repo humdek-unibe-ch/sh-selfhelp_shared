@@ -52,6 +52,23 @@ export interface IPluginPageModal {
 }
 
 /**
+ * The page a plugin section is drawn on. A plugin endpoint that serves or
+ * accepts data for the section names the page and the section in every call
+ * (with this language, preview state and route), so the server can check
+ * access and read the section's settings itself (rule 7.7), like the core
+ * form and form list do.
+ */
+export interface IPluginStylePage {
+    /** Page id; null while the page content is not known yet. */
+    id: number | null;
+    languageId: number | null;
+    /** Whether the page is shown as the editor's draft (preview mode). */
+    preview: boolean;
+    /** The page's declared route parameters (`page.route_params`). */
+    routeParams: Record<string, string>;
+}
+
+/**
  * Props the host passes to a plugin style component (the `component` of an
  * {@link IStyleDefinition}). `style` is the section as the page payload
  * carries it (fields keyed by name).
@@ -65,6 +82,8 @@ export interface IPluginStyleProps {
     parentColor?: string;
     /** The popup the page is shown in; a no-op outside one. */
     pageModal: IPluginPageModal;
+    /** The page the section is on, to name in plugin calls. */
+    page: IPluginStylePage;
 }
 
 /**

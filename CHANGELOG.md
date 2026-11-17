@@ -12,6 +12,10 @@ This project follows semantic versioning.
 
 ## Unreleased
 
+- **Plugin styles know their page.** `IPluginStyleProps.page:
+  IPluginStylePage` (`id`, `languageId`, `preview`, `routeParams`), so a plugin
+  names the page and the section in its calls and the server checks access and
+  reads the section's settings itself (rule 7.7). Additive.
 - **Plugin manifest: catalogue sections (rule 7.8, F112).** `IPluginManifest`
   gains `styleGroups`, `fieldTypes` and `fields`; `IPluginManifestStyle` gains
   `group`, `renamedFrom` and `fields` (the style's field list). The host
