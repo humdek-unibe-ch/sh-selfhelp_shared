@@ -52,10 +52,8 @@ export interface IPageAccessTypeInfo {
 export interface IPageItem extends IBasePageInfo {
     id_users?: number;
     id_pages?: number;
+    /** Page ACL: members of a group with this right can see the page and use its forms. */
     acl_select?: 0 | 1;
-    acl_insert?: 0 | 1;
-    acl_update?: 0 | 1;
-    acl_delete?: 0 | 1;
     id_page_types?: number;
     id_page_access_types?: number;
     title?: string | null;

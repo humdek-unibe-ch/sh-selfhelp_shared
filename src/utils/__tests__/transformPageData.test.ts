@@ -61,6 +61,16 @@ describe('transformPageData', () => {
         expect(result.keyword).toBe('');
         expect(result.children).toEqual([]);
     });
+
+    it('passes through acl_select only (page ACL is one right)', () => {
+        const result = transformPageData({
+            id: 1,
+            keyword: 'seen',
+            acl_select: 1,
+        });
+        expect(result.acl_select).toBe(1);
+        expect(Object.keys(result).filter((k) => k.startsWith('acl_'))).toEqual(['acl_select']);
+    });
 });
 
 describe('transformPagesData', () => {
