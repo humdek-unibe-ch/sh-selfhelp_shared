@@ -10,6 +10,18 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
+## v1.26.0
+
+Minor: access cleanup contracts for page ACL and plugin public routes (pairs with
+core `0.1.47`, frontend `0.1.74`).
+
+- **Page ACL is one right.** `IPageItem` and `transformPageData` keep only
+  `acl_select`. The leftover `acl_insert` / `acl_update` / `acl_delete` fields
+  are removed (F03).
+- **Plugin route `public`.** `IPluginManifestApiRoute` gains optional
+  `public?: boolean`. A route needs a permission **or** `public: true`, never
+  both and never neither (F09 / C3).
+
 ## v1.25.0
 
 Minor: Entry List with Form is its own form (pairs with core `0.1.45`, frontend
