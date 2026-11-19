@@ -293,6 +293,13 @@ export interface IPluginApi {
     /** Host rich-text editor adapter. */
     richTextEditor: IRichTextEditorAdapter;
     /**
+     * The host's HTML sanitizer, with the same rules core pages use (web:
+     * DOMPurify, plus the host's link rewrites). Call it before rendering any
+     * CMS or user HTML; never bundle a sanitizer of your own. `inline` keeps
+     * inline markup only, `block` also keeps headings, lists and paragraphs.
+     */
+    sanitizeHtml(html: string, mode: 'inline' | 'block'): string;
+    /**
      * Logger that respects the host's debug config. Avoid `console.log`
      * in plugin code; route everything through this.
      */
@@ -306,9 +313,12 @@ export interface IPluginApi {
 
 /**
  * Same shape on mobile, minus the rich-text editor adapter when the
- * plugin only supports read-only mobile rendering.
+ * plugin only supports read-only mobile rendering. React Native does not
+ * render HTML, so there is no `sanitizeHtml`: mobile plugins show CMS text
+ * with `parseInlineRich` / `stripHtmlToText`. A plugin that renders HTML in
+ * a WebView sanitizes it there itself.
  */
-export interface IMobilePluginApi extends Omit<IPluginApi, 'richTextEditor'> {
+export interface IMobilePluginApi extends Omit<IPluginApi, 'richTextEditor' | 'sanitizeHtml'> {
     /** Mobile builds without rich-text support set this to `null`. */
     richTextEditor: IRichTextEditorAdapter | null;
 }

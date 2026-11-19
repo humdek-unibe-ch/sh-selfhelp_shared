@@ -12,6 +12,10 @@ This project follows semantic versioning.
 
 ## Unreleased
 
+- **`IPluginApi.sanitizeHtml(html, mode)`.** The web host lends plugins its
+  HTML sanitizer (`inline` or `block`), the same rules core pages use, so no
+  plugin bundles its own DOMPurify. Not on `IMobilePluginApi`: React Native does
+  not render HTML. Additive for plugins; a host must now provide it.
 - **Plugin styles know their page.** `IPluginStyleProps.page:
   IPluginStylePage` (`id`, `languageId`, `preview`, `routeParams`), so a plugin
   names the page and the section in its calls and the server checks access and
