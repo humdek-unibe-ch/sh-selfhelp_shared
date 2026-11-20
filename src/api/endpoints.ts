@@ -103,7 +103,27 @@ export const ENDPOINTS = {
         VERSION_FILE: (tableName: string, recordId: number, version: number, fieldKey: string): string =>
             `${API_VERSION_PREFIX}/admin/data/tables/${encodeURIComponent(tableName)}/records/${recordId}/versions/${version}/files/${encodeURIComponent(fieldKey)}`,
     },
+    /**
+     * Page edit lock (live sync, C9). Route permission `admin.page.update` plus
+     * the update grant on the page. `LOCK` serves three methods: GET (status),
+     * POST (acquire or renew) and DELETE (release); `TAKE_OVER` is POST only.
+     * Every route answers an `IPageLockStatus`.
+     */
+    ADMIN_PAGE_LOCK: {
+        LOCK: (pageId: number): string => `${API_VERSION_PREFIX}/admin/pages/${pageId}/lock`,
+        TAKE_OVER: (pageId: number): string =>
+            `${API_VERSION_PREFIX}/admin/pages/${pageId}/lock/take-over`,
+    },
 } as const;
+
+/** Header on every response to a signed-in caller: the access stamp (live sync, C5). */
+export const HEADER_ACL_STAMP = 'X-Acl-Stamp';
+
+/** Request header `X-Page-View: 1`: the only page fetch per visit that counts as a view (C7, F135). */
+export const HEADER_PAGE_VIEW = 'X-Page-View';
+
+/** Draft-version header: sent with every page draft write, returned on page reads and writes (C8). */
+export const HEADER_PAGE_VERSION = 'X-Page-Version';
 
 /** Header set the backend reads to switch page-access mode + condition platform var. */
 export const HEADER_CLIENT_TYPE = 'X-Client-Type';
