@@ -45,6 +45,7 @@ export default defineConfig({
                 'src/api/rateLimit.ts',
                 'src/api/formListErrors.ts',
                 'src/content/formListState.ts',
+                'src/sync/**/*.ts',
             ],
             exclude: ['**/__tests__/**', '**/index.ts'],
             thresholds: {
