@@ -34,6 +34,12 @@ export interface IUserData {
     roles?: string[];
     groups?: string[];
     acl_version?: string | number | null;
+    /**
+     * Access stamp (live sync, C5): the same value the backend sends in the
+     * `X-Acl-Stamp` header of every response to this user. A client that sees
+     * a header value different from this one invalidates its user data.
+     */
+    acl_stamp?: string;
 }
 
 export interface IJwtPayload {

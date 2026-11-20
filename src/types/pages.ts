@@ -4,6 +4,7 @@ SPDX-License-Identifier: MPL-2.0
 */
 import type { IContentField } from './styles/base';
 import type { TStyleName } from './styles/unknown';
+import type { ISyncBlock } from '../sync/types';
 
 /**
  * Comprehensive page type system, single source of truth for both apps.
@@ -125,6 +126,13 @@ export interface IPageContent {
     matched_url_pattern?: string | null;
     /** The canonical active route pattern for the page, for canonical-link generation. Resolve responses only. */
     canonical_url?: string | null;
+    /**
+     * Live-sync block (C6): the tags this payload depends on and the moment it
+     * can change because time passes. Emitted by the backend on published and
+     * draft page payloads; optional here because the type is also used for
+     * payloads built elsewhere (preview, admin).
+     */
+    sync?: ISyncBlock;
     sections: IPageSectionWithFields[];
 }
 
