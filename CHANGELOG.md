@@ -10,6 +10,24 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
+## v1.28.0
+
+Minor: live-sync contract (task `2026-11-20-live-sync-and-edit-lock`; pairs with the
+backend, frontend and mobile releases of the same task). Additive, no breaking change.
+
+- **Added** `src/sync/` (exported from the root): `ISyncChangeMessage`, `TSyncTag`,
+  `SYNC_EVENT_NAME` (`changed`), `SYNC_TAG_PATTERN`, `ISyncBlock` (`depends_on`,
+  `valid_until`), `IAuthEventsBootstrap` (adds `syncTopics`; topics are `null` for a
+  guest), `IPageDraftVersioned` (`draft_version`), `IStalePageVersionData`,
+  `IPageLockStatus` / `IPageLockHolder`, and the error codes `page_version_required`,
+  `stale_page_version`, `page_locked`.
+- **Added** helpers `parseSyncMessage`, `parseSyncMessageJson`, `pageDependsOn` and
+  `syncRefetchDelayMs` (random 0 to 300 ms for `changed`, 0 to 2000 ms for `valid_until`).
+- **Added** header constants `HEADER_ACL_STAMP` (`X-Acl-Stamp`), `HEADER_PAGE_VIEW`
+  (`X-Page-View`) and `HEADER_PAGE_VERSION` (`X-Page-Version`), and
+  `ENDPOINTS.ADMIN_PAGE_LOCK` (`LOCK`, `TAKE_OVER`).
+- **Added** optional `IUserData.acl_stamp` and `IPageContent.sync`.
+
 ## v1.27.0
 
 Minor: role-scope permission names (pairs with core `0.1.48`, frontend `0.1.75`).
