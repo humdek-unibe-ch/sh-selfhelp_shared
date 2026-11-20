@@ -2,8 +2,8 @@
 
 Audience: Developers consuming the shared package.
 Status: active.
-Applies to: `@selfhelp/shared` 1.25.0.
-Last verified: 2026-11-17.
+Applies to: `@selfhelp/shared` 1.28.0.
+Last verified: 2026-11-20.
 Source of truth: `package.json` `exports`, `src/index.ts`, and the modules under `src/`.
 
 `@selfhelp/shared` is the single source of truth shared by `sh-selfhelp_frontend` and `sh-selfhelp_mobile` for CMS/page/style types, API contracts, theme tokens, and small runtime helpers that mirror backend behavior.
@@ -21,7 +21,7 @@ The package exposes one root export plus typed subpath exports (from `package.js
 | `@selfhelp/shared/plugin-sdk` | Plugin runtime-shim specifier contract. |
 | `@selfhelp/shared/testing` | Shared test helpers. |
 
-The root export (`src/index.ts`) re-exports: `types`, `registry`, `api`, `theme`, `interpolation`, `condition`, `cms-classes`, `assets`, `content`, `navigation`, and `utils`.
+The root export (`src/index.ts`) re-exports: `types`, `registry`, `api`, `theme`, `interpolation`, `condition`, `cms-classes`, `assets`, `content`, `navigation`, `sync`, and `utils`.
 
 ## Source folder guide
 
@@ -40,6 +40,7 @@ The root export (`src/index.ts`) re-exports: `types`, `registry`, `api`, `theme`
 | `src/condition/` | JSON-Logic condition evaluator mirroring backend condition handling. |
 | `src/cms-classes/` | Tailwind class allow-list, remap table, and classifier. |
 | `src/assets/` | `resolveAssetUrl()` for absolute and relative asset paths. |
+| `src/sync/` | Live-sync contract: change message, tags, page `sync` block, page lock status, helpers (see "Live sync"). |
 | `src/utils/` | Shared helpers such as spacing parsing and page-data transformation. |
 | `src/plugin-sdk/` | Plugin runtime-shim specifier contract. |
 | `src/testing/` | Shared test helpers. |
@@ -131,6 +132,34 @@ URL shows different records to different people and a record template can read
 `{{route.record_id}}`. A client repeats the route of the page it shows in the state
 request with `formListRouteQuery(page.route_params)` (`route[record_id]=3`); the server
 checks it against the routes of that page and does not believe it otherwise.
+
+## Live sync
+
+`src/sync/` is the typed contract of live sync (task `2026-11-20-live-sync-and-edit-lock`). The
+backend publishes a Mercure event `changed` with `{ "v": 1, "tags": [...] }`; a message carries names
+and ids, never content. Each page payload carries `sync: { depends_on, valid_until }`, so a client
+refetches only the pages whose `depends_on` names a tag of the message.
+
+```ts
+import { parseSyncMessageJson, pageDependsOn, syncRefetchDelayMs } from '@selfhelp/shared';
+
+const message = parseSyncMessageJson(event.data); // null for a higher version or no known tag
+if (message && pageDependsOn(page.sync, message.tags)) {
+  setTimeout(refetchPage, syncRefetchDelayMs('changed')); // random 0 to 300 ms
+}
+```
+
+- `acl` and `navigation` never match `depends_on`: they refresh every page and the navigation.
+- Tags: `acl`, `navigation`, `global_values`, `page:<id>`, `page_draft:<id>`, `page_lock:<id>`,
+  `table:<id>`, `section:<id>`, `asset:<id>`. Unknown tags are dropped by `parseSyncMessage`.
+- Headers: `HEADER_ACL_STAMP` (`X-Acl-Stamp`, response, compare with `IUserData.acl_stamp`),
+  `HEADER_PAGE_VIEW` (`X-Page-View: 1`, request, one per visit), `HEADER_PAGE_VERSION`
+  (`X-Page-Version`, request and response of page draft writes).
+- Page edit lock: `ENDPOINTS.ADMIN_PAGE_LOCK.LOCK(pageId)` (GET status, POST acquire, DELETE release)
+  and `.TAKE_OVER(pageId)` (POST); every route answers `IPageLockStatus`. Refusals use
+  `PAGE_VERSION_REQUIRED_ERROR`, `STALE_PAGE_VERSION_ERROR` and `PAGE_LOCKED_ERROR`.
+- `IAuthEventsBootstrap` is the data of `GET /auth/events`; `syncTopics` lists the topics to
+  subscribe to, and the user topics are `null` for a guest.
 
 ## Plugin runtime-shim contract
 
