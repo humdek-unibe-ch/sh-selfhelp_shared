@@ -10,6 +10,20 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
+## v1.27.0
+
+Minor: role-scope permission names (pairs with core `0.1.48`, frontend `0.1.75`).
+Breaking rename of client permission constants; no backward compatibility (pre-release).
+
+- **Removed** `PERMISSIONS.ADMIN_CMS_PREFERENCES_UPDATE` (`admin.cms_preferences.update`):
+  core 0.1.48 removes the permission (it guarded no route).
+- **Removed** `PERMISSIONS.ADMIN_SETTINGS` (`admin.settings`) and
+  `PERMISSIONS.ADMIN_AUDIT_VIEW` (`admin.audit.view`).
+- **Added** `ADMIN_LANGUAGE_READ` / `ADMIN_LANGUAGE_UPDATE`
+  (`admin.language.read` / `admin.language.update`), `ADMIN_AUDIT_READ`
+  (`admin.audit.read`), and `ADMIN_SECTION_READ` (`admin.section.read`).
+- No mobile-preview constant (shared never had one).
+
 ## v1.26.0
 
 Minor: access cleanup contracts for page ACL and plugin public routes (pairs with
