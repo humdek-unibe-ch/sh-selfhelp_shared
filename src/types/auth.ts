@@ -104,14 +104,15 @@ export const PERMISSIONS = {
     ADMIN_SCHEDULED_JOB_EXECUTE: 'admin.scheduled_job.execute',
     ADMIN_SCHEDULED_JOB_DELETE: 'admin.scheduled_job.delete',
     ADMIN_SCHEDULED_JOB_MANAGE: 'admin.scheduled_job.manage',
+    ADMIN_SECTION_READ: 'admin.section.read',
     ADMIN_SECTION_DELETE: 'admin.section.delete',
-    ADMIN_SETTINGS: 'admin.settings',
+    ADMIN_LANGUAGE_READ: 'admin.language.read',
+    ADMIN_LANGUAGE_UPDATE: 'admin.language.update',
     ADMIN_CMS_PREFERENCES_READ: 'admin.cms_preferences.read',
-    ADMIN_CMS_PREFERENCES_UPDATE: 'admin.cms_preferences.update',
     ADMIN_CACHE_READ: 'admin.cache.read',
     ADMIN_CACHE_CLEAR: 'admin.cache.clear',
     ADMIN_CACHE_MANAGE: 'admin.cache.manage',
-    ADMIN_AUDIT_VIEW: 'admin.audit.view',
+    ADMIN_AUDIT_READ: 'admin.audit.read',
 } as const;
 
 export type TPermission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
