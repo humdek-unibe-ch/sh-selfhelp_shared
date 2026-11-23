@@ -92,6 +92,12 @@ export interface IAuthEventsBootstrap {
 export const PAGE_VERSION_REQUIRED_ERROR = 'page_version_required' as const;
 export const STALE_PAGE_VERSION_ERROR = 'stale_page_version' as const;
 export const PAGE_LOCKED_ERROR = 'page_locked' as const;
+/**
+ * `409` when the caller's own page edit lock ended by idle expiry and they try
+ * to renew (`POST .../lock`). Data is {@link IPageLockStatus}. Resume through
+ * take-over (`POST .../lock/take-over`), not a plain acquire.
+ */
+export const LOCK_IDLE_ENDED_ERROR = 'lock_idle_ended' as const;
 
 /**
  * Draft version of a page (C8). `GET /admin/pages/{page_id}` returns it in its
