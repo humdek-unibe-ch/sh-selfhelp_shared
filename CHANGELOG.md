@@ -10,6 +10,22 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
+## v1.29.0
+
+Minor: live-sync follow-ups (task `2026-11-23-live-sync-follow-ups`; pairs with
+backend 0.1.50, frontend 0.1.77, mobile 0.1.39). Additive, no breaking change.
+
+- **Added** `LOCK_IDLE_ENDED_ERROR` (`lock_idle_ended`): `409` when a holder's own
+  lock ended by idle expiry and they try to renew; data is `IPageLockStatus`;
+  resume through take-over.
+- **Added** `IPagePayload` and `pageFromPayload()` (payload `sync` wins, then
+  `page.sync`; no page → `null`; no sync → page unchanged). Prefer these over
+  client-local copies.
+- **Changed** `IGetPageResponse` / `IResolvePageResponse` data to
+  `{ page; sync?: ISyncBlock | null }`.
+- **Added** schema-parity row for `responses/auth/events.json` ↔
+  `IAuthEventsBootstrap`.
+
 ## v1.28.0
 
 Minor: live-sync contract (task `2026-11-20-live-sync-and-edit-lock`; pairs with the

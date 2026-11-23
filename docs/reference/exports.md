@@ -40,7 +40,7 @@ The root export (`src/index.ts`) re-exports: `types`, `registry`, `api`, `theme`
 | `src/condition/` | JSON-Logic condition evaluator mirroring backend condition handling. |
 | `src/cms-classes/` | Tailwind class allow-list, remap table, and classifier. |
 | `src/assets/` | `resolveAssetUrl()` for absolute and relative asset paths. |
-| `src/sync/` | Live-sync contract: change message, tags, page `sync` block, page lock status, helpers (see "Live sync"). |
+| `src/sync/` | Live-sync contract: change message, tags, page `sync` block, `pageFromPayload` / `IPagePayload`, page lock status, helpers (see "Live sync"). |
 | `src/utils/` | Shared helpers such as spacing parsing and page-data transformation. |
 | `src/plugin-sdk/` | Plugin runtime-shim specifier contract. |
 | `src/testing/` | Shared test helpers. |
@@ -141,10 +141,16 @@ and ids, never content. Each page payload carries `sync: { depends_on, valid_unt
 refetches only the pages whose `depends_on` names a tag of the message.
 
 ```ts
-import { parseSyncMessageJson, pageDependsOn, syncRefetchDelayMs } from '@selfhelp/shared';
+import {
+  parseSyncMessageJson,
+  pageDependsOn,
+  pageFromPayload,
+  syncRefetchDelayMs,
+} from '@selfhelp/shared';
 
+const page = pageFromPayload(response.data); // attaches payload.sync onto the page
 const message = parseSyncMessageJson(event.data); // null for a higher version or no known tag
-if (message && pageDependsOn(page.sync, message.tags)) {
+if (message && pageDependsOn(page?.sync, message.tags)) {
   setTimeout(refetchPage, syncRefetchDelayMs('changed')); // random 0 to 300 ms
 }
 ```
@@ -157,7 +163,10 @@ if (message && pageDependsOn(page.sync, message.tags)) {
   (`X-Page-Version`, request and response of page draft writes).
 - Page edit lock: `ENDPOINTS.ADMIN_PAGE_LOCK.LOCK(pageId)` (GET status, POST acquire, DELETE release)
   and `.TAKE_OVER(pageId)` (POST); every route answers `IPageLockStatus`. Refusals use
-  `PAGE_VERSION_REQUIRED_ERROR`, `STALE_PAGE_VERSION_ERROR` and `PAGE_LOCKED_ERROR`.
+  `PAGE_VERSION_REQUIRED_ERROR`, `STALE_PAGE_VERSION_ERROR`, `PAGE_LOCKED_ERROR` and
+  `LOCK_IDLE_ENDED_ERROR` (`lock_idle_ended`; resume through take-over).
+- `IPagePayload` / `pageFromPayload`: unwrap `{ page, sync? }` so the sync block travels with the
+  cached page. `IGetPageResponse` and `IResolvePageResponse` data include optional `sync`.
 - `IAuthEventsBootstrap` is the data of `GET /auth/events`; `syncTopics` lists the topics to
   subscribe to, and the user topics are `null` for a guest.
 
