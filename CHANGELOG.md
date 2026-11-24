@@ -15,11 +15,16 @@ This project follows semantic versioning.
 - **`IPluginApi.sanitizeHtml(html, mode)`.** The web host lends plugins its
   HTML sanitizer (`inline` or `block`), the same rules core pages use, so no
   plugin bundles its own DOMPurify. Not on `IMobilePluginApi`: React Native does
-  not render HTML. Additive for plugins; a host must now provide it.
+  not render HTML. A host must now provide it, so a plugin that calls it
+  declares the first host version that does (`compatibility` in its manifest);
+  on an older host it is undefined.
 - **Plugin styles know their page.** `IPluginStyleProps.page:
   IPluginStylePage` (`id`, `languageId`, `preview`, `routeParams`), so a plugin
   names the page and the section in its calls and the server checks access and
-  reads the section's settings itself (rule 7.7). Additive.
+  reads the section's settings itself (rule 7.7). With it,
+  `IPluginStyleProps.pageModal` (`inModal`, `closeModal`) for a style shown in
+  the page popup. Both are new required props: a plugin that reads them
+  declares the first host version that passes them; an older host does not.
 - **Plugin manifest: catalogue sections (rule 7.8, F112).** `IPluginManifest`
   gains `styleGroups`, `fieldTypes` and `fields`; `IPluginManifestStyle` gains
   `group`, `renamedFrom` and `fields` (the style's field list). The host
