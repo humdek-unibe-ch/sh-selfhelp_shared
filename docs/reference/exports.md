@@ -2,8 +2,8 @@
 
 Audience: Developers consuming the shared package.
 Status: active.
-Applies to: `@selfhelp/shared` 1.29.0.
-Last verified: 2026-11-24.
+Applies to: `@selfhelp/shared` 1.30.0.
+Last verified: 2026-11-25.
 Source of truth: `package.json` `exports`, `src/index.ts`, and the modules under `src/`.
 
 `@selfhelp/shared` is the single source of truth shared by `sh-selfhelp_frontend` and `sh-selfhelp_mobile` for CMS/page/style types, API contracts, theme tokens, and small runtime helpers that mirror backend behavior.

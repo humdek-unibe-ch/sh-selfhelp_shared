@@ -10,7 +10,10 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
-## Unreleased
+## v1.30.0
+
+Minor: plugin SDK additions for the SurveyJS 3 upgrade (pairs with the backend,
+frontend and SurveyJS plugin releases of that work). Additive, no breaking change.
 
 - **`IPluginApi.sanitizeHtml(html, mode)`.** The web host lends plugins its
   HTML sanitizer (`inline` or `block`), the same rules core pages use, so no
