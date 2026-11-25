@@ -10,6 +10,35 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
+## Unreleased
+
+- **`IPluginApi.sanitizeHtml(html, mode)`.** The web host lends plugins its
+  HTML sanitizer (`inline` or `block`), the same rules core pages use, so no
+  plugin bundles its own DOMPurify. Not on `IMobilePluginApi`: React Native does
+  not render HTML. A host must now provide it, so a plugin that calls it
+  declares the first host version that does (`compatibility` in its manifest);
+  on an older host it is undefined.
+- **Plugin styles know their page.** `IPluginStyleProps.page:
+  IPluginStylePage` (`id`, `languageId`, `preview`, `routeParams`), so a plugin
+  names the page and the section in its calls and the server checks access and
+  reads the section's settings itself (rule 7.7). With it,
+  `IPluginStyleProps.pageModal` (`inModal`, `closeModal`) for a style shown in
+  the page popup. Both are new required props: a plugin that reads them
+  declares the first host version that passes them; an older host does not.
+- **Plugin manifest: catalogue sections (rule 7.8, F112).** `IPluginManifest`
+  gains `styleGroups`, `fieldTypes` and `fields`; `IPluginManifestStyle` gains
+  `group`, `renamedFrom` and `fields` (the style's field list). The host
+  installer writes these rows, tagged with the plugin id, so a plugin migration
+  touches only the plugin's own tables. New exported types:
+  `IPluginManifestStyleField`, `IPluginManifestStyleGroup`,
+  `IPluginManifestFieldType`, `IPluginManifestField`. Additive; needs a minor
+  version bump at release (the manifest JSON Schema changed).
+- **Plugin styles can close their popup.** New `IPluginStyleProps` (the props
+  the host passes to a plugin style component) with `pageModal:
+  IPluginPageModal` (`inModal`, `closeModal()`), so a plugin closes the popup
+  its page is shown in the way the core form does with `close_modal_on_save`.
+  Additive.
+
 ## v1.29.0
 
 Minor: live-sync follow-ups (task `2026-11-23-live-sync-follow-ups`; pairs with
