@@ -6,6 +6,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import {
     BASE_STYLE_REGISTRY,
+    FORM_SECTION_STYLE_NAMES,
     STYLE_REGISTRY,
     extendStyleRegistry,
     getMergedStyleRegistry,
@@ -72,6 +73,19 @@ describe('shared style registry', () => {
             // traversal on this flag, so a flip is a real behaviour change.
             expect(getRegistryEntry('text')?.canHaveChildren).toBe(false);
             expect(getRegistryEntry('container')?.canHaveChildren).toBe(true);
+        });
+
+        it('lists every FORM_SECTION_STYLE_NAMES entry in the core registry', () => {
+            expect([...FORM_SECTION_STYLE_NAMES]).toEqual([
+                'form-record',
+                'form-log',
+                'entry-record-form',
+                'entry-form-list',
+            ]);
+            for (const name of FORM_SECTION_STYLE_NAMES) {
+                expect(BASE_STYLE_REGISTRY[name], name).toBeDefined();
+                expect(isKnownStyleName(name), name).toBe(true);
+            }
         });
     });
 

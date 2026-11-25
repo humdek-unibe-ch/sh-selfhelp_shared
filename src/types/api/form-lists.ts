@@ -69,7 +69,13 @@ export interface IFormListInfo {
     style: TFormListStyleName;
     layout: TFormListLayout;
     form_presentation: TFormListPresentation;
-    /** The inline form that creates and edits records; null for a data view. */
+    /**
+     * The section that creates and edits records.
+     * For an `entry-form-list` that owns its table (no foreign `data_table`),
+     * this is the **list's own** section id. It is `null` for a `data-view`
+     * and for an `entry-form-list` with a foreign `data_table` (read-only
+     * override: delete and quick actions only, no form).
+     */
     form_section_id: number | null;
     /** False while the list's form was never submitted: there is nothing to read yet. */
     table_exists: boolean;

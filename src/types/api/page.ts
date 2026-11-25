@@ -4,8 +4,13 @@ SPDX-License-Identifier: MPL-2.0
 */
 import type { IBaseApiResponse } from './envelope';
 import type { IPageContent, IPageItem } from '../pages';
+import type { ISyncBlock } from '../../sync/types';
 
-export type IGetPageResponse = IBaseApiResponse<{ page: IPageContent }>;
+export type IGetPageResponse = IBaseApiResponse<{
+    page: IPageContent;
+    /** Live-sync block next to the page (contract C6); optional on older servers. */
+    sync?: ISyncBlock | null;
+}>;
 export type IGetPagesResponse = IBaseApiResponse<IPageItem[]>;
 
 /**
@@ -13,4 +18,8 @@ export type IGetPagesResponse = IBaseApiResponse<IPageItem[]>;
  * envelope to {@link IGetPageResponse}; the resolved `page` additionally carries
  * `route_params`, `matched_url_pattern`, and `canonical_url`.
  */
-export type IResolvePageResponse = IBaseApiResponse<{ page: IPageContent }>;
+export type IResolvePageResponse = IBaseApiResponse<{
+    page: IPageContent;
+    /** Live-sync block next to the page (contract C6); optional on older servers. */
+    sync?: ISyncBlock | null;
+}>;

@@ -233,6 +233,13 @@ export interface IPluginManifestApiRoute {
     methods: ('GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')[];
     /** Permission key required. */
     permission?: string;
+    /**
+     * When true, the route is open without a permission check (stored as
+     * `api_routes.is_public`). A plugin route needs at least one permission
+     * **or** `public: true`. Having neither is refused at install, update and
+     * sync. Having both is refused too: a public route checks no permission.
+     */
+    public?: boolean;
 }
 
 export interface IPluginManifestScheduledJob {

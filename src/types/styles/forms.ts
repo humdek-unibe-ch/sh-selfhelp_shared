@@ -614,7 +614,14 @@ export interface IFormListBaseStyle extends IStyleWithSpacing {
     title?: IContentField<string>;
     /** The list's name in the URL (`<key>.page`, `<key>.q`, ...); unique on a page. */
     list_key?: IContentField<string>;
-    /** Numeric `data_tables.id`, or empty: the table of the inline form. Required for a data view. */
+    /**
+     * Numeric `data_tables.id`, or empty.
+     * - On `entry-form-list`: empty means the list owns its table (created on
+     *   first submit as `data_tables.name = "<list section id>"`). Set to another
+     *   table for a read-only override: the list only deletes and runs quick
+     *   actions; inputs, create and edit are refused.
+     * - On `data-view`: required; the view is always read-only.
+     */
     data_table?: IContentField<string>;
     list_layout?: IContentField<TFormListLayout>;
     /** Rows per page, 1 to 100. */
@@ -634,11 +641,44 @@ export interface IFormListBaseStyle extends IStyleWithSpacing {
 }
 
 /**
- * Entry List with Form: a server-rendered list of records with create, view,
- * edit, delete and quick actions, over the generic data store. Its child
- * sections include the inline form that creates and edits records.
+ * Form fields that an Entry List with Form carries when it is its own form.
+ * Picked from {@link IFormRecordStyle} so labels, alerts and button knobs cannot
+ * drift from standalone forms. Not included: `description` (the list has
+ * `title`), `close_modal_on_save`, `redirect_on_save`, `btn_cancel_url` (the
+ * list closes its modal or returns to itself).
  */
-export interface IEntryFormListStyle extends IFormListBaseStyle {
+export type TEntryFormListFormFields = Pick<
+    IFormRecordStyle,
+    | 'name'
+    | 'btn_save_label'
+    | 'btn_save_color'
+    | 'btn_update_label'
+    | 'btn_update_color'
+    | 'btn_cancel_label'
+    | 'btn_cancel_color'
+    | 'alert_success'
+    | 'alert_success_title'
+    | 'alert_error'
+    | 'alert_error_title'
+    | 'confirm_submit'
+    | 'confirm_message'
+    | 'buttons_size'
+    | 'buttons_radius'
+    | 'buttons_variant'
+    | 'buttons_position'
+    | 'buttons_order'
+    | 'redirect_at_end'
+>;
+
+/**
+ * Entry List with Form: a server-rendered list of records that is also the form
+ * that creates and edits them. Put the inputs directly inside the list; the
+ * first successful submit creates `data_tables.name = "<list section id>"`.
+ * A nested `form-record` / `form-log` / `entry-record-form` / `entry-form-list`
+ * is refused. When {@link IFormListBaseStyle.data_table} names another table,
+ * the list is a read-only override (delete and quick actions only).
+ */
+export interface IEntryFormListStyle extends IFormListBaseStyle, TEntryFormListFormFields {
     style_name: 'entry-form-list';
     form_presentation?: IContentField<TFormListPresentation>;
     /** JSON: up to 8 server-defined quick actions `{id, label, confirm, set, when}`. */

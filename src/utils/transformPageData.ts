@@ -26,9 +26,6 @@ interface IRawPage {
     mobile_icon?: string | null;
     id_users?: number;
     acl_select?: 0 | 1;
-    acl_insert?: 0 | 1;
-    acl_update?: 0 | 1;
-    acl_delete?: 0 | 1;
     id_page_types?: number;
     id_page_access_types?: number;
     children?: IRawPage[];
@@ -62,9 +59,6 @@ export function transformPageData(apiPage: IRawPage): IPageItem {
         id_users: apiPage.id_users,
         id_pages: apiPage.id_pages ?? id,
         acl_select: apiPage.acl_select,
-        acl_insert: apiPage.acl_insert,
-        acl_update: apiPage.acl_update,
-        acl_delete: apiPage.acl_delete,
         id_page_types: apiPage.id_page_types,
         id_page_access_types: apiPage.id_page_access_types,
     };

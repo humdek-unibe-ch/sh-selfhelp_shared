@@ -108,6 +108,14 @@ const RESPONSE_SCHEMA_MAPPING = [
         requiredPath: ['properties', 'data', 'required'],
     },
     {
+        // Mercure subscriber bootstrap (live sync, C4). IAuthEventsBootstrap
+        // mirrors the data object, including syncTopics.
+        schemaFile: 'responses/auth/events.json',
+        sourceFile: 'src/sync/types.ts',
+        label: 'auth events bootstrap (IAuthEventsBootstrap / syncTopics)',
+        requiredPath: ['properties', 'data', 'required'],
+    },
+    {
         // CMS page payload consumed by frontend + mobile renderers. The shared
         // mirror is IPageContent (the `data.page` object).
         schemaFile: 'responses/frontend/get_page.json',

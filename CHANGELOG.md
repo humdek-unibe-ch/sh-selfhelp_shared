@@ -39,6 +39,86 @@ This project follows semantic versioning.
   its page is shown in the way the core form does with `close_modal_on_save`.
   Additive.
 
+## v1.29.0
+
+Minor: live-sync follow-ups (task `2026-11-23-live-sync-follow-ups`; pairs with
+backend 0.1.50, frontend 0.1.77, mobile 0.1.39). Additive, no breaking change.
+
+- **Added** `LOCK_IDLE_ENDED_ERROR` (`lock_idle_ended`): `409` when a holder's own
+  lock ended by idle expiry and they try to renew; data is `IPageLockStatus`;
+  resume through take-over.
+- **Added** `IPagePayload` and `pageFromPayload()` (payload `sync` wins, then
+  `page.sync`; no page → `null`; no sync → page unchanged). Prefer these over
+  client-local copies.
+- **Changed** `IGetPageResponse` / `IResolvePageResponse` data to
+  `{ page; sync?: ISyncBlock | null }`.
+- **Added** schema-parity row for `responses/auth/events.json` ↔
+  `IAuthEventsBootstrap`.
+
+## v1.28.0
+
+Minor: live-sync contract (task `2026-11-20-live-sync-and-edit-lock`; pairs with the
+backend, frontend and mobile releases of the same task). Additive, no breaking change.
+
+- **Added** `src/sync/` (exported from the root): `ISyncChangeMessage`, `TSyncTag`,
+  `SYNC_EVENT_NAME` (`changed`), `SYNC_TAG_PATTERN`, `ISyncBlock` (`depends_on`,
+  `valid_until`), `IAuthEventsBootstrap` (adds `syncTopics`; topics are `null` for a
+  guest), `IPageDraftVersioned` (`draft_version`), `IStalePageVersionData`,
+  `IPageLockStatus` / `IPageLockHolder`, and the error codes `page_version_required`,
+  `stale_page_version`, `page_locked`.
+- **Added** helpers `parseSyncMessage`, `parseSyncMessageJson`, `pageDependsOn` and
+  `syncRefetchDelayMs` (random 0 to 300 ms for `changed`, 0 to 2000 ms for `valid_until`).
+- **Added** header constants `HEADER_ACL_STAMP` (`X-Acl-Stamp`), `HEADER_PAGE_VIEW`
+  (`X-Page-View`) and `HEADER_PAGE_VERSION` (`X-Page-Version`), and
+  `ENDPOINTS.ADMIN_PAGE_LOCK` (`LOCK`, `TAKE_OVER`).
+- **Added** optional `IUserData.acl_stamp` and `IPageContent.sync`.
+
+## v1.27.0
+
+Minor: role-scope permission names (pairs with core `0.1.48`, frontend `0.1.75`).
+Breaking rename of client permission constants; no backward compatibility (pre-release).
+
+- **Removed** `PERMISSIONS.ADMIN_CMS_PREFERENCES_UPDATE` (`admin.cms_preferences.update`):
+  core 0.1.48 removes the permission (it guarded no route).
+- **Removed** `PERMISSIONS.ADMIN_SETTINGS` (`admin.settings`) and
+  `PERMISSIONS.ADMIN_AUDIT_VIEW` (`admin.audit.view`).
+- **Added** `ADMIN_LANGUAGE_READ` / `ADMIN_LANGUAGE_UPDATE`
+  (`admin.language.read` / `admin.language.update`), `ADMIN_AUDIT_READ`
+  (`admin.audit.read`), and `ADMIN_SECTION_READ` (`admin.section.read`).
+- No mobile-preview constant (shared never had one).
+
+## v1.26.0
+
+Minor: access cleanup contracts for page ACL and plugin public routes (pairs with
+core `0.1.47`, frontend `0.1.74`).
+
+- **Page ACL is one right.** `IPageItem` and `transformPageData` keep only
+  `acl_select`. The leftover `acl_insert` / `acl_update` / `acl_delete` fields
+  are removed (F03).
+- **Plugin route `public`.** `IPluginManifestApiRoute` gains optional
+  `public?: boolean`. A route needs a permission **or** `public: true`, never
+  both and never neither (F09 / C3).
+
+## v1.25.0
+
+Minor: Entry List with Form is its own form (pairs with core `0.1.45`, frontend
+`0.1.72`, mobile `0.1.37`).
+
+- **`FORM_SECTION_STYLE_NAMES`.** Exported from the registry entry point and the
+  package root: `['form-record', 'form-log', 'entry-record-form', 'entry-form-list']`
+  as const, plus `TFormSectionStyleName`. The CMS add-section dialog uses it to
+  hide these styles below an `entry-form-list`.
+- **`IEntryFormListStyle` form fields.** The list carries the same form knobs as
+  a form-record (`name`, save/update/cancel labels and colours, alerts,
+  confirm, button layout, `redirect_at_end`) via `TEntryFormListFormFields`
+  (`Pick` of `IFormRecordStyle`), so types cannot drift. Put the inputs
+  directly inside the list; a nested form style is refused by the backend.
+- **`data_table` on a list.** Empty: the list owns its table (created on first
+  submit). Set to another table: read-only override (delete and quick actions
+  only). Documented on `IFormListBaseStyle` and in `form_section_id` (own list
+  id when the list writes; `null` for a foreign table or a data view).
+- **Registry description** of `entry-form-list` updated to match.
+
 ## v1.24.0
 
 - **Form list URL mode `history`.** `TFormListMode` and `FORM_LIST_MODES` include

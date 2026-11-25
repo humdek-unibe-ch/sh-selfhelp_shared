@@ -4,6 +4,7 @@ SPDX-License-Identifier: MPL-2.0
 */
 import type { IContentField } from './styles/base';
 import type { TStyleName } from './styles/unknown';
+import type { ISyncBlock } from '../sync/types';
 
 /**
  * Comprehensive page type system, single source of truth for both apps.
@@ -52,10 +53,8 @@ export interface IPageAccessTypeInfo {
 export interface IPageItem extends IBasePageInfo {
     id_users?: number;
     id_pages?: number;
+    /** Page ACL: members of a group with this right can see the page and use its forms. */
     acl_select?: 0 | 1;
-    acl_insert?: 0 | 1;
-    acl_update?: 0 | 1;
-    acl_delete?: 0 | 1;
     id_page_types?: number;
     id_page_access_types?: number;
     title?: string | null;
@@ -127,6 +126,13 @@ export interface IPageContent {
     matched_url_pattern?: string | null;
     /** The canonical active route pattern for the page, for canonical-link generation. Resolve responses only. */
     canonical_url?: string | null;
+    /**
+     * Live-sync block (C6): the tags this payload depends on and the moment it
+     * can change because time passes. Emitted by the backend on published and
+     * draft page payloads; optional here because the type is also used for
+     * payloads built elsewhere (preview, admin).
+     */
+    sync?: ISyncBlock;
     sections: IPageSectionWithFields[];
 }
 
