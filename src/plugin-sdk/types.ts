@@ -41,6 +41,52 @@ export interface IStyleDefinition extends Omit<IStyleRegistryEntry, 'category'> 
 }
 
 /**
+ * The popup a page is shown in, as the host sees it. Outside a popup
+ * `inModal` is false and `closeModal()` does nothing, so a plugin can call
+ * it unconditionally (for example after a save, like the core form's
+ * `close_modal_on_save`).
+ */
+export interface IPluginPageModal {
+    inModal: boolean;
+    closeModal: () => void;
+}
+
+/**
+ * The page a plugin section is drawn on. A plugin endpoint that serves or
+ * accepts data for the section names the page and the section in every call
+ * (with this language, preview state and route), so the server can check
+ * access and read the section's settings itself (rule 7.7), like the core
+ * form and form list do.
+ */
+export interface IPluginStylePage {
+    /** Page id; null while the page content is not known yet. */
+    id: number | null;
+    languageId: number | null;
+    /** Whether the page is shown as the editor's draft (preview mode). */
+    preview: boolean;
+    /** The page's declared route parameters (`page.route_params`). */
+    routeParams: Record<string, string>;
+}
+
+/**
+ * Props the host passes to a plugin style component (the `component` of an
+ * {@link IStyleDefinition}). `style` is the section as the page payload
+ * carries it (fields keyed by name).
+ */
+export interface IPluginStyleProps {
+    style: Record<string, unknown>;
+    styleProps: Record<string, string>;
+    cssClass: string;
+    parentActive?: number;
+    childIndex?: number;
+    parentColor?: string;
+    /** The popup the page is shown in; a no-op outside one. */
+    pageModal: IPluginPageModal;
+    /** The page the section is on, to name in plugin calls. */
+    page: IPluginStylePage;
+}
+
+/**
  * Props passed by the host's section-field editor to a plugin-supplied
  * field renderer. The host owns the surrounding label / help tooltip /
  * type badge; the plugin only owns the actual input control.
@@ -247,6 +293,13 @@ export interface IPluginApi {
     /** Host rich-text editor adapter. */
     richTextEditor: IRichTextEditorAdapter;
     /**
+     * The host's HTML sanitizer, with the same rules core pages use (web:
+     * DOMPurify, plus the host's link rewrites). Call it before rendering any
+     * CMS or user HTML; never bundle a sanitizer of your own. `inline` keeps
+     * inline markup only, `block` also keeps headings, lists and paragraphs.
+     */
+    sanitizeHtml(html: string, mode: 'inline' | 'block'): string;
+    /**
      * Logger that respects the host's debug config. Avoid `console.log`
      * in plugin code; route everything through this.
      */
@@ -260,9 +313,12 @@ export interface IPluginApi {
 
 /**
  * Same shape on mobile, minus the rich-text editor adapter when the
- * plugin only supports read-only mobile rendering.
+ * plugin only supports read-only mobile rendering. React Native does not
+ * render HTML, so there is no `sanitizeHtml`: mobile plugins show CMS text
+ * with `parseInlineRich` / `stripHtmlToText`. A plugin that renders HTML in
+ * a WebView sanitizes it there itself.
  */
-export interface IMobilePluginApi extends Omit<IPluginApi, 'richTextEditor'> {
+export interface IMobilePluginApi extends Omit<IPluginApi, 'richTextEditor' | 'sanitizeHtml'> {
     /** Mobile builds without rich-text support set this to `null`. */
     richTextEditor: IRichTextEditorAdapter | null;
 }
