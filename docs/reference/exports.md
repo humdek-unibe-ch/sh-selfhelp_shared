@@ -2,7 +2,7 @@
 
 Audience: Developers consuming the shared package.
 Status: active.
-Applies to: `@selfhelp/shared` 1.29.0.
+Applies to: `@selfhelp/shared` 1.30.0.
 Last verified: 2026-11-24.
 Source of truth: `package.json` `exports`, `src/index.ts`, and the modules under `src/`.
 
@@ -31,7 +31,7 @@ The root export (`src/index.ts`) re-exports: `types`, `registry`, `api`, `theme`
 | `src/types/pages.ts` | CMS page structures such as `IPageContent`, `IPageItem`, and section field models. |
 | `src/types/auth.ts` | User/auth payloads such as `IUserDataResponse`, `IJwtPayload`, and permission constants. |
 | `src/types/api/` | Request/response DTOs and envelope types for auth, pages, forms, lists (`form-lists.ts`), and language endpoints. |
-| `src/content/` | Content helpers both clients share: inline formatting, option labels, form-record prefill, and the URL state of entry lists (`formListState.ts`). |
+| `src/content/` | Content helpers both clients share: the language-independent sentinel (`LANGUAGE_INDEPENDENT_ID` / `LOCALE`, `isLanguageIndependent`), inline formatting, option labels, form-record prefill, and the URL state of entry lists (`formListState.ts`). |
 | `src/types/mantine/` | Shared semantic size, radius, spacing, and color type definitions. |
 | `src/registry/` | Typed style registry (`styles.registry.ts`) mapping `style_name` to schema metadata. |
 | `src/api/` | Frontend-facing `/cms-api/v1/*` endpoint catalog, and the readers of the structured form and list refusals (`formListErrors.ts`: stale version, blocked restore, invalid form data, any refusal by `data.reason`). |

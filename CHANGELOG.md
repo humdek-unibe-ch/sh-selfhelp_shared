@@ -10,6 +10,19 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
+## v1.30.0
+
+Minor: language-independent sentinel as one named constant (task
+`2026-11-24-language-independent`; pairs with backend 0.1.51, frontend 0.1.78,
+mobile 0.1.40). Additive, no breaking change.
+
+- **Added** `LANGUAGE_INDEPENDENT_ID` (`1`), `LANGUAGE_INDEPENDENT_LOCALE`
+  (`'all'`) and `isLanguageIndependent()` from the package root (`src/content/
+  languageIndependent.ts`). The backend `languages` row id 1 holds values that
+  are the same in every language; it is not a real language.
+- **Changed** `formRecordPrefill` to use `isLanguageIndependent` instead of a
+  bare comparison with `1`. Behaviour unchanged.
+
 ## v1.29.0
 
 Minor: live-sync follow-ups (task `2026-11-23-live-sync-follow-ups`; pairs with
