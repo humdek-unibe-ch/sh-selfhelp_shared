@@ -12,6 +12,7 @@
  */
 
 import type { IFormListFilesCell, IFormListFileValue } from '../types/api/form-lists';
+import { isLanguageIndependent } from './languageIndependent';
 
 /** Per-language value for a translatable form field. */
 export interface IFormRecordPrefillTranslatedValue {
@@ -142,9 +143,10 @@ export function asFilesCell(value: unknown): TFormRecordPrefillFileValue | null 
  *
  * - Missing / empty / non-array `section_data` → empty create state.
  * - Rows without a numeric `record_id` are ignored.
- * - Translatable fields accumulate `{ language_id, value }[]` (language id `1`
- *   is an Independent seed kept only until a public-language row arrives).
- * - Non-translatable fields prefer language id `1`, else the first seen value.
+ * - Translatable fields accumulate `{ language_id, value }[]` (the
+ *   language-independent seed is kept only until a public-language row arrives).
+ * - Non-translatable fields prefer the language-independent row, else the first
+ *   seen value.
  */
 export function parseFormRecordPrefill(section: IFormRecordPrefillSection): IFormRecordPrefill {
     const sectionDataArray = section?.section_data;
@@ -194,7 +196,7 @@ export function parseFormRecordPrefill(section: IFormRecordPrefillSection): IFor
             }
             const filesCell = asFilesCell(fieldValue);
             if (filesCell !== null) {
-                if (languageId === 1 || !recordGroups[recordId][fieldName]) {
+                if (isLanguageIndependent(languageId) || !recordGroups[recordId][fieldName]) {
                     recordGroups[recordId][fieldName] = filesCell;
                 }
                 continue;
@@ -207,7 +209,7 @@ export function parseFormRecordPrefill(section: IFormRecordPrefillSection): IFor
             const translatable = isTranslatableChild(section.children, fieldName);
 
             if (translatable) {
-                if (languageId === 1) {
+                if (isLanguageIndependent(languageId)) {
                     if (!recordGroups[recordId][fieldName]) {
                         recordGroups[recordId][fieldName] = value;
                     }
@@ -229,7 +231,7 @@ export function parseFormRecordPrefill(section: IFormRecordPrefillSection): IFor
                         }
                     }
                 }
-            } else if (languageId === 1 || !recordGroups[recordId][fieldName]) {
+            } else if (isLanguageIndependent(languageId) || !recordGroups[recordId][fieldName]) {
                 recordGroups[recordId][fieldName] = value;
             }
         }
@@ -287,7 +289,7 @@ export function flattenFormRecordPrefillValues(
                 continue;
             }
         }
-        const nonIndependent = value.find((entry) => entry.language_id !== 1);
+        const nonIndependent = value.find((entry) => !isLanguageIndependent(entry.language_id));
         out[key] = (nonIndependent ?? value[0]).value;
     }
     return out;
