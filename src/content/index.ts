@@ -5,5 +5,6 @@ SPDX-License-Identifier: MPL-2.0
 export * from './inlineFormat';
 export * from './optionLabels';
 export * from './fieldsMapLabels';
+export * from './languageIndependent';
 export * from './formRecordPrefill';
 export * from './formListState';
