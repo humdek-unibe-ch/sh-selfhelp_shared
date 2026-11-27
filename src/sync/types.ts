@@ -32,6 +32,7 @@ export const SYNC_MESSAGE_VERSION = 1 as const;
  * | `table:<id>` | A record of the data table changed |
  * | `section:<id>` | A section was saved in the admin |
  * | `asset:<id>` | An asset changed |
+ * | `res:<type>:<id>` | A plugin item of a registered resource type changed |
  */
 export type TSyncTag =
     | 'acl'
@@ -42,11 +43,12 @@ export type TSyncTag =
     | `page_lock:${number}`
     | `table:${number}`
     | `section:${number}`
-    | `asset:${number}`;
+    | `asset:${number}`
+    | `res:${string}:${number}`;
 
 /** Mirror of the backend tag pattern (C1). Anchored, so the whole tag must match. */
 export const SYNC_TAG_PATTERN =
-    /^(acl|navigation|global_values|page:\d+|page_draft:\d+|page_lock:\d+|table:\d+|section:\d+|asset:\d+)$/;
+    /^(acl|navigation|global_values|page:\d+|page_draft:\d+|page_lock:\d+|table:\d+|section:\d+|asset:\d+|res:[a-z][a-z0-9_]{1,63}:\d+)$/;
 
 /** Data of one `changed` event (C1). */
 export interface ISyncChangeMessage {
@@ -60,10 +62,11 @@ export interface ISyncChangeMessage {
  * The `sync` block of every page payload, published and draft (C6).
  *
  * `depends_on` lists `page:<id>` (`page_draft:<id>` for a draft), `table:<id>`
- * for every data table the page reads, and `global_values`. `valid_until` is
- * the earliest moment (UTC, ISO 8601) the result can change because time
- * passes, or `null`. The client refetches once at `valid_until` plus a random
- * delay while the page is open.
+ * for every data table the page reads, `res:<type>:<id>` for plugin items the
+ * page references or a style resolver depends on, and `global_values`.
+ * `valid_until` is the earliest moment (UTC, ISO 8601) the result can change
+ * because time passes, or `null`. The client refetches once at `valid_until`
+ * plus a random delay while the page is open.
  */
 export interface ISyncBlock {
     depends_on: string[];

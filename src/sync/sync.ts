@@ -70,8 +70,9 @@ export function parseSyncMessageJson(raw: string): ISyncChangeMessage | null {
  * True when a page payload's `sync.depends_on` names any of the message's tags (C6).
  *
  * Only tags that a page payload can list match here: `page:<id>`,
- * `page_draft:<id>`, `table:<id>` and `global_values`. The other tags are not
- * page dependencies and are handled by the client on their own:
+ * `page_draft:<id>`, `table:<id>`, `res:<type>:<id>` and `global_values`. The
+ * other tags are not page dependencies and are handled by the client on their
+ * own:
  *
  * - `acl` and `navigation` affect every page the caller may see, so the client
  *   invalidates all page queries and the navigation (it does not ask each page).

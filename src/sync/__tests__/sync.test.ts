@@ -38,8 +38,18 @@ describe('parseSyncMessage (C1)', () => {
             'table:4',
             'section:5',
             'asset:6',
+            'res:surveyjs_survey:12',
         ];
         expect(parseSyncMessage({ v: 1, tags })?.tags).toEqual(tags);
+    });
+
+    it('keeps only well-formed res: tags (C1)', () => {
+        expect(
+            parseSyncMessage({
+                v: 1,
+                tags: ['res:surveyjs_survey:12', 'res:Bad:1', 'res:x:1'],
+            }),
+        ).toEqual({ v: 1, tags: ['res:surveyjs_survey:12'] });
     });
 
     it('ignores a message of a higher version', () => {
@@ -122,6 +132,15 @@ describe('pageDependsOn (C6)', () => {
         const draft: ISyncBlock = { depends_on: ['page_draft:12', 'table:31'], valid_until: null };
         expect(pageDependsOn(draft, ['page_draft:12'])).toBe(true);
         expect(pageDependsOn(draft, ['page:12'])).toBe(false);
+    });
+
+    it('matches a listed res: tag', () => {
+        const withRes: ISyncBlock = {
+            depends_on: ['page:12', 'res:surveyjs_survey:12', 'global_values'],
+            valid_until: null,
+        };
+        expect(pageDependsOn(withRes, ['res:surveyjs_survey:12'])).toBe(true);
+        expect(pageDependsOn(withRes, ['res:surveyjs_survey:99'])).toBe(false);
     });
 
     it('is false without a sync block or an empty list', () => {
