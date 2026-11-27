@@ -77,6 +77,72 @@ export interface IMobileHostResponse<TData = unknown> {
 }
 
 /**
+ * One file part of a multipart upload the plugin asks the host to send
+ * (renderer 0.4.0, C27). Give exactly one of {@link uri} or {@link base64}.
+ */
+export interface IMobileHostUploadFile {
+    /** Multipart part name (the field name the plugin's route reads). */
+    field: string;
+    /** File name sent to the server. */
+    name: string;
+    /** MIME type, e.g. `audio/m4a`. */
+    type: string;
+    /**
+     * `file://` or `content://` (native), `blob:` or `data:` (web preview).
+     * Exclusive with {@link base64}.
+     */
+    uri?: string;
+    /** Raw base64 without a `data:` prefix. Exclusive with {@link uri}. */
+    base64?: string;
+}
+
+/**
+ * A protected multipart upload (renderer 0.4.0, C27). Same path rules as
+ * {@link IMobileHostRequest}: relative to the host API base, absolute URLs are
+ * refused.
+ */
+export interface IMobileHostUploadRequest {
+    /** Path relative to the host API base, like {@link IMobileHostRequest.path}. */
+    path: string;
+    /** HTTP method. Defaults to `POST`. */
+    method?: 'POST' | 'PUT';
+    /** Text parts of the multipart body. */
+    fields?: Record<string, string>;
+    /** File parts. At least one is required. */
+    files: IMobileHostUploadFile[];
+    /** Extra request headers. */
+    headers?: Record<string, string>;
+    /** Query parameters appended to the path. */
+    query?: Record<string, string | number | boolean>;
+}
+
+/** What a plugin may ask the host to request from the system (C28). */
+export type TMobileHostPermission = 'microphone' | 'camera';
+
+/**
+ * Answer to {@link IMobileHostServices.requestPermission}: `granted`, `denied`
+ * (the user said no and the app may ask again) or `blocked` (the system will
+ * not show the prompt again; send the user to {@link IMobileHostServices.openAppSettings}).
+ */
+export type TMobileHostPermissionState = 'granted' | 'denied' | 'blocked';
+
+/**
+ * Small device key-value store for one plugin, one user and one server (C29).
+ * Meant for drafts and view state. It is not encrypted: never keep secrets or
+ * tokens in it. The server still decides everything on submit.
+ */
+export interface IMobilePluginStorage {
+    /** The stored value, or `null` when the key is not set. */
+    getItem(key: string): Promise<string | null>;
+    /** Stores a value; rejects with `Error('plugin_storage_full')` over the size cap and changes nothing. */
+    setItem(key: string, value: string): Promise<void>;
+    /** Removes one key. */
+    removeItem(key: string): Promise<void>;
+    /** Removes everything of this plugin, this user and this server only. */
+    clear(): Promise<void>;
+}
+
+/**
  * Authenticated host services exposed to a plugin's mobile package. The
  * host owns the token + refresh; the plugin only describes the request.
  */
@@ -113,6 +179,46 @@ export interface IMobileHostServices {
      * gracefully rather than assume it exists.
      */
     navigate?(target: string, external?: boolean): void;
+    /**
+     * Send a `multipart/form-data` request through the host (renderer 0.4.0).
+     * The host attaches the token and client headers, makes one 401 refresh
+     * retry and answers in the {@link IMobileHostResponse} shape, like
+     * {@link request}. An absolute path is refused. Nothing is sent, and the
+     * answer is `{ ok: false, status: 0, reason }`, when `reason` is
+     * `invalid_upload` (no file, or a file with both or neither of `uri` and
+     * `base64`) or `file_too_large` (one total size limit per request). The
+     * host removes any temporary file it wrote for a `base64` input.
+     *
+     * Optional: an older host omits it, so a plugin MUST feature-detect
+     * (`if (host.upload)`) and degrade gracefully.
+     */
+    upload?<TData = unknown>(req: IMobileHostUploadRequest): Promise<IMobileHostResponse<TData>>;
+    /**
+     * Ask the system for microphone or camera access (renderer 0.4.0). Only the
+     * app asks; a plugin in a WebView cannot. Resolves to `granted`, `denied`
+     * or `blocked` ({@link TMobileHostPermissionState}); on `blocked` the plugin
+     * should explain why it needs the permission and offer
+     * {@link openAppSettings}.
+     *
+     * Optional: feature-detect (`if (host.requestPermission)`).
+     */
+    requestPermission?(kind: TMobileHostPermission): Promise<TMobileHostPermissionState>;
+    /**
+     * Open the app's system settings page so the user can change a `blocked`
+     * permission (renderer 0.4.0). Does nothing in the web preview.
+     *
+     * Optional: feature-detect (`if (host.openAppSettings)`).
+     */
+    openAppSettings?(): void;
+    /**
+     * Device storage for the given plugin id, scoped to the current server and
+     * user (guest = 0), emptied on logout, server switch and a rejected token
+     * refresh (renderer 0.4.0, C29). Throws when `pluginId` does not match the
+     * manifest id pattern. Not for secrets.
+     *
+     * Optional: feature-detect (`if (host.getPluginStorage)`).
+     */
+    getPluginStorage?(pluginId: string): IMobilePluginStorage;
 }
 
 let registeredHostServices: IMobileHostServices | null = null;

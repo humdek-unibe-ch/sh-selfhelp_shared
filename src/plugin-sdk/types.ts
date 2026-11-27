@@ -17,12 +17,50 @@ SPDX-License-Identifier: MPL-2.0
 
 import type { IStyleRegistryEntry } from '../registry/styles.registry';
 
+import type { IPluginSyncEntry } from './sync-map';
+
 /**
  * Generic component renderer. We avoid pulling in React types here to
  * keep the SDK framework-agnostic; the runtime casts to the appropriate
  * component type at registration time.
  */
 export type TPluginComponent<TProps = unknown> = (props: TProps) => unknown;
+
+/**
+ * Where a plugin item is used (C7). Pages the caller may not read are counted
+ * only in `hidden_count`.
+ */
+export interface IResourceUsage {
+    pages: Array<{
+        id: number;
+        keyword: string;
+        title: string | null;
+        draft_uses: boolean;
+        published_uses: boolean;
+    }>;
+    actions: Array<{ id: number; name: string }>;
+    hidden_count: number;
+}
+
+/**
+ * One item of `GET /admin/plugins/{pluginId}/settings` (C14). Secrets never
+ * carry a clear `value`; `hint` is the last 4 characters when the secret is
+ * long enough, otherwise null.
+ */
+export interface IPluginSettingViewItem {
+    key: string;
+    label: string;
+    type: 'string' | 'number' | 'boolean' | 'url';
+    secret: boolean;
+    required: boolean;
+    has_value: boolean;
+    value: string | number | boolean | null;
+    hint: string | null;
+    overridden_by_env: boolean;
+}
+
+/** The C14 GET settings list for one plugin. */
+export type IPluginSettingsView = IPluginSettingViewItem[];
 
 /**
  * Definition of a CMS style contributed by a plugin.
@@ -300,6 +338,33 @@ export interface IPluginApi {
      */
     sanitizeHtml(html: string, mode: 'inline' | 'block'): string;
     /**
+     * CSS selector for a rendered section element (C23). Returns
+     * `.section-<id>`. Web only.
+     */
+    sectionAnchor(sectionId: number): string;
+    /** Where-used for a plugin item the caller may view (C7, C11). */
+    resources: {
+        usage(type: string, id: number): Promise<IResourceUsage>;
+    };
+    /**
+     * Optional host UI parts. `ResourceUsageList` is offered when the host
+     * ships a shared where-used list for delete warnings.
+     */
+    ui?: {
+        ResourceUsageList: TPluginComponent<{
+            type: string;
+            id: number;
+            warnBeforeDelete?: boolean;
+        }>;
+    };
+    /**
+     * This plugin's settings as the host stores them (C14). Secrets show
+     * `has_value` only; clear values are never returned for secrets.
+     */
+    settings: {
+        get(): Promise<IPluginSettingsView>;
+    };
+    /**
      * Logger that respects the host's debug config. Avoid `console.log`
      * in plugin code; route everything through this.
      */
@@ -313,12 +378,21 @@ export interface IPluginApi {
 
 /**
  * Same shape on mobile, minus the rich-text editor adapter when the
- * plugin only supports read-only mobile rendering. React Native does not
- * render HTML, so there is no `sanitizeHtml`: mobile plugins show CMS text
- * with `parseInlineRich` / `stripHtmlToText`. A plugin that renders HTML in
- * a WebView sanitizes it there itself.
+ * plugin only supports read-only mobile rendering. Web-only C11 / C23 members
+ * are omitted. React Native does not render HTML, so there is no
+ * `sanitizeHtml` on mobile. HTML rule for mobile plugins:
+ *   - Native React Native text: `parseInlineRich` (inline formatting and
+ *     links) and `stripHtmlToText` (plain text), both exported from
+ *     `@selfhelp/shared/plugin-sdk`.
+ *   - HTML inside the plugin's own WebView: the plugin bundles a sanitizer into
+ *     the WebView runtime and keeps a strict CSP. The host offers no sanitizer
+ *     on mobile.
+ *   - Web part: `api.sanitizeHtml`; never bundle a sanitizer there.
  */
-export interface IMobilePluginApi extends Omit<IPluginApi, 'richTextEditor' | 'sanitizeHtml'> {
+export interface IMobilePluginApi extends Omit<
+    IPluginApi,
+    'richTextEditor' | 'sanitizeHtml' | 'sectionAnchor' | 'resources' | 'ui' | 'settings'
+> {
     /** Mobile builds without rich-text support set this to `null`. */
     richTextEditor: IRichTextEditorAdapter | null;
 }
@@ -353,6 +427,11 @@ export interface IPluginRegistration {
      * `field_types`) without the host having to hardcode the renderer.
      */
     fieldRenderers?: IFieldRendererDefinition[];
+    /**
+     * Declarative sync map (C10). The host invalidates each matching
+     * `queryKey` as a prefix when a change notice carries a listed tag.
+     */
+    sync?: IPluginSyncEntry[];
 }
 
 /**
@@ -368,4 +447,9 @@ export interface IMobilePluginRegistration {
     realtimeTopics?: IPluginRealtimeTopic[];
     /** Mobile feature flags (mirror of the manifest flags). */
     featureFlags?: IPluginFeatureFlag[];
+    /**
+     * Declarative sync map (C10). Same shape as the web registration; the
+     * mobile host invalidates matching query keys from `applySyncTags`.
+     */
+    sync?: IPluginSyncEntry[];
 }

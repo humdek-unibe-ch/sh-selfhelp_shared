@@ -13,8 +13,16 @@ SPDX-License-Identifier: MPL-2.0
  *   - major (1.x   -> 2.0)   — breaking SDK change.
  *
  * Independent from the npm `version` of `@selfhelp/shared`.
+ *
+ * `0.2.0` adds resource tags, the plugin sync map, manifest keys for settings /
+ * rate limits / JSON Logic / cache categories / action-plannable jobs, and the
+ * web SDK `resources` / `settings` / `sectionAnchor` surface (task
+ * `2026-11-25-plugin-resource-hooks`). It also covers the optional mobile host
+ * services `upload`, `requestPermission` / `openAppSettings` and
+ * `getPluginStorage`, and the `parseInlineRich` / `stripHtmlToText` /
+ * `IInlineNode` exports (the mobile renderer axis is `0.4.0`).
  */
-export const PLUGIN_API_VERSION = '0.1.0' as const;
+export const PLUGIN_API_VERSION = '0.2.0' as const;
 
 /**
  * Mobile renderer contract version. This is the SECOND, mobile-only
@@ -42,8 +50,17 @@ export const PLUGIN_API_VERSION = '0.1.0' as const;
  * through the host router (correct in the native app AND the CMS web preview
  * iframe) instead of touching `window.location` — an additive renderer feature.
  * It is optional, so older plugins/hosts stay compatible.
+ *
+ * `0.4.0` adds three optional host services and one text-helper export (task
+ * `2026-11-25-plugin-resource-hooks`, C27 to C30): `upload` (multipart through
+ * the host with the host's token), `requestPermission` / `openAppSettings`
+ * (microphone and camera, asked by the app), `getPluginStorage` (a small device
+ * key-value store per server, user and plugin), and `parseInlineRich` /
+ * `stripHtmlToText` / `IInlineNode` exported from `plugin-sdk`. All members are
+ * optional, so a plugin feature-detects them; plugins declare `>=` ranges in
+ * `compatibility.mobile`.
  */
-export const MOBILE_RENDERER_VERSION = '0.3.0' as const;
+export const MOBILE_RENDERER_VERSION = '0.4.0' as const;
 
 export interface ISemver {
     major: number;

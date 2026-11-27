@@ -4,6 +4,7 @@ SPDX-License-Identifier: MPL-2.0
 */
 import { describe, expect, it } from 'vitest';
 import {
+    PLUGIN_API_VERSION,
     MOBILE_RENDERER_VERSION,
     isMobileRendererCompatible,
     parseSemver,
@@ -27,6 +28,14 @@ describe('mobile renderer compatibility (compatibility.mobile axis)', () => {
     it('rejects a range outside the host renderer version', () => {
         expect(isMobileRendererCompatible('>=0.2.0', '0.1.0')).toBe(false);
         expect(isMobileRendererCompatible('<0.1.0', '0.1.0')).toBe(false);
+    });
+
+    it('pins the renderer contract at 0.4.0 and the SDK contract at 0.2.0', () => {
+        expect(MOBILE_RENDERER_VERSION).toBe('0.4.0');
+        expect(PLUGIN_API_VERSION).toBe('0.2.0');
+        // The SurveyJS manifest range still matches; a caret on 0.x does not span a minor.
+        expect(isMobileRendererCompatible('>=0.2.0')).toBe(true);
+        expect(isMobileRendererCompatible('^0.3.0')).toBe(false);
     });
 
     it('treats a missing range as "no mobile support declared" (web-only plugin)', () => {

@@ -187,6 +187,12 @@ export interface IPluginManifestStyle {
     renamedFrom?: string[];
     /** When present, the installer makes the style's field links match this list. */
     fields?: IPluginManifestStyleField[];
+    /**
+     * Field name → registered resource type of this plugin (`resourceTypes`
+     * lookup). The field must be declared for the style. Needs `pluginApiVersion`
+     * >= 0.2.0.
+     */
+    resourceFields?: Record<string, string>;
 }
 
 /** Style group written into `style_groups` by the host installer (rule 7.8). */
@@ -242,12 +248,112 @@ export interface IPluginManifestApiRoute {
     public?: boolean;
 }
 
+/**
+ * Inline JSON Schema for an action-plannable plugin job config. Allowed property
+ * types are `string`, `integer`, `number` and `boolean`; nesting is not allowed.
+ * `format: "variable-text"` marks a string that accepts `{{variables}}`.
+ */
+export interface IPluginManifestJobConfigSchema {
+    type: 'object';
+    properties?: Record<string, IPluginManifestJobConfigProperty>;
+    required?: string[];
+    additionalProperties?: boolean;
+}
+
+export interface IPluginManifestJobConfigProperty {
+    type: 'string' | 'integer' | 'number' | 'boolean';
+    enum?: Array<string | number | boolean>;
+    minimum?: number;
+    maximum?: number;
+    maxLength?: number;
+    title?: string;
+    description?: string;
+    default?: string | number | boolean;
+    /** Marks a string that accepts `{{variables}}` when the action plans the job. */
+    format?: 'variable-text';
+}
+
 export interface IPluginManifestScheduledJob {
     /** Job type key. */
     type: string;
     description: string;
     /** Capability gate (always requires `scheduledJobs`). */
     capability: 'scheduledJobs';
+    /** Required when `actionPlannable` is true. Shown in the action builder. */
+    label?: string;
+    /** When true, editors may plan this job type in an action. Default false. */
+    actionPlannable?: boolean;
+    /** Inline JSON Schema for `plugin_config` when the job is planned from an action. */
+    configSchema?: IPluginManifestJobConfigSchema;
+    /** Config property → registered resource type of this plugin. */
+    resourceFields?: Record<string, string>;
+    /** Child-process timeout in seconds (10 to 900). Default 120. */
+    timeoutSeconds?: number;
+}
+
+/** Cache category declared by a plugin; stored as `<plugin id>.<name>`. */
+export interface IPluginManifestCacheCategory {
+    /** `^[a-z][a-z0-9_]{0,40}$`. */
+    name: string;
+    /** Lifetime in seconds (60 to 86400). */
+    ttlSeconds: number;
+    description?: string;
+}
+
+/** Instance setting declared by a plugin; stored by the host (C14). */
+export interface IPluginManifestSetting {
+    /** `^[a-z][a-z0-9_]{0,63}$`. */
+    key: string;
+    label: string;
+    type: 'string' | 'number' | 'boolean' | 'url';
+    /** Default false. Secrets are encrypted at rest and never returned clear. */
+    secret?: boolean;
+    /** Default false. */
+    required?: boolean;
+    /** Not allowed when `secret` is true. */
+    default?: string | number | boolean;
+    /** `^[A-Z][A-Z0-9_]{2,63}$`, unique across enabled plugins. */
+    envOverride?: string;
+}
+
+/** Rate limit declared by a plugin (C15). */
+export interface IPluginManifestRateLimit {
+    /** `^[a-z][a-z0-9_]{0,40}$`. */
+    name: string;
+    policy: 'sliding_window' | 'fixed_window';
+    /** 1 to 100000. */
+    limit: number;
+    /** Symfony rate-limiter interval string (e.g. `1 minute`). */
+    interval: string;
+}
+
+/** JSON Logic operation declared by a plugin (C16). */
+export interface IPluginManifestJsonLogicOperation {
+    /** `^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$`; the namespace belongs to one plugin. */
+    name: string;
+    description: string;
+}
+
+/**
+ * After-commit domain events a plugin may listen to (C24). Must match the host
+ * event names exactly.
+ */
+export type TPluginDomainEventName =
+    | 'record.saved'
+    | 'record.deleted'
+    | 'user.created'
+    | 'user.deleted'
+    | 'page.published';
+
+/** Recurring plugin job (C25). `type` must be one of the plugin's `scheduledJobs`. */
+export interface IPluginManifestRecurringJob {
+    /** `^[a-z][a-z0-9_]{0,40}$`. */
+    name: string;
+    /** One of this plugin's `scheduledJobs[].type`. */
+    type: string;
+    /** Five-field cron, UTC, at least 5 minutes apart. */
+    cron: string;
+    description: string;
 }
 
 export interface IPluginManifestAsset {
@@ -361,6 +467,42 @@ export interface IPluginManifest {
 
     /** Scheduled jobs. */
     scheduledJobs?: IPluginManifestScheduledJob[];
+
+    /**
+     * Cache categories the host registers for this plugin (C4). Needs
+     * `pluginApiVersion` >= 0.2.0.
+     */
+    cacheCategories?: IPluginManifestCacheCategory[];
+
+    /**
+     * Instance settings and secrets stored by the host (C14). Needs
+     * `pluginApiVersion` >= 0.2.0.
+     */
+    settings?: IPluginManifestSetting[];
+
+    /**
+     * Rate limits the host builds for this plugin (C15). Needs
+     * `pluginApiVersion` >= 0.2.0.
+     */
+    rateLimits?: IPluginManifestRateLimit[];
+
+    /**
+     * JSON Logic operations the host registers for conditions (C16). Needs
+     * `pluginApiVersion` >= 0.2.0.
+     */
+    jsonLogicOperations?: IPluginManifestJsonLogicOperation[];
+
+    /**
+     * After-commit domain events this plugin's listeners receive (C24). Needs
+     * `pluginApiVersion` >= 0.2.0.
+     */
+    listens?: TPluginDomainEventName[];
+
+    /**
+     * Recurring jobs the host keeps queued while the plugin is enabled (C25).
+     * Needs `pluginApiVersion` >= 0.2.0.
+     */
+    recurringJobs?: IPluginManifestRecurringJob[];
 
     /** Vendored assets. */
     assets?: IPluginManifestAsset[];

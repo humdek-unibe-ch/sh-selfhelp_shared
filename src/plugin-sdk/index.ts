@@ -48,11 +48,19 @@ export type {
     IPluginManifestAdminPage,
     IPluginManifestApiRoute,
     IPluginManifestScheduledJob,
+    IPluginManifestJobConfigSchema,
+    IPluginManifestJobConfigProperty,
+    IPluginManifestCacheCategory,
+    IPluginManifestSetting,
+    IPluginManifestRateLimit,
+    IPluginManifestJsonLogicOperation,
+    IPluginManifestRecurringJob,
     IPluginManifestAsset,
     IPluginManifestMobile,
     IPluginManifestExternalHost,
     IPluginManifestDataAccess,
     IPluginManifestHealth,
+    TPluginDomainEventName,
 } from './manifest';
 
 export type {
@@ -91,7 +99,13 @@ export type {
     IRichTextEditorAdapter,
     IRichTextEditorAdapterOptions,
     IRichTextEditorValue,
+    IResourceUsage,
+    IPluginSettingViewItem,
+    IPluginSettingsView,
 } from './types';
+
+export type { IPluginSyncEntry } from './sync-map';
+export { matchPluginSyncEntries } from './sync-map';
 
 export { definePlugin, defineMobilePlugin, definePluginRealtimeTopic } from './define';
 
@@ -100,8 +114,18 @@ export type {
     IMobileHostRequest,
     IMobileHostResponse,
     TMobileHostMethod,
+    IMobileHostUploadFile,
+    IMobileHostUploadRequest,
+    IMobilePluginStorage,
+    TMobileHostPermission,
+    TMobileHostPermissionState,
 } from './host-services';
 export { setMobileHostServices, getMobileHostServices } from './host-services';
+
+// Text helpers for native mobile plugin text (C30). One implementation: the
+// same functions core renderers use; not copied.
+export { parseInlineRich, stripHtmlToText } from '../content/inlineFormat';
+export type { IInlineNode } from '../content/inlineFormat';
 
 export type {
     IRealtimeTransport,
