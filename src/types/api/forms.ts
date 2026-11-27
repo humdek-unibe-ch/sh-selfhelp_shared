@@ -187,6 +187,11 @@ export interface IFormSubmitData extends IFormResultLegacyFields {
     user_authenticated: boolean;
     /** The record's version after the submit (1 for a new record). */
     version: number;
+    /**
+     * Content the write was based on (`page:<id>@v<n>|draft` or
+     * `res:<type>:<id>@v<n>`). Null when unknown.
+     */
+    content_ref?: string | null;
 }
 
 /**
@@ -201,6 +206,11 @@ export interface IFormUpdateData extends IFormResultLegacyFields {
     updated_at: string;
     /** The record's version after the update. */
     version: number;
+    /**
+     * Content the write was based on (`page:<id>@v<n>|draft` or
+     * `res:<type>:<id>@v<n>`). Null when unknown.
+     */
+    content_ref?: string | null;
 }
 
 /**

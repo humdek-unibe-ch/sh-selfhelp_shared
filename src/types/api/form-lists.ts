@@ -165,6 +165,11 @@ export interface IFormListRow extends IFormListRecordAccess {
     entry_date: string;
     /** Send back as `expected_version` when changing the record. */
     version: number;
+    /**
+     * Content the write was based on (`page:<id>@v<n>|draft` or
+     * `res:<type>:<id>@v<n>`). Null when unknown (older rows).
+     */
+    content_ref?: string | null;
     /** Exactly the configured columns, by field. */
     values: Record<string, TFormListCellValue>;
     /**
@@ -182,6 +187,11 @@ export interface IFormListSelected extends IFormListRecordAccess {
     entry_date: string;
     /** Send back as `expected_version` when saving, deleting, running an action or restoring. */
     version: number;
+    /**
+     * Content the write was based on (`page:<id>@v<n>|draft` or
+     * `res:<type>:<id>@v<n>`). Null when unknown (older rows).
+     */
+    content_ref?: string | null;
     values: Record<string, TFormListCellValue>;
     /** The prefill the inline form receives on a page load; null when the caller cannot edit the record. */
     form_values: Record<string, unknown> | unknown[] | null;
@@ -269,7 +279,7 @@ export type IFormListQuickActionResponse = IBaseApiResponse<IFormListQuickAction
 // -- history -------------------------------------------------------------------------
 
 export type TDataRevisionOperation = 'create' | 'update' | 'delete' | 'restore' | 'baseline';
-export type TDataRevisionSource = 'form' | 'admin' | 'quick_action' | 'job' | 'import' | 'system';
+export type TDataRevisionSource = 'form' | 'admin' | 'quick_action' | 'job' | 'import' | 'system' | 'plugin';
 
 export interface IFormListActor {
     id: number;
@@ -289,6 +299,11 @@ export interface IFormListRevision {
     /** The number of fields the revision changed. */
     changed_fields: number;
     is_checkpoint: boolean;
+    /**
+     * Content that revision was based on (`page:<id>@v<n>|draft` or
+     * `res:<type>:<id>@v<n>`). Null when unknown (older revisions).
+     */
+    content_ref?: string | null;
 }
 
 /** A file a revision held; `available` is false once the file was erased. */
