@@ -10,6 +10,47 @@ All notable changes to `@selfhelp/shared` will be documented in this file.
 This project follows semantic versioning.
 
 
+## v1.31.0
+
+Minor: plugin host hooks contracts for resource tags, sync map, manifest
+settings and the web SDK surface (task `2026-11-25-plugin-resource-hooks`).
+Additive, no breaking change. `PLUGIN_API_VERSION` becomes `0.2.0`.
+
+- **Added** `res:<type>:<id>` to `SYNC_TAG_PATTERN` / `TSyncTag`;
+  `pageDependsOn` matches listed `res:` tags.
+- **Added** plugin SDK `sync?` map on web and mobile registrations,
+  `matchPluginSyncEntries()` (`src/plugin-sdk/sync-map.ts`).
+- **Added** manifest types for C2 / C21–C25: `resourceFields`,
+  `cacheCategories`, action-plannable `scheduledJobs`, `settings`,
+  `rateLimits`, `jsonLogicOperations`, `listens`, `recurringJobs`,
+  `timeoutSeconds`.
+- **Added** web `IPluginApi` members `resources`, `settings`,
+  `sectionAnchor`, optional `ui.ResourceUsageList`; types
+  `IResourceUsage`, `IPluginSettingsView`. Mobile omits these.
+- **Added** optional `content_ref` on form list rows, selected records,
+  history revisions and form submit/update responses (C19).
+- **Added** mobile host services, all optional on `IMobileHostServices` so a
+  plugin feature-detects them (C27 to C29): `upload(req)` with
+  `IMobileHostUploadRequest` / `IMobileHostUploadFile` (multipart through the
+  host with its token; `invalid_upload` and `file_too_large` answer
+  `{ ok: false, status: 0 }`), `requestPermission(kind)` with
+  `TMobileHostPermission` (`microphone` | `camera`) and
+  `TMobileHostPermissionState` (`granted` | `denied` | `blocked`),
+  `openAppSettings()`, and `getPluginStorage(pluginId)` returning
+  `IMobilePluginStorage` (device key-value store per server, user and plugin;
+  not for secrets).
+- **Added** `parseInlineRich`, `stripHtmlToText` and `IInlineNode` exported from
+  `@selfhelp/shared/plugin-sdk` for native mobile plugin text (C30). They are
+  the same functions as in `src/content/inlineFormat.ts`, not copies. The
+  `IMobilePluginApi` comment now states the HTML rule: native text through
+  these helpers; HTML in a plugin's own WebView through a sanitizer bundled
+  there; web through `api.sanitizeHtml`.
+- **Added** `'plugin'` to `TDataRevisionSource`: a plugin writes a data row through the revision door `plugin`; clients show "via plugin" in a record's history.
+- **Changed** `MOBILE_RENDERER_VERSION` `0.3.0` to `0.4.0` (additive renderer
+  feature). Plugins declare `>=` ranges in `compatibility.mobile`; a caret on
+  `0.x` such as `^0.3.0` does not match `0.4.0`. `PLUGIN_API_VERSION` stays
+  `0.2.0` (the 0.2.0 comment lists the new members).
+
 ## v1.30.0
 
 Minor: language-independent sentinel as one named constant (task
